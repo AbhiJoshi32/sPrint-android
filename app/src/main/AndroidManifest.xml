@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.binktec.sprint">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/my_backup_rules"
+        android:icon="@mipmap/logo_icon"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/logo_icon"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        >
+        <service
+            android:name="com.binktec.sprint.service.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.binktec.sprint.service.MyFirebaseInstanceIDService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <!-- [END firebase_iid_service] -->
+        <service
+            android:name="com.binktec.sprint.service.MyJobService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name="com.binktec.sprint.ui.activity.PrintJobActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
+                <data
+                    android:host="www.binktec.com"
+                    android:pathPrefix="/printIt"
+                    android:scheme="http" />
+                <!-- note that the leading "/" is required for pathPrefix -->
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <data
+                    android:host="binktec"
+                    android:scheme="printIt" />
+                <data
+                    android:host="binktec"
+                    android:scheme="online print" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.binktec.sprint.ui.activity.AuthActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.binktec.sprint.ui.activity.PrivacyPolicyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.binktec.sprint.ui.activity.AboutUs"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.binktec.sprint.ui.activity.TransactionActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.binktec.sprint.ui.activity.AvailableShopActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name="com.binktec.sprint.ui.activity.SettingsActivity" />
+        <activity android:name="com.binktec.sprint.ui.activity.ManageAccountActivity" />
+        <activity android:name="com.binktec.sprint.ui.activity.InstructionActivity" />
+    </application>
+
+</manifest>

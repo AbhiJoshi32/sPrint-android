@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "496914499075",
+    "firebase_url": "https://sprint-1045.firebaseio.com",
+    "project_id": "sprint-1045",
+    "storage_bucket": "sprint-1045.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:496914499075:android:5f60e46a1438ef15",
+        "android_client_info": {
+          "package_name": "com.binktec.sprint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "496914499075-nsnat45pg1kn6r1gbuptctm3ipplm5mh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.binktec.sprint",
+            "certificate_hash": "f8a2bbac80f453a8d37599faa5a5554717f09efe"
+          }
+        },
+        {
+          "client_id": "496914499075-aqhame5fds8d98aec77d58q4ros1su2m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeDIbF5-6Lel03nwgTS-W_ahrSNADwh5k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "496914499075-aqhame5fds8d98aec77d58q4ros1su2m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
