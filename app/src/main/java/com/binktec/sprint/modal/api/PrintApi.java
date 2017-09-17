@@ -73,7 +73,7 @@ public class PrintApi {
     public void startFileUpload(final PrintJobDetail printJobDetail, final PrintJobModalListener callback) {
         StorageReference storageRef = storage.getReference();
         StorageMetadata metadata = new StorageMetadata.Builder()
-                .setContentType("image/jpeg")
+                .setContentType("application/pdf")
                 .build();
         try {
                 final int numOfFiles = printJobDetail.getPrintTransaction().getFileDetails().size();

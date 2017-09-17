@@ -148,7 +148,7 @@ public class TransactionPresenter implements TransactionModalListener {
     public void confirmPrintDetail(PrintDetail detail) {
         try {
             int totalPages = 0;
-            int pagesToPrint = 0;
+            int pagesToPrint;
             if (chosenFiles == null) {
                 if (SessionManager.getFileDetail() == null) {
                     transactionPresenterListener.showFileError("empty File List");
