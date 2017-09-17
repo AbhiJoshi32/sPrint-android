@@ -22,7 +22,6 @@ public class PrintJobPresenter implements PrintJobModalListener{
     private PrintApi printApi;
     private List<PrintJobDetail> progressPrintJobDetails;
     private List<PrintJobDetail> historyPrintJobDetails;
-//    private final static String TAG = "print job pesenter";
 
 
     public PrintJobPresenter(PrintJobPresenterListener printJobPresenterListener) {
@@ -85,6 +84,8 @@ public class PrintJobPresenter implements PrintJobModalListener{
 
         Log.d(TAG,"api list is " + apiPrintJobDetails);
 
+        List<PrintJobDetail> apiJobs = new ArrayList<>();
+
         if (progressPrintJobDetails == null) {
             progressPrintJobDetails = new ArrayList<>();
         } else {
@@ -106,12 +107,13 @@ public class PrintJobPresenter implements PrintJobModalListener{
         for (PrintJobDetail apiPrintJob:apiPrintJobDetails) {
             if (!apiPrintJob.getStatus().equals("Printed") && !apiPrintJob.getStatus().equals("Cancelled")){
                 progressPrintJobDetails.add(apiPrintJob);
+                apiJobs.add(apiPrintJob);
             } else {
                 historyPrintJobDetails.add(apiPrintJob);
             }
         }
         SessionManager.saveHistoryPrintJob(historyPrintJobDetails);
-        SessionManager.saveApiPrintJob(progressPrintJobDetails);
+        SessionManager.saveApiPrintJob(apiJobs);
         printJobPresenterListener.updatePrintJobFragment(progressPrintJobDetails);
         printJobPresenterListener.updateHistoryJobFragment(historyPrintJobDetails);
     }
@@ -168,7 +170,18 @@ public class PrintJobPresenter implements PrintJobModalListener{
     }
 
     public void cancelUpload(PrintJobDetail printJobDetail) {
-        Log.d(TAG,"the tid is" + printJobDetail.gettId());
-        printApi.cancelTransaction(printJobDetail.gettId(),printJobDetail.getUser().getUid(),printJobDetail.getPrintTransaction().getShop().getShopId());
+        Log.d(TAG, "the tid is" + printJobDetail.getStatus());
+        if (printJobDetail.getStatus().equals("Uploading")) {
+            SessionManager.clearCurrentPrintJob();
+            progressPrintJobDetails = new ArrayList<>();
+            if (SessionManager.getApiPrintJobDetail() != null) {
+                progressPrintJobDetails.addAll(SessionManager.getApiPrintJobDetail());
+            }
+            Log.d(TAG,"progress Details are" + progressPrintJobDetails);
+
+            printJobPresenterListener.updatePrintJobFragment(progressPrintJobDetails);
+        } else {
+            printApi.cancelTransaction(printJobDetail.gettId(), printJobDetail.getUser().getUid(), printJobDetail.getPrintTransaction().getShop().getShopId());
+        }
     }
 }

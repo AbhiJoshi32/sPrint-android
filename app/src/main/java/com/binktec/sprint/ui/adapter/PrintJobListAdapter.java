@@ -95,6 +95,9 @@ public class PrintJobListAdapter extends RecyclerView.Adapter<PrintJobListAdapte
                 for (int i=1;i<size;i++) {
                     listOfFiles += detail.getPrintTransaction().getFileDetails().get(i).getFilename() + "\n";
                 }
+                holder.showFiles.setVisibility(View.VISIBLE);
+                holder.hideFiles.setVisibility(View.GONE);
+                listOfFiles = listOfFiles.trim();
                 holder.fileListText.setText(listOfFiles);
             } else {
                 holder.showFiles.setVisibility(View.GONE);
