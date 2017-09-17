@@ -55,7 +55,8 @@
                 android:background="@android:drawable/screen_background_light_transparent"
                 app:layout_constraintLeft_toRightOf="@+id/mainFile"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_drop_down_arrow" />
+                app:srcCompat="@drawable/ic_drop_down_arrow"
+                android:contentDescription="@string/arrow_down" />
 
             <ImageButton
                 android:id="@+id/hideFiles"
@@ -68,7 +69,8 @@
                 android:visibility="visible"
                 app:layout_constraintLeft_toRightOf="@+id/mainFile"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_drop_up_arrow" />
+                app:srcCompat="@drawable/ic_drop_up_arrow"
+                android:contentDescription="@string/arrow_up" />
 
             <TextView
                 android:id="@+id/fileListText"

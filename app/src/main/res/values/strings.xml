@@ -37,6 +37,8 @@
     <string name="background_image">background image</string>
     <string name="profile_picture">Profile Picture</string>
     <string name="web_client_id">496914499075-aqhame5fds8d98aec77d58q4ros1su2m.apps.googleusercontent.com</string>
+    <string name="arrow_down">Arrow down</string>
+    <string name="arrow_up">Arrow up</string>
 
     <string-array name="nav_item_activity_titles">
         <item>Printing Jobs</item>

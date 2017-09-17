@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.binktec.sprint.R;
@@ -43,6 +44,8 @@ public class PrintJobListAdapter extends RecyclerView.Adapter<PrintJobListAdapte
         TextView statusText;
         TextView totalCostText;
         Button cancelButton;
+        ImageButton showFiles;
+        ImageButton hideFiles;
 
         public PrintJobViewHolder(View itemView) {
             super(itemView);
@@ -55,6 +58,8 @@ public class PrintJobListAdapter extends RecyclerView.Adapter<PrintJobListAdapte
             totalCostText = itemView.findViewById(R.id.totalCostText);
             statusText = itemView.findViewById(R.id.statusText);
             cancelButton = itemView.findViewById(R.id.cancel);
+            showFiles = itemView.findViewById(R.id.showFiles);
+            hideFiles = itemView.findViewById(R.id.hideFiles);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -78,7 +83,7 @@ public class PrintJobListAdapter extends RecyclerView.Adapter<PrintJobListAdapte
     }
 
     @Override
-    public void onBindViewHolder(PrintJobListAdapter.PrintJobViewHolder holder, int position) {
+    public void onBindViewHolder(final PrintJobListAdapter.PrintJobViewHolder holder, final int position) {
         PrintJobDetail detail = userTransactions.get(position);
         if (detail != null) {
             String listOfFiles = "";
@@ -87,15 +92,31 @@ public class PrintJobListAdapter extends RecyclerView.Adapter<PrintJobListAdapte
             holder.location.setText(detail.getPrintTransaction().getShop().getShopLocation());
             int size = detail.getPrintTransaction().getFileDetails().size();
             if (size>1) {
-                for (int i=0;i<size;i++) {
+                for (int i=1;i<size;i++) {
                     listOfFiles += detail.getPrintTransaction().getFileDetails().get(i).getFilename() + "\n";
                 }
                 holder.fileListText.setText(listOfFiles);
-                holder.fileListText.setVisibility(View.VISIBLE);
             } else {
-                holder.fileListText.setVisibility(View.GONE);
+                holder.showFiles.setVisibility(View.GONE);
+                holder.hideFiles.setVisibility(View.GONE);
             }
             holder.statusText.setText(detail.getStatus());
+            holder.hideFiles.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    holder.fileListText.setVisibility(View.GONE);
+                    holder.hideFiles.setVisibility(View.GONE);
+                    holder.showFiles.setVisibility(View.VISIBLE);
+                }
+            });
+            holder.showFiles.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    holder.fileListText.setVisibility(View.VISIBLE);
+                    holder.showFiles.setVisibility(View.GONE);
+                    holder.hideFiles.setVisibility(View.VISIBLE);
+                }
+            });
             holder.file1.setText(detail.getPrintTransaction().getFileDetails().get(0).getFilename());
             float totalCost = detail.getPrintTransaction().getBindingCost() + detail.getPrintTransaction().getPrintCost();
             String totalCostString = "Total Cost: "+totalCost;
