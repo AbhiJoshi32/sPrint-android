@@ -135,9 +135,8 @@ public class PrintJobPresenter implements PrintJobModalListener{
             progressPrintJobDetails.clear();
         }
 
-        if (firebaseUser != null) {
-            printApi.getTransactionInfo(this, firebaseUser.getUid());
-        }
+        printApi.getTransactionInfo(this, firebaseUser.getUid());
+
 
         if (SessionManager.getCurrentPrintJobDetail() != null ) {
             progressPrintJobDetails.add(SessionManager.getCurrentPrintJobDetail());
@@ -154,7 +153,6 @@ public class PrintJobPresenter implements PrintJobModalListener{
 
     public void getHistorySession() {
         if (SessionManager.getHistoryPrintJobDetail() != null) {
-            Log.d(TAG,"history session saved" + SessionManager.getHistoryPrintJobDetail());
             historyPrintJobDetails = new ArrayList<>(SessionManager.getHistoryPrintJobDetail());
             printJobPresenterListener.updateHistoryJobFragment(historyPrintJobDetails);
         }

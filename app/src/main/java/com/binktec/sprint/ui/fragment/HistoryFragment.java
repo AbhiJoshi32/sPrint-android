@@ -86,8 +86,6 @@ public class HistoryFragment extends Fragment {
     }
 
     public void updateHistoryRecyclerView(List<PrintJobDetail> retPrintJobDetails) {
-        Log.d(TAG,"uploading progress view");
-        Log.d(TAG,"retireived list is " + retPrintJobDetails);
         printJobDetails.clear();
         printJobDetails.addAll(retPrintJobDetails);
         printJobListAdapter.notifyDataSetChanged();

@@ -50,7 +50,6 @@ public class PrintJobListAdapter extends RecyclerView.Adapter<PrintJobListAdapte
             file1 = itemView.findViewById(R.id.mainFile);
             location = itemView.findViewById(R.id.location);
             fileListText = itemView.findViewById(R.id.fileListText);
-            shopName = itemView.findViewById(R.id.shopName);
             dateText = itemView.findViewById(R.id.dateText);
             timeText = itemView.findViewById(R.id.timeText);
             totalCostText = itemView.findViewById(R.id.totalCostText);
@@ -85,7 +84,6 @@ public class PrintJobListAdapter extends RecyclerView.Adapter<PrintJobListAdapte
             String listOfFiles = "";
             holder.dateText.setText(detail.getDate());
             holder.timeText.setText(detail.getTime());
-            holder.shopName.setText(detail.getPrintTransaction().getShop().getShopName());
             holder.location.setText(detail.getPrintTransaction().getShop().getShopLocation());
             int size = detail.getPrintTransaction().getFileDetails().size();
             if (size>1) {
