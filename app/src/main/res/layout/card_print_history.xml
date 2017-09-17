@@ -40,7 +40,7 @@
                 android:text="Shop Name"
                 android:layout_marginLeft="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="8dp"
                 app:layout_constraintTop_toBottomOf="@+id/fileListText" />
 
             <TextView
@@ -51,13 +51,14 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:maxWidth="150dp"
                 android:text="File1"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/showfiles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -67,6 +68,19 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_drop_down_arrow" />
 
+            <ImageButton
+                android:id="@+id/hideFiles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:drawable/screen_background_light_transparent"
+                android:visibility="gone"
+                app:layout_constraintLeft_toRightOf="@+id/mainFile"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_drop_up_arrow" />
+
 
             <TextView
                 android:id="@+id/fileListText"
@@ -74,8 +88,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
+                android:maxWidth="150dp"
                 android:text="FileList"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/mainFile" />
 
