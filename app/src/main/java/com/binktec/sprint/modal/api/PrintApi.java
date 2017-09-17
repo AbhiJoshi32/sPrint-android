@@ -148,8 +148,10 @@ public class PrintApi {
         });
     }
 
-    public void cancelTransaction(String tId, String uid) {
+    public void cancelTransaction(String tId, String uid,String shopId) {
         DatabaseReference userRef = database.getReference("userTransaction/" + uid);
+        DatabaseReference printRef = database.getReference("printTransaction/" + shopId);
         userRef.child(tId).child("status").setValue("Cancelled");
+        printRef.child(tId).child("status").setValue("Cancelled");
     }
 }
