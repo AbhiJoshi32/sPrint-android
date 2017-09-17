@@ -74,7 +74,6 @@ public class PrintJobPresenter implements PrintJobModalListener{
             if (SessionManager.getApiPrintJobDetail() != null) {
                 progressPrintJobDetails.addAll(SessionManager.getApiPrintJobDetail());
             }
-            jobDetail.setUser(SessionManager.getUser());
             jobDetail.setStatus("Waiting");
             printApi.enterTransaction(jobDetail);
             printJobPresenterListener.updatePrintJobFragment(progressPrintJobDetails);
@@ -171,13 +170,7 @@ public class PrintJobPresenter implements PrintJobModalListener{
     }
 
     public void cancelUpload(PrintJobDetail printJobDetail) {
-        if (printJobDetail.getStatus().equals("Uploading")){
-            SessionManager.clearCurrentPrintJob();
-            progressPrintJobDetails.remove(0);
-        } else {
-            Log.d(TAG,"the tid is" + printJobDetail.gettId());
-            printApi.cancelTransaction(printJobDetail.gettId(),printJobDetail.getUser().getUid());
-        }
-        printJobPresenterListener.updatePrintJobFragment(progressPrintJobDetails);
+        Log.d(TAG,"the tid is" + printJobDetail.gettId());
+        printApi.cancelTransaction(printJobDetail.gettId(),printJobDetail.getUser().getUid(),printJobDetail.getPrintTransaction().getShop().getShopId());
     }
 }

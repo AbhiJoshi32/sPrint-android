@@ -58,7 +58,7 @@ public class PrintApi {
 
     public void enterTransaction(PrintJobDetail printJobDetail) {
         try {
-            DatabaseReference userRef = database.getReference("userTransaction/" + printJobDetail.getPrintTransaction().getUid());
+            DatabaseReference userRef = database.getReference("userTransaction/" + printJobDetail.getUser().getUid());
             String key = userRef.push().getKey();
             printJobDetail.settId(key);
             userRef.child(key).setValue(printJobDetail);
@@ -81,7 +81,7 @@ public class PrintApi {
                 for (final FileDetail file : printJobDetail.getPrintTransaction().getFileDetails()) {
                     Uri uri = Uri.parse(file.getUri());
                    final UploadTask uploadTask = storageRef.
-                            child("docs/" + printJobDetail.getPrintTransaction()
+                            child("docs/" + printJobDetail.getUser()
                                     .getUid() + "/" + file.getFilename() + uri.getLastPathSegment())
                             .putFile(uri,metadata);
                     StorageTask<UploadTask.TaskSnapshot> taskSnapshotStorageTask = uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -148,8 +148,10 @@ public class PrintApi {
         });
     }
 
-    public void cancelTransaction(String tId, String uid) {
+    public void cancelTransaction(String tId, String uid,String shopId) {
         DatabaseReference userRef = database.getReference("userTransaction/" + uid);
+        DatabaseReference printRef = database.getReference("printTransaction/" + shopId);
         userRef.child(tId).child("status").setValue("Cancelled");
+        printRef.child(tId).child("status").setValue("Cancelled");
     }
 }
