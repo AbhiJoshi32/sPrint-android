@@ -21,13 +21,13 @@
 
         <com.layer_net.stepindicator.StepIndicator
             android:id="@+id/step_indicator"
-            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
-            app:siBackgroundColor="@color/background_default"
-            app:siStepColor="@color/step_default"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_marginTop="16dp"
+            app:siBackgroundColor="@color/colorPrimary"
+            app:siStepColor="@color/colorAccent" />
 
         <com.binktec.sprint.ui.ui_utility.CustomViewPager
             android:id="@+id/viewPager"

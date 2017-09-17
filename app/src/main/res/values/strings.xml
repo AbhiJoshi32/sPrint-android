@@ -30,7 +30,7 @@
     <string name="resendText">Didn\'t receive the mail yet?</string>
     <string name="hello_blank_fragment">Hello</string>
     <string name="requestIdToken">566404411615-1jbgkpp3rlb4bn3prldhtb0nfi3sf9fk.apps.googleusercontent.com</string>
-    <string name="logout">Logout</string>
+    <string name="logout">Login</string>
     <string name="background_url">https://api.androidhive.info/images/nav-menu-header-bg.jpg</string>
     <string name="print_your_files">Print Your Files</string>
     <string name="instructions">Instructions:\n1. Tap on the orange button to start printing\n2. Click ADD to select a file and tap on DONE\n3. Select your print options and press DONE\n4. Now choose your shop and confirm\n5. sPrint and collect your docs before the shop closes!</string>
