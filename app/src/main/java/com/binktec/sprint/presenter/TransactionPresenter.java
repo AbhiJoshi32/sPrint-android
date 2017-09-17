@@ -34,7 +34,6 @@ public class TransactionPresenter implements TransactionModalListener {
 
     private TransactionPresenterListener transactionPresenterListener;
     private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
     private List<FileDetail> chosenFiles = null;
     private PrintApi printApi;
 
@@ -54,7 +53,7 @@ public class TransactionPresenter implements TransactionModalListener {
     }
 
     public void appStart() {
-        firebaseUser = firebaseAuth.getCurrentUser();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         printApi = new PrintApi();
         if (firebaseUser != null) {
             if (firebaseUser.getPhotoUrl() != null) {
@@ -233,11 +232,11 @@ public class TransactionPresenter implements TransactionModalListener {
 
     public void confirmTransaction(PrintTransaction printTransaction) {
         try {
-            printTransaction.setUid(firebaseUser.getUid());
             PrintJobDetail printJobDetail = new PrintJobDetail();
             printJobDetail.setPrintTransaction(printTransaction);
             printJobDetail.setStatus("Uploading");
             printJobDetail.setDate(Misc.getDate());
+            printJobDetail.setUser(SessionManager.getUser());
             printJobDetail.setTime(Misc.getTime());
             SessionManager.saveCurrentPrintJob(printJobDetail);
             Log.d(TAG, "uploading done");

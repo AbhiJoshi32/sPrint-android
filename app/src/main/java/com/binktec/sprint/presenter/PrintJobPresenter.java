@@ -74,7 +74,6 @@ public class PrintJobPresenter implements PrintJobModalListener{
             if (SessionManager.getApiPrintJobDetail() != null) {
                 progressPrintJobDetails.addAll(SessionManager.getApiPrintJobDetail());
             }
-            jobDetail.setUser(SessionManager.getUser());
             jobDetail.setStatus("Waiting");
             printApi.enterTransaction(jobDetail);
             printJobPresenterListener.updatePrintJobFragment(progressPrintJobDetails);
