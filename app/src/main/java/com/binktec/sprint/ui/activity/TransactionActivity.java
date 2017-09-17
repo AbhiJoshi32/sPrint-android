@@ -172,6 +172,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     @Override
     public void openPrintJobActivity() {
         Intent intent = new Intent(TransactionActivity.this, PrintJobActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
@@ -193,6 +194,12 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void ongoingUpload() {
+        showToastError("Let one upload complete to print again");
+        openPrintJobActivity();
     }
 
     private void setToolbarTitle() {
@@ -331,7 +338,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
 
     public void onPause() {
         super.onPause();
-        overridePendingTransition(0, 0);
     }
 
     public void onBackPressed() {

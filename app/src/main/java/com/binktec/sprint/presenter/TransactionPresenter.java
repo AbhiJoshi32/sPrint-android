@@ -56,13 +56,18 @@ public class TransactionPresenter implements TransactionModalListener {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         printApi = new PrintApi();
         if (firebaseUser != null) {
-            if (firebaseUser.getPhotoUrl() != null) {
-                transactionPresenterListener.initTransactionActivity(firebaseUser.getDisplayName(),
-                        firebaseUser.getPhotoUrl().toString());
+            if (SessionManager.getCurrentPrintJobDetail() != null) {
+                transactionPresenterListener.ongoingUpload();
             } else {
-                transactionPresenterListener.initTransactionActivity(firebaseUser.getDisplayName(),
-                        "");
+                if (firebaseUser.getPhotoUrl() != null) {
+                    transactionPresenterListener.initTransactionActivity(firebaseUser.getDisplayName(),
+                            firebaseUser.getPhotoUrl().toString());
+                } else {
+                    transactionPresenterListener.initTransactionActivity(firebaseUser.getDisplayName(),
+                            "");
+                }
             }
+
         }
         if (SessionManager.getFileDetail() != null) {
             chosenFiles = new ArrayList<>(SessionManager.getFileDetail());

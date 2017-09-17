@@ -25,4 +25,6 @@ public interface TransactionPresenterListener {
     void disableDone();
 
     void enableDone();
+
+    void ongoingUpload();
 }
