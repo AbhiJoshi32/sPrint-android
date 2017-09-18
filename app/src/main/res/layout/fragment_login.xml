@@ -13,7 +13,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:elevation="5dp"
         android:text="@string/login_btn_txt"
         android:theme="@style/lightButton"
@@ -28,31 +28,6 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/signup_input_layout_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_input_layout_email"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="0dp"
-        app:passwordToggleEnabled="true"
-        app:layout_constraintHorizontal_bias="0.5">
-
-        <EditText
-            android:id="@+id/login_input_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/password_hint"
-            android:inputType="textPassword" />
-
-    </android.support.design.widget.TextInputLayout>
-
     <TextView
         android:id="@+id/registerText"
         android:layout_width="wrap_content"
@@ -66,7 +41,7 @@
         app:layout_constraintTop_toBottomOf="@+id/google_button"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="32dp"
-        app:layout_constraintVertical_bias="0." />
+        app:layout_constraintVertical_bias="0.0" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/signup_input_layout_email"
@@ -95,15 +70,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="24dp"
         android:paddingBottom="8dp"
         android:text="@string/google_sign_in_text"
-        app:layout_constraintLeft_toLeftOf="@+id/guideline"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_input_layout_name" />
+        app:layout_constraintTop_toBottomOf="@+id/loginbutton" />
 
     <ProgressBar
         android:id="@+id/loginProgessbar"
@@ -116,5 +91,42 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/signup_input_layout_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signup_input_layout_email"
+        app:passwordToggleEnabled="true">
+
+        <EditText
+            android:id="@+id/login_input_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/password_hint"
+            android:inputType="textPassword" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:id="@+id/forgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Forgot Password?"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@+id/signup_input_layout_name" />
 
 </android.support.constraint.ConstraintLayout>

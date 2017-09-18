@@ -66,6 +66,7 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         unbinder = ButterKnife.bind(this, view);
+        googleButton.setSize(SignInButton.SIZE_WIDE);
         return view;
     }
 
