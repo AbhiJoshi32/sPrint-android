@@ -17,7 +17,7 @@
         <include
             android:id="@+id/include2"
             layout="@layout/app_bar_main"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -54,7 +54,7 @@
 
         <TextView
             android:id="@+id/PP3"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="16dp"
@@ -87,7 +87,7 @@ Personal Data: email address, first name, last name, profile picture and usernam
 
         <TextView
             android:id="@+id/PP4"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="16dp"
