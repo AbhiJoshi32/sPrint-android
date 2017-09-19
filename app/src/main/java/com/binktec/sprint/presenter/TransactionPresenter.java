@@ -54,8 +54,9 @@ public class TransactionPresenter implements TransactionModalListener {
 
     public void appStart() {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        printApi = new PrintApi();
+
         if (firebaseUser != null) {
+            printApi = new PrintApi(firebaseUser.getUid());
             if (SessionManager.getCurrentPrintJobDetail() != null) {
                 transactionPresenterListener.ongoingUpload();
             } else {
@@ -240,9 +241,7 @@ public class TransactionPresenter implements TransactionModalListener {
             PrintJobDetail printJobDetail = new PrintJobDetail();
             printJobDetail.setPrintTransaction(printTransaction);
             printJobDetail.setStatus("Uploading");
-            printJobDetail.setDate(Misc.getDate());
             printJobDetail.setUser(SessionManager.getUser());
-            printJobDetail.setTime(Misc.getTime());
             SessionManager.saveCurrentPrintJob(printJobDetail);
             Log.d(TAG, "uploading done");
             transactionPresenterListener.openPrintJobActivity();

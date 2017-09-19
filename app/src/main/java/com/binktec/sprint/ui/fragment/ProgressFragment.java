@@ -61,15 +61,9 @@ public class ProgressFragment extends Fragment {
         progressRecyclerView.setLayoutManager(mLayoutManager);
         progressRecyclerView.setItemAnimator(new DefaultItemAnimator());
         progressRecyclerView.setAdapter(printJobListAdapter);
-        Log.d(TAG,"Progress voew created");
+        printJobFragmentListener.initProgressFragment();
         return view;
     }
-    @Override
-    public void onStart() {
-        super.onStart();
-        printJobFragmentListener.initProgressFragment();
-    }
-
 
     @Override
     public void onAttach(Context context) {
@@ -94,10 +88,36 @@ public class ProgressFragment extends Fragment {
         unbinder.unbind();
     }
 
-    public void updateProgressRecyclerView(List<PrintJobDetail> retPrintJobDetails) {
-        Log.d(TAG,"uploading progress view");
+    public void insertProgressRecyclerView(PrintJobDetail transactionDetail, int i) {
+        Log.d(TAG,"Item inserted");
+        Log.d(TAG,"trnsacciton detail is "+transactionDetail+" index is "+i);
+        Log.d(TAG,"printjobDetail is " + printJobDetails + "/n size is" + printJobDetails.size());
+
+        if (i == 0) {
+            printJobDetails.clear();
+            printJobDetails.add(transactionDetail);
+            printJobListAdapter.notifyDataSetChanged();
+        } else {
+            printJobDetails.add(transactionDetail);
+            printJobListAdapter.notifyItemInserted(i);
+        }
+    }
+
+    public void changeProgressRecyclerView(PrintJobDetail changedTransaction, int changedIndex) {
+        Log.d(TAG,"item changed");
+        printJobDetails.set(changedIndex,changedTransaction);
+        printJobListAdapter.notifyItemChanged(changedIndex);
+    }
+
+    public void removeProgressRecyclerView(int removeIndex) {
+        printJobDetails.remove(removeIndex);
+        printJobListAdapter.notifyItemRemoved(removeIndex);
+    }
+
+    public void initProgressRecyclerView(List<PrintJobDetail> progressPrintJobDetails) {
         printJobDetails.clear();
-        printJobDetails.addAll(retPrintJobDetails);
+        Log.d(TAG,"Init called" + progressPrintJobDetails);
+        printJobDetails.addAll(progressPrintJobDetails);
         printJobListAdapter.notifyDataSetChanged();
     }
 }

@@ -6,8 +6,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -48,6 +49,8 @@ public class PrintJobActivity extends AppCompatActivity
 
     private static final String TAG = "Print Jobs";
     private static final int WRITE_STORAGE_PERMISSION_CODE = 24;
+    @BindView(R.id.content_main)
+    ConstraintLayout contentMain;
 
     private String urlNavHeaderBg;
 
@@ -71,6 +74,8 @@ public class PrintJobActivity extends AppCompatActivity
 
     private int STORAGE_PERMISSION_CODE = 23;
 
+    private ProgressFragment progressFragment;
+    private HistoryFragment historyFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,85 +89,16 @@ public class PrintJobActivity extends AppCompatActivity
         imgNavHeaderBg = navHeader.findViewById(R.id.img_header_bg);
         imgProfile = navHeader.findViewById(R.id.img_profile);
         printJobPresenter = new PrintJobPresenter(this);
-        printJobPresenter.viewCreated();
+        setSupportActionBar(toolbar);
+        setToolbarTitle();
+        setUpTabLayout();
+        setUpNavigationView();
+
         if (!isReadStorageAllowed()) {
-            Log.d(TAG, "need storage permission");
             requestStoragePermission();
         }
         if (!isWriteStorageAllowed()) {
-            Log.d(TAG, "Need write storage permission");
             requestWriteStoragePermission();
-        }
-        Log.d(TAG, "opened Print Job Activity");
-    }
-
-    private void requestWriteStoragePermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-        }
-
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_PERMISSION_CODE);
-    }
-
-    private boolean isWriteStorageAllowed() {
-        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        //If permission is granted returning true
-        if (result == PackageManager.PERMISSION_GRANTED)
-            return true;
-
-        //If permission is not granted returning false
-        return false;
-    }
-
-    private boolean isReadStorageAllowed() {
-        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-
-        //If permission is granted returning true
-        if (result == PackageManager.PERMISSION_GRANTED)
-            return true;
-
-        //If permission is not granted returning false
-        return false;
-    }
-
-    //Requesting permission
-    private void requestStoragePermission() {
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-        }
-
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
-    }
-
-    //This method will be called when the user will tap on allow or deny
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        //Checking the request code of our request
-        if (requestCode == STORAGE_PERMISSION_CODE) {
-
-            //If permission is granted
-            Log.d(TAG, "Grant result is for read " + grantResults[0]);
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                //Displaying a toast
-                Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
-            } else {
-                //Displaying another toast if permission is not granted
-                Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
-            }
-        } else if (requestCode == WRITE_STORAGE_PERMISSION_CODE) {
-            Log.d(TAG, "Grant result is for write " + grantResults[0]);
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                //Displaying a toast
-                Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
-            } else {
-                //Displaying another toast if permission is not granted
-                Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
-            }
         }
     }
 
@@ -214,30 +150,8 @@ public class PrintJobActivity extends AppCompatActivity
 
     @Override
     public void initializePrintJob(String displayName, String photoUrl) {
-        setSupportActionBar(toolbar);
-        loadNavHeader(displayName, photoUrl);
-        setToolbarTitle();
-        setUpTabLayout();
         selectNavMenu();
-        setUpNavigationView();
-    }
-
-    @Override
-    public void updatePrintJobFragment(List<PrintJobDetail> printJobDetails) {
-        if (printJobPagerAdapter != null) {
-            ProgressFragment progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
-            Log.d(TAG, "The reg fragment is" + progressFragment);
-            progressFragment.updateProgressRecyclerView(printJobDetails);
-        }
-    }
-
-    @Override
-    public void updateHistoryJobFragment(List<PrintJobDetail> historyPrintJobDetail) {
-        if (printJobPagerAdapter != null) {
-            HistoryFragment historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
-            Log.d(TAG, "The reg fragment is" + historyFragment);
-            historyFragment.updateHistoryRecyclerView(historyPrintJobDetail);
-        }
+        loadNavHeader(displayName, photoUrl);
     }
 
     @Override
@@ -246,6 +160,59 @@ public class PrintJobActivity extends AppCompatActivity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void showToastError(String s) {
+
+    }
+
+    @Override
+    public void progressItemInserted(PrintJobDetail transactionDetail, int i) {
+        progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+        if (progressFragment != null) {
+            progressFragment.insertProgressRecyclerView(transactionDetail, i);
+        }
+    }
+
+    @Override
+    public void progressItemChanged(PrintJobDetail changedTransaction, int changedIndex) {
+        progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+        if (progressFragment != null) {
+            progressFragment.changeProgressRecyclerView(changedTransaction, changedIndex);
+        }
+    }
+
+    @Override
+    public void progressItemRemoved(int removeIndex) {
+        progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+        if (progressFragment != null) {
+            progressFragment.removeProgressRecyclerView(removeIndex);
+        }
+    }
+
+    @Override
+    public void initProgressList(List<PrintJobDetail> progressPrintJobDetails) {
+        progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+        if (progressFragment != null) {
+            progressFragment.initProgressRecyclerView(progressPrintJobDetails);
+        }
+    }
+
+    @Override
+    public void initHistoryList(List<PrintJobDetail> historyPrintJobDetails) {
+        historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
+        if (historyFragment != null) {
+            historyFragment.initHistoryRecyclerView(historyPrintJobDetails);
+        }
+    }
+
+    @Override
+    public void historyItemInserted(PrintJobDetail historyDetail, int i) {
+        historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
+        if (historyFragment != null) {
+            historyFragment.addHistoryRecyclerView(historyDetail,i);
+        }
     }
 
     private void selectNavMenu() {
@@ -357,8 +324,15 @@ public class PrintJobActivity extends AppCompatActivity
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        printJobPresenter.onStopCalled();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
+
         Log.d(TAG, "On destroy called");
     }
 
@@ -373,8 +347,8 @@ public class PrintJobActivity extends AppCompatActivity
     }
 
     @Override
-    public void getHistoryList() {
-        printJobPresenter.getHistorySession();
+    public void initHistoryFragment() {
+        printJobPresenter.getHistoryList();
     }
 
     @Override
@@ -388,4 +362,75 @@ public class PrintJobActivity extends AppCompatActivity
         intent = new Intent(PrintJobActivity.this, TransactionActivity.class);
         startActivity(intent);
     }
+
+    private void requestWriteStoragePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+        }
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_PERMISSION_CODE);
+    }
+
+    private boolean isWriteStorageAllowed() {
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        //If permission is granted returning true
+        if (result == PackageManager.PERMISSION_GRANTED)
+            return true;
+
+        //If permission is not granted returning false
+        return false;
+    }
+
+    private boolean isReadStorageAllowed() {
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        //If permission is granted returning true
+        if (result == PackageManager.PERMISSION_GRANTED)
+            return true;
+
+        //If permission is not granted returning false
+        return false;
+    }
+
+    //Requesting permission
+    private void requestStoragePermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+        }
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+    }
+
+    //This method will be called when the user will tap on allow or deny
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        //Checking the request code of our request
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+
+            //If permission is granted
+            Log.d(TAG, "Grant result is for read " + grantResults[0]);
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                //Displaying a toast
+                Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
+            } else {
+                //Displaying another toast if permission is not granted
+                Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
+            }
+        } else if (requestCode == WRITE_STORAGE_PERMISSION_CODE) {
+            Log.d(TAG, "Grant result is for write " + grantResults[0]);
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                //Displaying a toast
+                Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
+            } else {
+                //Displaying another toast if permission is not granted
+                Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
 }

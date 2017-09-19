@@ -7,7 +7,7 @@ public interface PrintJobFragmentListener {
 
     void initProgressFragment();
 
-    void getHistoryList();
-
     void cancelUpload(PrintJobDetail printJobDetail);
+
+    void initHistoryFragment();
 }

@@ -58,7 +58,7 @@ public class HistoryFragment extends Fragment {
         historyRecyclerView.setLayoutManager(mLayoutManager);
         historyRecyclerView.setItemAnimator(new DefaultItemAnimator());
         historyRecyclerView.setAdapter(printJobListAdapter);
-        printJobFragmentListener.getHistoryList();
+        printJobFragmentListener.initHistoryFragment();
         return view;
     }
 
@@ -85,9 +85,15 @@ public class HistoryFragment extends Fragment {
         unbinder.unbind();
     }
 
-    public void updateHistoryRecyclerView(List<PrintJobDetail> retPrintJobDetails) {
+
+    public void initHistoryRecyclerView(List<PrintJobDetail> historyPrintJobDetails) {
         printJobDetails.clear();
-        printJobDetails.addAll(retPrintJobDetails);
+        printJobDetails.addAll(historyPrintJobDetails);
         printJobListAdapter.notifyDataSetChanged();
+    }
+
+    public void addHistoryRecyclerView(PrintJobDetail historyDetail, int i) {
+        printJobDetails.add(historyDetail);
+        printJobListAdapter.notifyItemInserted(i);
     }
 }

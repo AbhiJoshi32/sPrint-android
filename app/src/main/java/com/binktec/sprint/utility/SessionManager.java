@@ -2,7 +2,6 @@ package com.binktec.sprint.utility;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.binktec.sprint.modal.pojo.FileDetail;
 import com.binktec.sprint.modal.pojo.PrintDetail;
@@ -27,6 +26,8 @@ public class SessionManager {
     private static final String KEY_HISTORY_PRINT_JOBS = "History jobs";
     private static final String KEY_SHOPS = "Shops";
     private static final String KEY_FIRST_SETUP = "First Setup";
+    private static final String KEY_TRNSACTION_IDS = "Transaction ids";
+    private static final String KEY_HISTORY_IDS = "History Id";
     private static SharedPreferences pref;
 
     public SessionManager() {}
@@ -51,7 +52,6 @@ public class SessionManager {
         String json;
         Gson gson=new Gson();
         json = pref.getString(KEY_FILE_DETAILS,null);
-        Log.d(TAG, "The value of json is "+json);
         Type type = new TypeToken<ArrayList<FileDetail>>() {}.getType();
         return gson.fromJson(json, type);
     }
@@ -175,5 +175,43 @@ public class SessionManager {
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(KEY_FIRST_SETUP,status);
         editor.apply();
+    }
+
+    public static void clearApiPrintTransaction() {
+        pref.edit().remove(KEY_API_PRINT_JOBS).apply();
+    }
+
+    public static void saveTrasactionIds(List<String>transactionIds) {
+        String json;
+        Gson gson=new Gson();
+        SharedPreferences.Editor editor = pref.edit();
+        json = gson.toJson(transactionIds);
+        editor.putString(KEY_TRNSACTION_IDS,json);
+        editor.apply();
+    }
+
+    public static List<String> getTransactionIds(){
+        String json;
+        Gson gson=new Gson();
+        json = pref.getString(KEY_TRNSACTION_IDS,null);
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+        return gson.fromJson(json,type);
+    }
+
+    public static void saveHistoryIds(List<String> historyIds) {
+        String json;
+        Gson gson=new Gson();
+        SharedPreferences.Editor editor = pref.edit();
+        json = gson.toJson(historyIds);
+        editor.putString(KEY_HISTORY_IDS,json);
+        editor.apply();
+    }
+
+    public static List<String> getHistoryIds(){
+        String json;
+        Gson gson=new Gson();
+        json = pref.getString(KEY_HISTORY_IDS,null);
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+        return gson.fromJson(json,type);
     }
 }

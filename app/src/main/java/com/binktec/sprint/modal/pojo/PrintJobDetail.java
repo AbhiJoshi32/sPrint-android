@@ -3,10 +3,44 @@ package com.binktec.sprint.modal.pojo;
 public class PrintJobDetail {
     private PrintTransaction printTransaction;
     private String status;
-    private String date;
-    private String time;
+    private String issuedDate;
+    private String issuedTime;
+    private String confirmedDate;
+    private String completedTime;
     private User user;
     private String tId;
+
+    public String getIssuedDate() {
+        return issuedDate;
+    }
+
+    public void setIssuedDate(String issuedDate) {
+        this.issuedDate = issuedDate;
+    }
+
+    public String getIssuedTime() {
+        return issuedTime;
+    }
+
+    public void setIssuedTime(String issuedTime) {
+        this.issuedTime = issuedTime;
+    }
+
+    public String getConfirmedDate() {
+        return confirmedDate;
+    }
+
+    public void setConfirmedDate(String confirmedDate) {
+        this.confirmedDate = confirmedDate;
+    }
+
+    public String getCompletedTime() {
+        return completedTime;
+    }
+
+    public void setCompletedTime(String completedTime) {
+        this.completedTime = completedTime;
+    }
 
     public String gettId() {
         return tId;
@@ -22,22 +56,6 @@ public class PrintJobDetail {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
     }
 
     public PrintTransaction getPrintTransaction() {
