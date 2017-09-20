@@ -242,6 +242,8 @@ public class TransactionPresenter implements TransactionModalListener {
             printJobDetail.setPrintTransaction(printTransaction);
             printJobDetail.setStatus("Uploading");
             printJobDetail.setUser(SessionManager.getUser());
+            printJobDetail.setIssuedDate(Misc.getDate());
+            printJobDetail.setIssuedTime(Misc.getTime());
             SessionManager.saveCurrentPrintJob(printJobDetail);
             Log.d(TAG, "uploading done");
             transactionPresenterListener.openPrintJobActivity();

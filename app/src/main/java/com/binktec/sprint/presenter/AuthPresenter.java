@@ -3,6 +3,7 @@ package com.binktec.sprint.presenter;
 import android.util.Log;
 
 import com.binktec.sprint.interactor.presenter.AuthPresenterListener;
+import com.binktec.sprint.modal.api.PrintApi;
 import com.binktec.sprint.modal.api.UserApi;
 import com.binktec.sprint.modal.pojo.User;
 import com.binktec.sprint.utility.Constants;
@@ -92,6 +93,8 @@ public class AuthPresenter {
             user.setEmailId(firebaseUser.getEmail());
             user.setUid(firebaseUser.getUid());
         }
+        PrintApi printApi = new PrintApi(user.getUid());
+        printApi.dummyEntry();
         SessionManager.saveUser(user);
         userApi.refreshToken(user);
     }

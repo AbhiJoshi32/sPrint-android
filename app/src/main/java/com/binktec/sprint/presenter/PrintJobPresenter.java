@@ -49,18 +49,18 @@ public class PrintJobPresenter implements PrintJobModalListener {
                     printApi = new PrintApi(firebaseUser.getUid());
                     clearTransactionSessions();
                     PrintJobDetail currJobDetail = SessionManager.getCurrentPrintJobDetail();
-                    if (currJobDetail != null) {
-                        progressPrintJobDetails.add(currJobDetail);
-                        transactionIds.add("Uploading File");
-                        Log.d(TAG,"current file" + currJobDetail + "\n progressPrint " + progressPrintJobDetails);
-                        printApi.startFileUpload(currJobDetail,this);
-                    }
                     if (SessionManager.getApiPrintJobDetail() != null
                             && SessionManager.getTransactionIds() !=null) {
                         List<PrintJobDetail> apiProgressPrintDetail = new ArrayList<>(SessionManager.getApiPrintJobDetail());
                         List<String> savedTransactionIds = new ArrayList<>(SessionManager.getTransactionIds());
                         progressPrintJobDetails.addAll(apiProgressPrintDetail);
                         transactionIds.addAll(savedTransactionIds);
+                    }
+                    if (currJobDetail != null) {
+                        progressPrintJobDetails.add(0,currJobDetail);
+                        transactionIds.add(0,"Uploading File");
+                        Log.d(TAG,"current file" + currJobDetail + "\n progressPrint " + progressPrintJobDetails);
+                        printApi.startFileUpload(currJobDetail,this);
                     }
                     SessionManager.saveApiPrintJob(progressPrintJobDetails);
                     SessionManager.saveTrasactionIds(transactionIds);
@@ -88,16 +88,20 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
     @Override
     public void uploadFailed(String s) {
-        SessionManager.clearCurrentPrintJob();
-        progressPrintJobDetails.remove(0);
-        transactionIds.remove(0);
-        printJobPresenterListener.progressItemRemoved(0);
-        printJobPresenterListener.showToastError("upload Failed");
+        if (transactionIds.get(0).equals("Uploading File")) {
+            SessionManager.clearCurrentPrintJob();
+            progressPrintJobDetails.remove(0);
+            transactionIds.remove(0);
+            printJobPresenterListener.progressItemRemoved(0);
+            printJobPresenterListener.showToastError("upload Failed");
+            SessionManager.saveApiPrintJob(progressPrintJobDetails);
+            SessionManager.saveTrasactionIds(transactionIds);
+        }
     }
 
     @Override
     public void filesUploaded(PrintJobDetail jobDetail) {
-        if (SessionManager.getCurrentPrintJobDetail() !=  null) {
+        if (transactionIds.get(0).equals("Uploading File")) {
             Log.d(TAG,"File Uploaded");
             SessionManager.clearCurrentPrintJob();
             progressPrintJobDetails.remove(0);
@@ -106,19 +110,21 @@ public class PrintJobPresenter implements PrintJobModalListener {
             SessionManager.saveTrasactionIds(transactionIds);
             printJobPresenterListener.progressItemRemoved(0);
             jobDetail.setStatus("Waiting");
-            jobDetail.setIssuedTime(Misc.getTime());
-            jobDetail.setIssuedDate(Misc.getDate());
             printApi.enterTransaction(jobDetail);
         }
     }
 
     @Override
     public void uploadFailed(PrintJobDetail file) {
-        printJobPresenterListener.showToastError("Upload Failed");
-        progressPrintJobDetails.remove(0);
-        transactionIds.remove(0);
-        printJobPresenterListener.progressItemRemoved(0);
-        SessionManager.clearCurrentPrintJob();
+        if (transactionIds.get(0).equals("Uploading File")) {
+            SessionManager.clearCurrentPrintJob();
+            progressPrintJobDetails.remove(0);
+            transactionIds.remove(0);
+            printJobPresenterListener.progressItemRemoved(0);
+            printJobPresenterListener.showToastError("upload Failed");
+            SessionManager.saveApiPrintJob(progressPrintJobDetails);
+            SessionManager.saveTrasactionIds(transactionIds);
+        }
     }
 
     @Override
@@ -128,32 +134,43 @@ public class PrintJobPresenter implements PrintJobModalListener {
             historyPrintJobDetails = SessionManager.getHistoryPrintJobDetail();
         }
         if (historyIds.indexOf(historyDetail.gettId()) == -1) {
-            historyPrintJobDetails.add(historyDetail);
-            historyIds.add(historyDetail.gettId());
+            Log.d(TAG,"New history added");
+            historyPrintJobDetails.add(0,historyDetail);
+            historyIds.add(0,historyDetail.gettId());
             SessionManager.saveHistoryPrintJob(historyPrintJobDetails);
             SessionManager.saveHistoryIds(historyIds);
-            printJobPresenterListener.historyItemInserted(historyDetail,historyPrintJobDetails.size()-1);
+            apiPrintTransactionRemoved(historyDetail,historyDetail.gettId());
+            printJobPresenterListener.historyItemInserted(historyDetail,0);
         }
     }
 
     @Override
     public void apiPrintTransactionAdded(PrintJobDetail transactionDetail, String key, String prevKey) {
+        int topIndex;
+        if (SessionManager.getCurrentPrintJobDetail() != null) {
+            topIndex = 1;
+        } else {
+            topIndex = 0;
+        }
+        Log.d(TAG,"top index is" + topIndex);
         if (prevKey == null) {
             progressPrintJobDetails.clear();
             transactionIds.clear();
             PrintJobDetail uploadingDetail = SessionManager.getCurrentPrintJobDetail();
             if (uploadingDetail != null) {
-                progressPrintJobDetails.add(uploadingDetail);
-                transactionIds.add("Uploading File");
-                printJobPresenterListener.progressItemInserted(uploadingDetail,progressPrintJobDetails.size()-1);
+                progressPrintJobDetails.add(0,uploadingDetail);
+                transactionIds.add(0,"Uploading File");
             }
+            printJobPresenterListener.initProgressList(progressPrintJobDetails);
+            SessionManager.saveApiPrintJob(progressPrintJobDetails);
+            SessionManager.saveTrasactionIds(transactionIds);
+        } else {
+            progressPrintJobDetails.add(topIndex,transactionDetail);
+            transactionIds.add(topIndex,key);
+            SessionManager.saveApiPrintJob(progressPrintJobDetails);
+            SessionManager.saveTrasactionIds(transactionIds);
+            printJobPresenterListener.progressItemInserted(transactionDetail, topIndex);
         }
-        transactionDetail.settId(key);
-        progressPrintJobDetails.add(transactionDetail);
-        transactionIds.add(key);
-        SessionManager.saveApiPrintJob(progressPrintJobDetails);
-        SessionManager.saveTrasactionIds(transactionIds);
-        printJobPresenterListener.progressItemInserted(transactionDetail,progressPrintJobDetails.size()-1);
     }
 
     @Override
@@ -186,15 +203,12 @@ public class PrintJobPresenter implements PrintJobModalListener {
     public void getPrintJobList() {
         progressPrintJobDetails.clear();
         transactionIds.clear();
-        List<PrintJobDetail> savedApiList = SessionManager.getApiPrintJobDetail();
-        List<String> savedTransactionIds = SessionManager.getTransactionIds();
-        Log.d(TAG,"the saved Api list is" + savedApiList+"saved transactionn is"+savedTransactionIds);
-        if (savedApiList!= null
-                && savedTransactionIds != null
-                && !savedApiList.isEmpty()
-                && !savedTransactionIds.isEmpty()) {
-            progressPrintJobDetails.addAll(savedApiList);
-            transactionIds.addAll(savedTransactionIds);
+        if (SessionManager.getApiPrintJobDetail() != null
+                && SessionManager.getTransactionIds() != null
+                && !SessionManager.getApiPrintJobDetail().isEmpty()
+                && !SessionManager.getTransactionIds().isEmpty()) {
+            progressPrintJobDetails.addAll(SessionManager.getApiPrintJobDetail());
+            transactionIds.addAll(SessionManager.getTransactionIds());
             printJobPresenterListener.initProgressList(progressPrintJobDetails);
         }
         if (printApi == null) {
@@ -206,12 +220,15 @@ public class PrintJobPresenter implements PrintJobModalListener {
     public void getHistoryList() {
         historyPrintJobDetails.clear();
         historyIds.clear();
+//        Log.d(TAG,"History frag is " + SessionManager.getHistoryPrintJobDetail() + "trans id is" + SessionManager.getTransactionIds());
         List<PrintJobDetail> savedHistoryList = SessionManager.getHistoryPrintJobDetail();
         List<String> savedHistoryIds = SessionManager.getHistoryIds();
-        if (savedHistoryList != null
-                && savedHistoryIds != null
-                && !savedHistoryList.isEmpty()
-                && !savedHistoryList.isEmpty()) {
+//        Log.d(TAG,"History saved frag is " + savedHistoryList + "historyId id saved is" + savedHistoryIds);
+        if (SessionManager.getHistoryPrintJobDetail() != null
+                && SessionManager.getHistoryIds() != null
+                && !SessionManager.getHistoryPrintJobDetail().isEmpty()
+                && !SessionManager.getHistoryIds().isEmpty()) {
+            Log.d(TAG,"saved History list is" + savedHistoryList);
             historyPrintJobDetails.addAll(savedHistoryList);
             historyIds.addAll(savedHistoryIds);
             printJobPresenterListener.initHistoryList(historyPrintJobDetails);
@@ -236,7 +253,7 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
     public void onStopCalled() {
         if (printApi != null) {
-            printApi.removeListeners();
+//            printApi.removeListeners();
         }
     }
 }

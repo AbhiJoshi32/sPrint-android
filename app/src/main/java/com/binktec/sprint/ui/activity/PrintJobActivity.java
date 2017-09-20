@@ -2,6 +2,8 @@ package com.binktec.sprint.ui.activity;
 
 
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -49,9 +52,6 @@ public class PrintJobActivity extends AppCompatActivity
 
     private static final String TAG = "Print Jobs";
     private static final int WRITE_STORAGE_PERMISSION_CODE = 24;
-    @BindView(R.id.content_main)
-    ConstraintLayout contentMain;
-
     private String urlNavHeaderBg;
 
     @BindView(R.id.toolbar)
@@ -76,11 +76,13 @@ public class PrintJobActivity extends AppCompatActivity
 
     private ProgressFragment progressFragment;
     private HistoryFragment historyFragment;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_print_job);
+        context = this;
         SessionManager.initInstance(this);
         urlNavHeaderBg = getApplicationContext().getString(R.string.background_url);
         ButterKnife.bind(this);
@@ -106,6 +108,12 @@ public class PrintJobActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         printJobPresenter.appStart();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG,"on Pause Called");
     }
 
     private void setUpTabLayout() {
@@ -202,17 +210,57 @@ public class PrintJobActivity extends AppCompatActivity
     @Override
     public void initHistoryList(List<PrintJobDetail> historyPrintJobDetails) {
         historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
+        Log.d(TAG,"History Fragment" + historyFragment);
         if (historyFragment != null) {
             historyFragment.initHistoryRecyclerView(historyPrintJobDetails);
         }
     }
 
     @Override
-    public void historyItemInserted(PrintJobDetail historyDetail, int i) {
-        historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
-        if (historyFragment != null) {
-            historyFragment.addHistoryRecyclerView(historyDetail,i);
-        }
+    public void historyItemInserted(final PrintJobDetail historyDetail, final int i) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG,"Status is" + historyDetail.getStatus());
+                Log.d(TAG,"is finishing is " + isFinishing());
+                try {
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    printJobPager.setCurrentItem(1);
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    //No button clicked
+                                    break;
+                            }
+                        }
+
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    String status = historyDetail.getStatus();
+                    if (status.equals("Rejected")) {
+                        builder.setMessage("Your Document is rejected").setPositiveButton("Check History", dialogClickListener)
+                                .setNegativeButton("Yes", dialogClickListener).show();
+                    } else if (status.equals("Printed")) {
+                        builder.setMessage("Your Document is printed").setPositiveButton("Check History", dialogClickListener)
+                                .setNegativeButton("Yes", dialogClickListener).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    initHistoryFragment();
+                }
+                historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
+                if (historyFragment != null) {
+                    Log.d(TAG,"history item to be inserted");
+                    historyFragment.addHistoryRecyclerView(historyDetail,i);
+                }
+            }
+        });
+
     }
 
     private void selectNavMenu() {
@@ -352,8 +400,29 @@ public class PrintJobActivity extends AppCompatActivity
     }
 
     @Override
-    public void cancelUpload(PrintJobDetail printJobDetail) {
-        printJobPresenter.cancelUpload(printJobDetail);
+    public void cancelUpload(final PrintJobDetail printJobDetail) {
+        try {
+            DialogInterface.OnClickListener cancelDialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case DialogInterface.BUTTON_POSITIVE:
+                            printJobPresenter.cancelUpload(printJobDetail);
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            //No button clicked
+                            break;
+                    }
+                }
+            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure you want to cancel?").setPositiveButton("Yes", cancelDialogClickListener)
+                    .setNegativeButton("No", cancelDialogClickListener).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @OnClick(R.id.print_float_button)

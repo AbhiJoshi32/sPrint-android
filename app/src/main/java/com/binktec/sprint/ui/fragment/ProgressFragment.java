@@ -1,8 +1,10 @@
 package com.binktec.sprint.ui.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,7 +55,7 @@ public class ProgressFragment extends Fragment {
             }
 
             @Override
-            public void cancelPrintDetail(View v, int position) {
+            public void cancelPrintDetail(View v, final int position) {
                 printJobFragmentListener.cancelUpload(printJobDetails.get(position));
             }
         });
@@ -95,10 +97,10 @@ public class ProgressFragment extends Fragment {
 
         if (i == 0) {
             printJobDetails.clear();
-            printJobDetails.add(transactionDetail);
+            printJobDetails.add(i,transactionDetail);
             printJobListAdapter.notifyDataSetChanged();
         } else {
-            printJobDetails.add(transactionDetail);
+            printJobDetails.add(i,transactionDetail);
             printJobListAdapter.notifyItemInserted(i);
         }
     }
