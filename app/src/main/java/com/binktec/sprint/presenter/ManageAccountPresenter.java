@@ -4,9 +4,12 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.binktec.sprint.interactor.presenter.ManageAccountPresenterListener;
+import com.binktec.sprint.ui.fragment.ForgotPasswordFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class ManageAccountPresenter {
@@ -39,18 +42,18 @@ public class ManageAccountPresenter {
     }
 
 
-    private void updatePassword(String newPassword) {
+    public void updatePassword() {
         FirebaseUser user = firebaseAuth.getCurrentUser();
-        assert user != null;
-        user.updatePassword(newPassword)
+        firebaseAuth.sendPasswordResetEmail(user.getEmail())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User password updated.");
+                            if (task.isSuccessful()) {
+                                manageAccountPresenterListener.showToast("Email has been sent to your mail");
+                            } else {
+                                manageAccountPresenterListener.showToast("Some Error Occurred in sending the mail");
+                            }
                         }
-                    }
                 });
-
     }
 }

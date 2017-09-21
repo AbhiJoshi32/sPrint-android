@@ -15,6 +15,7 @@ import com.binktec.sprint.interactor.fragment.AuthFragmentListener;
 import com.binktec.sprint.interactor.presenter.AuthPresenterListener;
 import com.binktec.sprint.presenter.AuthPresenter;
 import com.binktec.sprint.ui.fragment.EmailVerFragment;
+import com.binktec.sprint.ui.fragment.ForgotPasswordFragment;
 import com.binktec.sprint.ui.fragment.LoginFragment;
 import com.binktec.sprint.ui.fragment.RegisterFragment;
 import com.binktec.sprint.utility.Constants;
@@ -40,6 +41,7 @@ public class AuthActivity extends AppCompatActivity implements
     private static final String TAG_LOGIN = "Login";
     private static final String TAG_REG = "Registration";
     private static final String TAG_EMAIL_VER = "Email Verification";
+    private static final String TAG_FORGOT_PASSWORD = "Forgot Password";
     private String TAG_CURR = TAG_LOGIN;
 
     private String toastErr;
@@ -48,6 +50,8 @@ public class AuthActivity extends AppCompatActivity implements
     private LoginFragment loginFragment;
     private RegisterFragment registerFragment;
     private EmailVerFragment emailVerFragment;
+    private ForgotPasswordFragment forgotPasswordFragment;
+
     private FragmentManager fragmentManager;
     private AuthPresenter authPresenter;
     private GoogleApiClient mGoogleApiClient;
@@ -134,6 +138,10 @@ public class AuthActivity extends AppCompatActivity implements
                 emailVerFragment = EmailVerFragment.newInstance();
                 fragment = emailVerFragment;
                 break;
+            case TAG_FORGOT_PASSWORD:
+                forgotPasswordFragment = ForgotPasswordFragment.newInstance();
+                fragment = forgotPasswordFragment;
+                break;
         }
         return fragment;
     }
@@ -202,6 +210,18 @@ public class AuthActivity extends AppCompatActivity implements
     @Override
     public void logOutBtnClicked() {
         signOut();
+    }
+
+    @Override
+    public void forgotPassBtnClicked(String email) {
+        resetPassword(email);
+    }
+
+    @Override
+    public void forgotPassTxtClicked() {
+        Log.d(TAG_CURR,"Forgot Pass clicked");
+        TAG_CURR = TAG_FORGOT_PASSWORD;
+        loadAuthFragment();
     }
 
     @Override
@@ -451,15 +471,19 @@ public class AuthActivity extends AppCompatActivity implements
         loadAuthFragment();
     }
 
-    private void changePassword(String email) {
+    private void resetPassword(String email) {
         firebaseAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG_CURR, "Email sent.");
-                        } else {
-                            showToastError("Some error occurred");
+                        if (TAG_CURR.equals(TAG_FORGOT_PASSWORD)) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG_CURR, "Email sent.");
+                                forgotPasswordFragment = (ForgotPasswordFragment) getAuthCurrentFrag();
+                                forgotPasswordFragment.showConfirmText();
+                            } else {
+                                showToastError("Some error occurred");
+                            }
                         }
                     }
                 });

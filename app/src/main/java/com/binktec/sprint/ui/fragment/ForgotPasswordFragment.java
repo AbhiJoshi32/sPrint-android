@@ -7,30 +7,30 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.binktec.sprint.R;
 import com.binktec.sprint.interactor.fragment.AuthFragmentListener;
-import com.binktec.sprint.utility.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-public class EmailVerFragment extends Fragment {
+public class ForgotPasswordFragment extends Fragment {
 
-
-    @BindView(R.id.resendButton)
-    Button resendButton;
+    @BindView(R.id.enterEmailText)
+    EditText enterEmailText;
 
     Unbinder unbinder;
-    @BindView(R.id.verifyText)
-    TextView verifyText;
+    @BindView(R.id.confirm_text)
+    TextView confirmText;
     private AuthFragmentListener authFragmentListener;
 
-    public EmailVerFragment() {
+
+    public ForgotPasswordFragment() {
+        // Required empty public constructor
     }
 
     @Override
@@ -44,20 +44,16 @@ public class EmailVerFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        authFragmentListener = null;
+
+    public static ForgotPasswordFragment newInstance() {
+        return new ForgotPasswordFragment();
     }
 
-    public static EmailVerFragment newInstance() {
-        return new EmailVerFragment();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_email_ver, container, false);
+        View view = inflater.inflate(R.layout.fragment_forgot_password, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -68,23 +64,19 @@ public class EmailVerFragment extends Fragment {
         unbinder.unbind();
     }
 
-    public void emailVerSendSuccessful() {
-        verifyText.setText(Constants.sendVerificationSuccess);
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        authFragmentListener = null;
     }
 
-    public void emailVerSendUnsuccessful() {
-        verifyText.setText(Constants.sendVerificationFailed);
+    @OnClick(R.id.forgot_button)
+    public void onViewClicked() {
+        String email = enterEmailText.getText().toString();
+        authFragmentListener.forgotPassBtnClicked(email);
     }
 
-    @OnClick({R.id.resendButton, R.id.logoutButton})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.resendButton:
-                authFragmentListener.resendVerBtnClicked();
-                break;
-            case R.id.logoutButton:
-                authFragmentListener.logOutBtnClicked();
-                break;
-        }
+    public void showConfirmText() {
+        confirmText.setVisibility(View.VISIBLE);
     }
 }

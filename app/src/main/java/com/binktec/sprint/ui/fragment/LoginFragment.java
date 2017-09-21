@@ -76,7 +76,7 @@ public class LoginFragment extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.loginbutton, R.id.registerText, R.id.google_button})
+    @OnClick({R.id.loginbutton, R.id.registerText, R.id.google_button, R.id.forgotPasswordTxt})
     public void onViewClicked(View view) {
         String loginEmail = loginInputEmail.getText().toString();
         String loginPassword = loginInputPassword.getText().toString();
@@ -89,6 +89,9 @@ public class LoginFragment extends Fragment {
                 break;
             case R.id.google_button:
                 authFragmentListener.googleSignInClicked();
+                break;
+            case R.id.forgotPasswordTxt:
+                authFragmentListener.forgotPassTxtClicked();
                 break;
         }
     }

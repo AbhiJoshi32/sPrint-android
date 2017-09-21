@@ -15,4 +15,8 @@ public interface AuthFragmentListener {
     void resendVerBtnClicked();
 
     void logOutBtnClicked();
+
+    void forgotPassBtnClicked(String email);
+
+    void forgotPassTxtClicked();
 }

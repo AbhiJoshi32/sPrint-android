@@ -82,10 +82,15 @@ public class ManageAccountFragment extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick(R.id.logoutButton)
-    public void onViewClicked() {
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signOut();
-        manageFragmentListener.manageSignOut();
+    @OnClick({R.id.logoutButton, R.id.changePassword})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.logoutButton:
+                manageFragmentListener.manageSignOut();
+                break;
+            case R.id.changePassword:
+                manageFragmentListener.changePassBtnClicked();
+                break;
+        }
     }
 }
