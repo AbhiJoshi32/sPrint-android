@@ -7,6 +7,15 @@ public class ShopGrayscaleCost {
     private float grayscaleA3Cost;
     private float grayscaleA4Cost;
     private float grayscaleA5Cost;
+    private float grayscaleGlossyA4Cost;
+
+    public float getGrayscaleGlossyA4Cost() {
+        return grayscaleGlossyA4Cost;
+    }
+
+    public void setGrayscaleGlossyA4Cost(float grayscaleGlossyA4Cost) {
+        this.grayscaleGlossyA4Cost = grayscaleGlossyA4Cost;
+    }
 
     public float getGrayscaleA3Cost() {
         return grayscaleA3Cost;

@@ -1,8 +1,10 @@
 package com.binktec.sprint.modal.api;
 
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
-////import android.util.Log;
+import android.util.Log;
 
 import com.binktec.sprint.interactor.modal.PrintJobModalListener;
 import com.binktec.sprint.interactor.modal.TransactionModalListener;
@@ -40,13 +42,11 @@ public class PrintApi {
 
     private DatabaseReference printTransactionRef = database.getReference("printTransaction");
     private DatabaseReference printCompletedRef = database.getReference("printCompleted");
-    private String uid;
 
     private ChildEventListener transactionInfoListener;
     private ChildEventListener completedInfoListener;
 
     public PrintApi(String uid) {
-        this.uid = uid;
         userCompletedRef = database.getReference("userCompleted/" + uid);
         userTransactionRef = database.getReference("userTransaction/" + uid);
     }
@@ -101,7 +101,7 @@ public class PrintApi {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             int progress = (int) ((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
-//                            Log.d(TAG,"Upload is " + progress + "% done");
+                            Log.d(TAG,"Upload is " + progress + "% done");
                         }
                     }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -182,24 +182,24 @@ public class PrintApi {
     public void prepareTransactionListeners(final PrintJobModalListener callback) {
         transactionInfoListener = new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String prevKey) {
-//                Log.d(TAG,"child added");
+            public void onChildAdded(final DataSnapshot dataSnapshot, final String prevKey) {
+                Log.d(TAG,"child added");
                 PrintJobDetail transactionDetail = dataSnapshot.getValue(PrintJobDetail.class);
                 callback.apiPrintTransactionAdded(transactionDetail,dataSnapshot.getKey(),prevKey);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                Log.d(TAG,"child changed");
+                Log.d(TAG,"child changed");
                 PrintJobDetail changedTransaction = dataSnapshot.getValue(PrintJobDetail.class);
                 callback.apiPrintTransactionChanged(changedTransaction,dataSnapshot.getKey());
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-//                Log.d(TAG,"child removed");
-//                PrintJobDetail deletedTransaction = dataSnapshot.getValue(PrintJobDetail.class);
-//                callback.apiPrintTransactionRemoved(deletedTransaction,dataSnapshot.getKey());
+                Log.d(TAG,"child removed");
+                PrintJobDetail deletedTransaction = dataSnapshot.getValue(PrintJobDetail.class);
+                callback.apiPrintTransactionRemoved(deletedTransaction,dataSnapshot.getKey());
             }
 
             @Override
@@ -211,7 +211,6 @@ public class PrintApi {
                 callback.connectionFaliure(databaseError.toString());
             }
         };
-
         userTransactionRef.addChildEventListener(transactionInfoListener);
     }
 
@@ -220,22 +219,5 @@ public class PrintApi {
             userTransactionRef.removeEventListener(transactionInfoListener);
             userCompletedRef.removeEventListener(completedInfoListener);
         }
-    }
-
-    public void dummyEntry() {
-        userTransactionRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() == null) {
-                    String key = userCompletedRef.push().getKey();
-                    userTransactionRef.child(key).child("tId").setValue(key);
-                    userTransactionRef.child(key).child("status").setValue("Dummy");
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 }

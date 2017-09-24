@@ -25,9 +25,13 @@ public class SessionManager {
     private static final String KEY_USER = "User";
     private static final String KEY_HISTORY_PRINT_JOBS = "History jobs";
     private static final String KEY_SHOPS = "Shops";
-    private static final String KEY_FIRST_SETUP = "First Setup";
+    private static final String KEY_PROGRESS_SYNC_DATE = "Progress sync date";
+    private static final String KEY_HISTORY_SYNC_DATE = "History Sync date";
     private static final String KEY_TRNSACTION_IDS = "Transaction ids";
     private static final String KEY_HISTORY_IDS = "History Id";
+    private static final String KEY_INSERT_PROGRESS = "Progress Inserted";
+    private static final String KEY_IS_PRINTED = "IS Printed";
+    private static final String KEY_IS_REJECTED = "Is Rejected";
     private static SharedPreferences pref;
 
     public SessionManager() {}
@@ -167,16 +171,6 @@ public class SessionManager {
         return gson.fromJson(json,User.class);
     }
 
-    public static boolean getIsFirstSetup() {
-        return pref.getBoolean(KEY_FIRST_SETUP,true);
-    }
-
-    public static void saveFirstSetup(boolean status) {
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean(KEY_FIRST_SETUP,status);
-        editor.apply();
-    }
-
     public static void clearApiPrintTransaction() {
         pref.edit().remove(KEY_API_PRINT_JOBS).apply();
     }
@@ -213,5 +207,63 @@ public class SessionManager {
         json = pref.getString(KEY_HISTORY_IDS,null);
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
         return gson.fromJson(json,type);
+    }
+
+    public static void saveProgressSyncDate(String currentDateTimeString) {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(KEY_PROGRESS_SYNC_DATE,currentDateTimeString);
+        editor.apply();
+    }
+
+    public static String getProgressSyncDate() {
+        return pref.getString(KEY_PROGRESS_SYNC_DATE,null);
+    }
+
+    public static void saveHistorySyncDate(String currentDateTimeString) {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(KEY_HISTORY_SYNC_DATE,currentDateTimeString);
+        editor.apply();
+    }
+
+    public static String getHistorySyncDate() {
+        return pref.getString(KEY_HISTORY_SYNC_DATE,null);
+    }
+
+    public static void saveProgreeInsert(PrintJobDetail insertedJobDetail) {
+        String json;
+        Gson gson=new Gson();
+        SharedPreferences.Editor editor = pref.edit();
+        json = gson.toJson(insertedJobDetail);
+        editor.putString(KEY_INSERT_PROGRESS,json);
+        editor.apply();
+    }
+
+    public static PrintJobDetail getInsertJobDetail(){
+        String json;
+        Gson gson=new Gson();
+        json = pref.getString(KEY_INSERT_PROGRESS,null);
+        return gson.fromJson(json,PrintJobDetail.class);
+    }
+
+    public static void clearAllSession() {
+        pref.edit().clear().apply();
+    }
+
+    public static void setIsPrinted(boolean status) {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(KEY_IS_PRINTED,status).apply();
+    }
+
+    public static boolean getIsPrinted() {
+        return pref.getBoolean(KEY_IS_PRINTED,false);
+    }
+
+    public static void setIsRejected(boolean b) {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(KEY_IS_REJECTED,b).apply();
+    }
+
+    public static boolean getIsRejected() {
+        return pref.getBoolean(KEY_IS_REJECTED,false);
     }
 }

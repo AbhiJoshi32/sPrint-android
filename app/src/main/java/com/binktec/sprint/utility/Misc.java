@@ -134,6 +134,7 @@ public class Misc {
                 case "A5":
                     costPerPage = shop.getShopCost().getShopColorCost().getColorA5Cost();
                     break;
+                case "Glossy-A4":
             }
         }
 

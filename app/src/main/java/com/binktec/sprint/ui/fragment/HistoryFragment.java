@@ -93,6 +93,7 @@ public class HistoryFragment extends Fragment {
 
     public void initHistoryRecyclerView(List<PrintJobDetail> historyPrintJobDetails) {
 //        Log.d(TAG,"History recycler init");
+        historyRecyclerView.scrollToPosition(0);
         printJobDetails.clear();
         printJobDetails.addAll(historyPrintJobDetails);
         printJobListAdapter.notifyDataSetChanged();
@@ -100,6 +101,7 @@ public class HistoryFragment extends Fragment {
 
     public void addHistoryRecyclerView(PrintJobDetail historyDetail, int i) {
 //        Log.d(TAG,"history item inserted" + printJobDetails + "position is " + i);
+        historyRecyclerView.scrollToPosition(0);
         printJobDetails.add(i,historyDetail);
         printJobListAdapter.notifyItemInserted(i);
     }

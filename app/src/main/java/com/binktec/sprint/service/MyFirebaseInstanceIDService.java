@@ -28,14 +28,10 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     private void sendRegistrationToServer(String token) {
         if(mAuth.getCurrentUser() != null ){
             UserApi userApi = new UserApi();
-            User user = new User();
             FirebaseUser firebaseUser = mAuth.getCurrentUser();
-            Log.d(TAG, String.valueOf(firebaseUser.isEmailVerified()));
-            user.setEmailId(firebaseUser.getEmail());
-            user.setUid(firebaseUser.getUid());
-            user.setRequestToken(token);
-            user.setDateOfJoin(Misc.getDate());
-            userApi.refreshToken(user);
+            if (firebaseUser != null) {
+                userApi.refreshToken(token,firebaseUser.getUid());
+            }
         }
     }
 }

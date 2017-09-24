@@ -6,11 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -129,7 +128,7 @@ public class PrintJobActivity extends AppCompatActivity
         }
     }
 
-    private void loadNavHeader(String displayName, String photoUrl) {
+    private void loadNavHeader(String displayName, Uri photoUrl) {
         txtName.setText(displayName);
 
         Glide.with(this).load(urlNavHeaderBg)
@@ -157,17 +156,9 @@ public class PrintJobActivity extends AppCompatActivity
     }
 
     @Override
-    public void initializePrintJob(String displayName, String photoUrl) {
+    public void initializePrintJob(String displayName, Uri photoUrl) {
         selectNavMenu();
         loadNavHeader(displayName, photoUrl);
-    }
-
-    @Override
-    public void openInstructionActivity() {
-        Intent intent = new Intent(PrintJobActivity.this, InstructionActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        finish();
     }
 
     @Override
@@ -176,7 +167,13 @@ public class PrintJobActivity extends AppCompatActivity
     }
 
     @Override
-    public void progressItemInserted(PrintJobDetail transactionDetail, int i) {
+    public void progressItemInserted(final PrintJobDetail transactionDetail, final int i) {
+        if (isFinishing()) {
+            Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            finish();
+        }
         progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
         if (progressFragment != null) {
             progressFragment.insertProgressRecyclerView(transactionDetail, i);
@@ -185,6 +182,12 @@ public class PrintJobActivity extends AppCompatActivity
 
     @Override
     public void progressItemChanged(PrintJobDetail changedTransaction, int changedIndex) {
+        if (isFinishing()) {
+            Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            finish();
+        }
         progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
         if (progressFragment != null) {
             progressFragment.changeProgressRecyclerView(changedTransaction, changedIndex);
@@ -193,6 +196,12 @@ public class PrintJobActivity extends AppCompatActivity
 
     @Override
     public void progressItemRemoved(int removeIndex) {
+        if (isFinishing()) {
+            Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            finish();
+        }
         progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
         if (progressFragment != null) {
             progressFragment.removeProgressRecyclerView(removeIndex);
@@ -218,49 +227,41 @@ public class PrintJobActivity extends AppCompatActivity
 
     @Override
     public void historyItemInserted(final PrintJobDetail historyDetail, final int i) {
-        this.runOnUiThread(new Runnable() {
+        if (isFinishing()) {
+            Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            finish();
+        }
+        showPrintConfirmDialog();
+        historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
+        if (historyFragment != null) {
+            Log.d(TAG,"history item to be inserted");
+            historyFragment.addHistoryRecyclerView(historyDetail,i);
+        }
+    }
+
+    @Override
+    public void showPrintConfirmDialog() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
-            public void run() {
-                Log.d(TAG,"Status is" + historyDetail.getStatus());
-                Log.d(TAG,"is finishing is " + isFinishing());
-                try {
-                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    printJobPager.setCurrentItem(1);
-                                    break;
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        printJobPager.setCurrentItem(1);
+                        break;
 
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    //No button clicked
-                                    break;
-                            }
-                        }
-
-                    };
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    String status = historyDetail.getStatus();
-                    if (status.equals("Rejected")) {
-                        builder.setMessage("Your Document is rejected").setPositiveButton("Check History", dialogClickListener)
-                                .setNegativeButton("Yes", dialogClickListener).show();
-                    } else if (status.equals("Printed")) {
-                        builder.setMessage("Your Document is printed").setPositiveButton("Check History", dialogClickListener)
-                                .setNegativeButton("Yes", dialogClickListener).show();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    initHistoryFragment();
-                }
-                historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
-                if (historyFragment != null) {
-                    Log.d(TAG,"history item to be inserted");
-                    historyFragment.addHistoryRecyclerView(historyDetail,i);
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
                 }
             }
-        });
 
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+         builder.setMessage("Your Document is printed").setPositiveButton("Check History", dialogClickListener)
+                    .setNegativeButton("Yes", dialogClickListener).show();
     }
 
     private void selectNavMenu() {
