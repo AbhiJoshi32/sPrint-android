@@ -186,12 +186,7 @@ public class PrintJobActivity extends AppCompatActivity
     @Override
     public void progressItemChanged(PrintJobDetail changedTransaction, int changedIndex) {
         Log.d(TAG,"preogress changed isfinishing" + isFinishing());
-        if (isFinishing()) {
-            Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
-            finish();
-        } else {
+        if (!isFinishing()) {
             progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
             if (progressFragment != null) {
                 progressFragment.changeProgressRecyclerView(changedTransaction, changedIndex);

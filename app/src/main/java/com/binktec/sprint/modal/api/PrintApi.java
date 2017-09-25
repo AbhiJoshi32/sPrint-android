@@ -1,8 +1,6 @@
 package com.binktec.sprint.modal.api;
 
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -228,7 +226,11 @@ public class PrintApi {
     public void removeListeners() {
         if (transactionInfoListener != null) {
             userTransactionRef.removeEventListener(transactionInfoListener);
+            transactionInfoListener = null;
+        }
+        if (completedInfoListener != null) {
             userCompletedRef.removeEventListener(completedInfoListener);
+            completedInfoListener = null;
         }
     }
 
