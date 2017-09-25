@@ -11,9 +11,15 @@ public interface PrintJobModalListener {
 
     void filesUploaded(PrintJobDetail jobDetail);
 
-    void apiPrintTransactionRetrievalSuccessful(List<PrintJobDetail> apiPrintJobDetail);
-
-    void apiPrintTransactionRetrievalUnsuccessful(String s);
-
     void uploadFailed(PrintJobDetail file);
+
+    void apiHistoryAdded(PrintJobDetail historyDetail);
+
+    void apiPrintTransactionAdded(PrintJobDetail transactionDetail, String key, String prevKey);
+
+    void apiPrintTransactionChanged(PrintJobDetail changedTransaction, String key);
+
+    void apiPrintTransactionRemoved(PrintJobDetail deletedTransaction, String key);
+
+    void connectionFaliure(String s);
 }

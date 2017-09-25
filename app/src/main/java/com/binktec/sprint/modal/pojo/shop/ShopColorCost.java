@@ -7,6 +7,15 @@ public class ShopColorCost {
     private float colorA3Cost;
     private float colorA4Cost;
     private float colorA5Cost;
+    private float colorGlossyA4Cost;
+
+    public float getColorGlossyA4Cost() {
+        return colorGlossyA4Cost;
+    }
+
+    public void setColorGlossyA4Cost(float colorGlossyA4Cost) {
+        this.colorGlossyA4Cost = colorGlossyA4Cost;
+    }
 
     public float getColorA3Cost() {
         return colorA3Cost;

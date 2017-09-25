@@ -1,27 +1,22 @@
 package com.binktec.sprint.ui.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.binktec.sprint.R;
 import com.binktec.sprint.interactor.fragment.ManageFragmentListener;
@@ -98,8 +93,9 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
                         Log.d(TAG, "Pritning job");
                         drawerLayout.closeDrawers();
                         intent = new Intent(ManageAccountActivity.this, PrintJobActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
+                        finish();
                         break;
                     case R.id.nav_start_print:
                         drawerLayout.closeDrawers();
@@ -208,18 +204,21 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
     }
 
     @Override
-    public void showToast(String s) {
-        Toast.makeText(ManageAccountActivity.this,s,
-                Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void manageSignOut() {
         openAuthActivity();
     }
 
     @Override
-    public void changePassBtnClicked() {
-        manageAccountPresenter.updatePassword();
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            Intent intent;
+            intent = new Intent(ManageAccountActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            super.onBackPressed();
+        }
     }
 }

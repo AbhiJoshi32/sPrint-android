@@ -174,8 +174,8 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         Intent intent = new Intent(TransactionActivity.this, PrintJobActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
         finish();
+        startActivity(intent);
     }
 
     @Override
@@ -336,8 +336,26 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         });
     }
 
-    public void onPause() {
-        super.onPause();
+    @Override
+    public void onStart() {
+        Log.d(TAG,"om stop called");
+        transactionPresenter.onStartCalled();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        Log.d(TAG,"om stop called");
+        transactionPresenter.onStopCalled();
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG,"om destroy called");
+        transactionPresenter.onDestroyCalled();
+        transactionPresenter = null;
+        super.onDestroy();
     }
 
     public void onBackPressed() {
@@ -349,6 +367,11 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         } else if (TAG_CURR.equals(TAG_SHOP)) {
             viewPager.setCurrentItem(1, true);
         } else {
+            Intent intent;
+            intent = new Intent(TransactionActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
             super.onBackPressed();
         }
     }

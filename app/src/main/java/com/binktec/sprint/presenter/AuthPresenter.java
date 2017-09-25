@@ -2,8 +2,12 @@ package com.binktec.sprint.presenter;
 
 import android.util.Log;
 
+import com.binktec.sprint.interactor.modal.SyncListener;
+import com.binktec.sprint.interactor.modal.UserModalListener;
 import com.binktec.sprint.interactor.presenter.AuthPresenterListener;
+import com.binktec.sprint.modal.api.SyncApi;
 import com.binktec.sprint.modal.api.UserApi;
+import com.binktec.sprint.modal.pojo.PrintJobDetail;
 import com.binktec.sprint.modal.pojo.User;
 import com.binktec.sprint.utility.Constants;
 import com.binktec.sprint.utility.Misc;
@@ -13,14 +17,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class AuthPresenter {
-
+public class AuthPresenter implements UserModalListener, SyncListener {
     private AuthPresenterListener authPresenterListener;
     private FirebaseAuth firebaseAuth;
+    private UserApi userApi;
+    private FirebaseUser firebaseUser;
 
     private static final Pattern p = Pattern.compile(Constants.vitRegex);
     private Matcher m;
@@ -29,6 +38,7 @@ public class AuthPresenter {
     public AuthPresenter(AuthPresenterListener authPresenterListener) {
         this.authPresenterListener = authPresenterListener;
         firebaseAuth = FirebaseAuth.getInstance();
+        userApi = new UserApi();
     }
 
 
@@ -81,18 +91,82 @@ public class AuthPresenter {
     }
 
     public void syncUser() {
-        Log.d(TAG,"sync user is callled");
-        String token = FirebaseInstanceId.getInstance().getToken();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        UserApi userApi = new UserApi();
+        firebaseUser = firebaseAuth.getCurrentUser();
         User user = new User();
+        user.setEmailId(firebaseUser.getEmail());
         user.setDateOfJoin(Misc.getDate());
-        user.setRequestToken(token);
-        if (firebaseUser != null) {
-            user.setEmailId(firebaseUser.getEmail());
-            user.setUid(firebaseUser.getUid());
-        }
+        user.setRequestToken(FirebaseInstanceId.getInstance().getToken());
+        user.setUid(firebaseUser.getUid());
         SessionManager.saveUser(user);
-        userApi.refreshToken(user);
+        userApi.syncUserWithBackEnd(user,this);
+    }
+
+    @Override
+    public void syncDatabaseValues(User user) {
+        SessionManager.saveUser(user);
+        SyncApi syncApi = new SyncApi(this,firebaseUser.getUid());
+        syncApi.syncProgressJobs();
+        syncApi.syncHistoryJobs();
+    }
+
+    @Override
+    public void initSessions() {
+        List<PrintJobDetail> emptyJobDetails = new ArrayList<>();
+        List<String> emptyId = new ArrayList<>();
+        SessionManager.saveApiPrintJob(emptyJobDetails);
+        SessionManager.saveHistoryPrintJob(emptyJobDetails);
+        SessionManager.saveHistoryIds(emptyId);
+        SessionManager.saveTrasactionIds(emptyId);
+
+        authPresenterListener.openInstructionActivity();
+    }
+
+    @Override
+    public void setProgressSession(List<PrintJobDetail> printJobDetailList, List<String> transactionIds) {
+        Log.d(TAG,"Progress sync" + printJobDetailList);
+        List<PrintJobDetail> emptyJobDetails = new ArrayList<>();
+        List<String> emptyId = new ArrayList<>();
+        if (printJobDetailList != null && transactionIds != null) {
+            SessionManager.saveApiPrintJob(printJobDetailList);
+            SessionManager.saveTrasactionIds(transactionIds);
+        } else {
+            SessionManager.saveApiPrintJob(emptyJobDetails);
+            SessionManager.saveTrasactionIds(emptyId);
+        }
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        SessionManager.saveProgressSyncDate(currentDateTimeString);
+        if (SessionManager.getHistoryPrintJobDetail() != null) {
+            authPresenterListener.openMainActity();
+        }
+    }
+
+    @Override
+    public void setHistorySession(List<PrintJobDetail> printJobDetailList, List<String> historyIds) {
+        Log.d(TAG,"History sync" + printJobDetailList + "history id is" + historyIds);
+        if (printJobDetailList != null && historyIds != null) {
+            SessionManager.saveHistoryPrintJob(printJobDetailList);
+            SessionManager.saveHistoryIds(historyIds);
+        } else {
+            List<PrintJobDetail> emptyJobDetails = new ArrayList<>();
+            List<String> emptyId = new ArrayList<>();
+            SessionManager.saveHistoryPrintJob(emptyJobDetails);
+            SessionManager.saveHistoryIds(emptyId);
+        }
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        SessionManager.saveHistorySyncDate(currentDateTimeString);
+        if (SessionManager.getApiPrintJobDetail() != null) {
+            authPresenterListener.openMainActity();
+        }
+    }
+
+    public void registerUser() {
+        firebaseUser = firebaseAuth.getCurrentUser();
+        User user = new User();
+        user.setEmailId(firebaseUser.getEmail());
+        user.setDateOfJoin(Misc.getDate());
+        user.setRequestToken(FirebaseInstanceId.getInstance().getToken());
+        user.setUid(firebaseUser.getUid());
+        SessionManager.saveUser(user);
+        userApi.registerToBackend(user);
     }
 }

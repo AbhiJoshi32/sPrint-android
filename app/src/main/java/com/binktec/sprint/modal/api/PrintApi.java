@@ -1,18 +1,19 @@
 package com.binktec.sprint.modal.api;
 
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
-//import android.util.Log;
 
 import com.binktec.sprint.interactor.modal.PrintJobModalListener;
 import com.binktec.sprint.interactor.modal.TransactionModalListener;
 import com.binktec.sprint.modal.pojo.FileDetail;
 import com.binktec.sprint.modal.pojo.PrintJobDetail;
 import com.binktec.sprint.modal.pojo.shop.Shop;
-import com.binktec.sprint.utility.SessionManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,14 +33,30 @@ import java.util.List;
 public class PrintApi {
     private int numFileUploded = 0;
 
-
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private static String TAG="ShopApi";
+    private DatabaseReference shopRef = database.getReference("shop-client/shop-info");
+    private DatabaseReference userTransactionRef;
+    private DatabaseReference userCompletedRef;
+
+    private DatabaseReference printTransactionRef = database.getReference("printTransaction");
+    private DatabaseReference printCompletedRef = database.getReference("printCompleted");
+
+    private ChildEventListener transactionInfoListener;
+    private ChildEventListener completedInfoListener;
+    private ValueEventListener shopListener;
+
+    public PrintApi(String uid) {
+        userCompletedRef = database.getReference("userCompleted/" + uid);
+        userTransactionRef = database.getReference("userTransaction/" + uid);
+    }
 
     public void getShopInfoApi(final TransactionModalListener callback) {
-        DatabaseReference myref = database.getReference("shop-client/shop-info");
-        myref.addValueEventListener(new ValueEventListener() {
+        if (shopListener != null) {
+            shopRef.removeEventListener(shopListener);
+        }
+        shopListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Shop> apiShops = new ArrayList<>();
@@ -54,16 +71,16 @@ public class PrintApi {
             public void onCancelled(DatabaseError databaseError) {
                 callback.apiShopRetrievalUnsuccessful(databaseError.toString());
             }
-        });
+        };
+        shopRef.addValueEventListener(shopListener);
     }
 
     public void enterTransaction(PrintJobDetail printJobDetail) {
         try {
-            DatabaseReference userRef = database.getReference("userTransaction/" + printJobDetail.getUser().getUid());
-            String key = userRef.push().getKey();
+            String key = userTransactionRef.push().getKey();
             printJobDetail.settId(key);
-            userRef.child(key).setValue(printJobDetail);
-            DatabaseReference printRef = database.getReference("printTransaction/" + printJobDetail.getPrintTransaction().getShop().getShopId());
+            userTransactionRef.child(key).setValue(printJobDetail);
+            DatabaseReference printRef = printTransactionRef.child(printJobDetail.getPrintTransaction().getShop().getShopId());
             printJobDetail.getPrintTransaction().setShop(null);
             printRef.child(key).setValue(printJobDetail);
         }catch (Exception e) {
@@ -110,7 +127,7 @@ public class PrintApi {
                                 uploadFiles.add(file);
                                 numFileUploded++;
                                 if (numFileUploded == numOfFiles) {
-                                    Log.d(TAG,"File Uploaded");
+//                                    Log.d(TAG,"File Uploaded");
                                     printJobDetail.getPrintTransaction().setFileDetails(uploadFiles);
                                     callback.filesUploaded(printJobDetail);
                                 }
@@ -126,33 +143,104 @@ public class PrintApi {
         }
     }
 
-    public void getTransactionInfo(final PrintJobModalListener callback,String uid) {
-        DatabaseReference myref = database.getReference("userTransaction/"+uid);
-        myref.addValueEventListener(new ValueEventListener() {
+
+    public void cancelTransaction(PrintJobDetail cancelledDetail) {
+        String key = cancelledDetail.gettId();
+        String shopId = cancelledDetail.getPrintTransaction().getShop().getShopId();
+        userTransactionRef.child(key).setValue(null);
+        userCompletedRef.child(key).setValue(cancelledDetail);
+        printTransactionRef.child(shopId).child(key).setValue(null);
+        printCompletedRef.child(shopId).child(key).setValue(cancelledDetail);
+    }
+
+    public void prepareHistoryListeners(final PrintJobModalListener callback) {
+        if (completedInfoListener != null) {
+            userCompletedRef.removeEventListener(completedInfoListener);
+        }
+        completedInfoListener = new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-//                Log.d(TAG,"Value got from firebase");
-//                Log.d(TAG,dataSnapshot.toString());
-                List<PrintJobDetail> apiPrintJobDetail = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    PrintJobDetail printJobDetail = snapshot.getValue(PrintJobDetail.class);
-                    apiPrintJobDetail.add(printJobDetail);
-                }
-                callback.apiPrintTransactionRetrievalSuccessful(apiPrintJobDetail);
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                Log.d(TAG,"history child added");
+                PrintJobDetail historyDetail = dataSnapshot.getValue(PrintJobDetail.class);
+                callback.apiHistoryAdded(historyDetail);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-//                Log.d(TAG, "Failed to read value" + databaseError.toString());
-                callback.apiPrintTransactionRetrievalUnsuccessful(databaseError.toString());
+
             }
-        });
+        };
+        userCompletedRef.addChildEventListener(completedInfoListener);
     }
 
-    public void cancelTransaction(String tId, String uid,String shopId) {
-        DatabaseReference userRef = database.getReference("userTransaction/" + uid);
-        DatabaseReference printRef = database.getReference("printTransaction/" + shopId);
-        userRef.child(tId).child("status").setValue("Cancelled");
-        printRef.child(tId).child("status").setValue("Cancelled");
+    public void prepareTransactionListeners(final PrintJobModalListener callback) {
+        if (transactionInfoListener != null) {
+            userTransactionRef.removeEventListener(transactionInfoListener);
+        }
+        transactionInfoListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(final DataSnapshot dataSnapshot, final String prevKey) {
+                Log.d(TAG,"progress child added");
+                PrintJobDetail transactionDetail = dataSnapshot.getValue(PrintJobDetail.class);
+                callback.apiPrintTransactionAdded(transactionDetail,dataSnapshot.getKey(),prevKey);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.d(TAG,"child changed");
+                PrintJobDetail changedTransaction = dataSnapshot.getValue(PrintJobDetail.class);
+                callback.apiPrintTransactionChanged(changedTransaction,dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG,"child removed");
+                PrintJobDetail deletedTransaction = dataSnapshot.getValue(PrintJobDetail.class);
+                callback.apiPrintTransactionRemoved(deletedTransaction,dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.connectionFaliure(databaseError.toString());
+            }
+        };
+        userTransactionRef.addChildEventListener(transactionInfoListener);
+    }
+
+    public void removeListeners() {
+        if (transactionInfoListener != null) {
+            userTransactionRef.removeEventListener(transactionInfoListener);
+            userCompletedRef.removeEventListener(completedInfoListener);
+        }
+    }
+
+    public void removeShopListener() {
+        if (shopListener != null) {
+            shopRef.removeEventListener(shopListener);
+            Log.d(TAG,"Shop listener removed");
+        }
+    }
+
+    public void transactionOnStart() {
+        if (shopListener != null)
+            shopRef.addValueEventListener(shopListener);
     }
 }

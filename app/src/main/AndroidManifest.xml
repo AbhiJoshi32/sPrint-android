@@ -29,13 +29,6 @@
             </intent-filter>
         </service>
         <!-- [END firebase_iid_service] -->
-        <service
-            android:name="com.binktec.sprint.service.MyJobService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
 
         <activity
             android:name="com.binktec.sprint.ui.activity.PrintJobActivity"

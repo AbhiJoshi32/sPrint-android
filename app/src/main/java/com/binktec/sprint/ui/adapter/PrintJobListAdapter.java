@@ -87,8 +87,8 @@ public class PrintJobListAdapter extends RecyclerView.Adapter<PrintJobListAdapte
         PrintJobDetail detail = userTransactions.get(position);
         if (detail != null) {
             String listOfFiles = "";
-            holder.dateText.setText(detail.getDate());
-            holder.timeText.setText(detail.getTime());
+            holder.dateText.setText(detail.getIssuedDate());
+            holder.timeText.setText(detail.getIssuedTime());
             holder.location.setText(detail.getPrintTransaction().getShop().getShopLocation());
             int size = detail.getPrintTransaction().getFileDetails().size();
             if (size>1) {

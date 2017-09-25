@@ -2,6 +2,7 @@ package com.binktec.sprint.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +28,7 @@ public class ProgressFragment extends Fragment {
     @BindView(R.id.progress_recycler_view)
     RecyclerView progressRecyclerView;
     Unbinder unbinder;
+    private Handler progressFragHandler;
 
     private PrintJobFragmentListener printJobFragmentListener;
     private static final String TAG = "Progress Frag";
@@ -46,6 +48,7 @@ public class ProgressFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_progress, container, false);
         unbinder = ButterKnife.bind(this, view);
+        progressFragHandler = new Handler();
         printJobListAdapter = new PrintJobListAdapter(printJobDetails, new PrintJobListAdapter.PrintJobListListener() {
             @Override
             public void showPrintDetail(View v, int position) {
@@ -53,7 +56,7 @@ public class ProgressFragment extends Fragment {
             }
 
             @Override
-            public void cancelPrintDetail(View v, int position) {
+            public void cancelPrintDetail(View v, final int position) {
                 printJobFragmentListener.cancelUpload(printJobDetails.get(position));
             }
         });
@@ -61,15 +64,9 @@ public class ProgressFragment extends Fragment {
         progressRecyclerView.setLayoutManager(mLayoutManager);
         progressRecyclerView.setItemAnimator(new DefaultItemAnimator());
         progressRecyclerView.setAdapter(printJobListAdapter);
-        Log.d(TAG,"Progress voew created");
+        printJobFragmentListener.initProgressFragment();
         return view;
     }
-    @Override
-    public void onStart() {
-        super.onStart();
-        printJobFragmentListener.initProgressFragment();
-    }
-
 
     @Override
     public void onAttach(Context context) {
@@ -94,10 +91,36 @@ public class ProgressFragment extends Fragment {
         unbinder.unbind();
     }
 
-    public void updateProgressRecyclerView(List<PrintJobDetail> retPrintJobDetails) {
-        Log.d(TAG,"uploading progress view");
+    public void insertProgressRecyclerView(final PrintJobDetail transactionDetail, final int i) {
+        Log.d(TAG,"Item inserted");
+        Log.d(TAG,"trnsacciton detail is "+transactionDetail+" index is "+i);
+        Log.d(TAG,"printjobDetail is " + printJobDetails + "/n size is" + printJobDetails.size());
+//        progressRecyclerView.scrollToPosition(0);
+        printJobDetails.add(i,transactionDetail);
+        printJobListAdapter.notifyItemInserted(i);
+    }
+
+    public void changeProgressRecyclerView(PrintJobDetail changedTransaction, int changedIndex) {
+        Log.d(TAG,"item changed");
+        try {
+            Log.d(TAG,"printjb changed " + printJobDetails);
+            printJobDetails.set(changedIndex, changedTransaction);
+            printJobListAdapter.notifyItemChanged(changedIndex);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeProgressRecyclerView(int removeIndex) {
+        printJobDetails.remove(removeIndex);
+        printJobListAdapter.notifyItemRemoved(removeIndex);
+    }
+
+    public void initProgressRecyclerView(List<PrintJobDetail> progressPrintJobDetails) {
         printJobDetails.clear();
-        printJobDetails.addAll(retPrintJobDetails);
+        Log.d(TAG,"Init called" + progressPrintJobDetails);
+//        progressRecyclerView.scrollToPosition(0);
+        printJobDetails.addAll(progressPrintJobDetails);
         printJobListAdapter.notifyDataSetChanged();
     }
 }

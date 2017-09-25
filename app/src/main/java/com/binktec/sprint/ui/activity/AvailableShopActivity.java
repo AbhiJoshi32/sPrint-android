@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -109,8 +110,9 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
                         Log.d(TAG, "Pritning job");
                         drawer.closeDrawers();
                         intent = new Intent(AvailableShopActivity.this, PrintJobActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
+                        finish();
                         break;
                     case R.id.nav_start_print:
                         drawer.closeDrawers();
@@ -199,5 +201,19 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
         }
 
         navigationView.getMenu().getItem(0).setActionView(R.layout.menu_dot);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            Intent intent;
+            intent = new Intent(AvailableShopActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            super.onBackPressed();
+        }
     }
 }

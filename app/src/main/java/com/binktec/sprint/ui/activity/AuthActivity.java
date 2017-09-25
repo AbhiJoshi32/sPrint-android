@@ -19,6 +19,7 @@ import com.binktec.sprint.ui.fragment.ForgotPasswordFragment;
 import com.binktec.sprint.ui.fragment.LoginFragment;
 import com.binktec.sprint.ui.fragment.RegisterFragment;
 import com.binktec.sprint.utility.Constants;
+import com.binktec.sprint.utility.SessionManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -263,8 +264,9 @@ public class AuthActivity extends AppCompatActivity implements
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG_CURR, "createUserWithEmail:success");
-                            authPresenter.syncUser();
+                            authPresenter.registerUser();
                             sendEmailVerification();
+
                         } else {
                             Log.w(TAG_CURR, "createUserWithEmail:failure", task.getException());
                             try {
@@ -294,12 +296,10 @@ public class AuthActivity extends AppCompatActivity implements
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     Log.d(TAG_CURR, "createUserWithEmail:success");
-                    authPresenter.syncUser();
                     FirebaseUser user = firebaseAuth.getCurrentUser();
-
                     if (user != null) {
                         if (user.isEmailVerified()) {
-                            startMainActivity();
+                            authPresenter.syncUser();
                         }
                         else {
                             TAG_CURR = TAG_EMAIL_VER;
@@ -310,7 +310,6 @@ public class AuthActivity extends AppCompatActivity implements
                 } else {
                     hideProgressBar();
                     Log.w(TAG_CURR, "createUserWithEmail:failure", task.getException());
-
                     try {
                         throw task.getException();
                     } catch (FirebaseAuthException e){
@@ -342,10 +341,27 @@ public class AuthActivity extends AppCompatActivity implements
         signOut();
     }
 
+    @Override
+    public void openInstructionActivity() {
+        Intent intent = new Intent(AuthActivity.this, InstructionActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void openMainActity() {
+        Intent intent = new Intent(AuthActivity.this, PrintJobActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
     public void signOut() {
         Log.d(TAG_CURR,"Signing Out");
         if (firebaseAuth != null) {
             firebaseAuth.signOut();
+            SessionManager.clearAllSession();
         }
         // Google sign out
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
@@ -368,7 +384,6 @@ public class AuthActivity extends AppCompatActivity implements
                             mGoogleApiClient.disconnect();
                             Log.d(TAG_CURR, "signInWithCredential:success");
                             authPresenter.syncUser();
-                            startMainActivity();
                         } else {
                             Log.w(TAG_CURR, "signInWithCredential:failure", task.getException());
                             try {

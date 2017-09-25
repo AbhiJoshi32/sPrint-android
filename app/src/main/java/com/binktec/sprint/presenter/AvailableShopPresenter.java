@@ -29,8 +29,8 @@ public class AvailableShopPresenter implements TransactionModalListener{
             firebaseAuth = FirebaseAuth.getInstance();
         }
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        printApi = new PrintApi();
         if (firebaseUser != null) {
+            printApi = new PrintApi(firebaseUser.getUid());
             if (firebaseUser.getPhotoUrl() != null) {
                 availShopPreseneterListener.initTransactionActivity(firebaseUser.getDisplayName(),
                         firebaseUser.getPhotoUrl().toString());

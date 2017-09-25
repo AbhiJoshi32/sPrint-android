@@ -10,9 +10,7 @@ import com.binktec.sprint.ui.fragment.HistoryFragment;
 import com.binktec.sprint.ui.fragment.ProgressFragment;
 
 public class PrintJobPagerAdapter extends FragmentStatePagerAdapter {
-    SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
-
-
+    private SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
     private static final int tabCount = 2;
     public PrintJobPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -57,7 +55,7 @@ public class PrintJobPagerAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch(position) {
             case 0:
-                return "Progress";
+                return "Ongoing";
             case 1:
                 return "History";
         }

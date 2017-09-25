@@ -2,11 +2,13 @@ package com.binktec.sprint.ui.activity;
 
 
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -15,6 +17,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -48,7 +51,6 @@ public class PrintJobActivity extends AppCompatActivity
 
     private static final String TAG = "Print Jobs";
     private static final int WRITE_STORAGE_PERMISSION_CODE = 24;
-
     private String urlNavHeaderBg;
 
     @BindView(R.id.toolbar)
@@ -71,11 +73,15 @@ public class PrintJobActivity extends AppCompatActivity
 
     private int STORAGE_PERMISSION_CODE = 23;
 
+    private ProgressFragment progressFragment;
+    private HistoryFragment historyFragment;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_print_job);
+        context = this;
         SessionManager.initInstance(this);
         urlNavHeaderBg = getApplicationContext().getString(R.string.background_url);
         ButterKnife.bind(this);
@@ -84,85 +90,16 @@ public class PrintJobActivity extends AppCompatActivity
         imgNavHeaderBg = navHeader.findViewById(R.id.img_header_bg);
         imgProfile = navHeader.findViewById(R.id.img_profile);
         printJobPresenter = new PrintJobPresenter(this);
-        printJobPresenter.viewCreated();
+        setSupportActionBar(toolbar);
+        setToolbarTitle();
+        setUpTabLayout();
+        setUpNavigationView();
+
         if (!isReadStorageAllowed()) {
-            Log.d(TAG, "need storage permission");
             requestStoragePermission();
         }
         if (!isWriteStorageAllowed()) {
-            Log.d(TAG, "Need write storage permission");
             requestWriteStoragePermission();
-        }
-        Log.d(TAG, "opened Print Job Activity");
-    }
-
-    private void requestWriteStoragePermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-        }
-
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_PERMISSION_CODE);
-    }
-
-    private boolean isWriteStorageAllowed() {
-        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        //If permission is granted returning true
-        if (result == PackageManager.PERMISSION_GRANTED)
-            return true;
-
-        //If permission is not granted returning false
-        return false;
-    }
-
-    private boolean isReadStorageAllowed() {
-        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-
-        //If permission is granted returning true
-        if (result == PackageManager.PERMISSION_GRANTED)
-            return true;
-
-        //If permission is not granted returning false
-        return false;
-    }
-
-    //Requesting permission
-    private void requestStoragePermission() {
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-        }
-
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
-    }
-
-    //This method will be called when the user will tap on allow or deny
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        //Checking the request code of our request
-        if (requestCode == STORAGE_PERMISSION_CODE) {
-
-            //If permission is granted
-            Log.d(TAG, "Grant result is for read " + grantResults[0]);
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                //Displaying a toast
-                Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
-            } else {
-                //Displaying another toast if permission is not granted
-                Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
-            }
-        } else if (requestCode == WRITE_STORAGE_PERMISSION_CODE) {
-            Log.d(TAG, "Grant result is for write " + grantResults[0]);
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                //Displaying a toast
-                Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
-            } else {
-                //Displaying another toast if permission is not granted
-                Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
-            }
         }
     }
 
@@ -170,6 +107,12 @@ public class PrintJobActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         printJobPresenter.appStart();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG,"on Pause Called");
     }
 
     private void setUpTabLayout() {
@@ -185,7 +128,7 @@ public class PrintJobActivity extends AppCompatActivity
         }
     }
 
-    private void loadNavHeader(String displayName, String photoUrl) {
+    private void loadNavHeader(String displayName, Uri photoUrl) {
         txtName.setText(displayName);
 
         Glide.with(this).load(urlNavHeaderBg)
@@ -213,39 +156,146 @@ public class PrintJobActivity extends AppCompatActivity
     }
 
     @Override
-    public void initializePrintJob(String displayName, String photoUrl) {
-        setSupportActionBar(toolbar);
-        loadNavHeader(displayName, photoUrl);
-        setToolbarTitle();
-        setUpTabLayout();
+    public void initializePrintJob(String displayName, Uri photoUrl) {
         selectNavMenu();
-        setUpNavigationView();
+        loadNavHeader(displayName, photoUrl);
     }
 
     @Override
-    public void updatePrintJobFragment(List<PrintJobDetail> printJobDetails) {
-        if (printJobPagerAdapter != null) {
-            ProgressFragment progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
-            Log.d(TAG, "The reg fragment is" + progressFragment);
-            progressFragment.updateProgressRecyclerView(printJobDetails);
+    public void showToastError(String s) {
+
+    }
+
+    @Override
+    public void progressItemInserted(final PrintJobDetail transactionDetail, final int i) {
+        Log.d(TAG,"preogress inserted isfinishing" + isFinishing());
+        if (isFinishing()) {
+
+            Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            finish();
+        } else {
+            progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+            if (progressFragment != null) {
+                progressFragment.insertProgressRecyclerView(transactionDetail, i);
+            }
         }
     }
 
     @Override
-    public void updateHistoryJobFragment(List<PrintJobDetail> historyPrintJobDetail) {
-        if (printJobPagerAdapter != null) {
-            HistoryFragment historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
-            Log.d(TAG, "The reg fragment is" + historyFragment);
-            historyFragment.updateHistoryRecyclerView(historyPrintJobDetail);
+    public void progressItemChanged(PrintJobDetail changedTransaction, int changedIndex) {
+        Log.d(TAG,"preogress changed isfinishing" + isFinishing());
+        if (isFinishing()) {
+            Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            finish();
+        } else {
+            progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+            if (progressFragment != null) {
+                progressFragment.changeProgressRecyclerView(changedTransaction, changedIndex);
+            }
         }
     }
 
     @Override
-    public void openInstructionActivity() {
-        Intent intent = new Intent(PrintJobActivity.this, InstructionActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        finish();
+    public void progressItemRemoved(int removeIndex) {
+        if (isFinishing()) {
+            Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            finish();
+        } else {
+            progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+            if (progressFragment != null) {
+                progressFragment.removeProgressRecyclerView(removeIndex);
+            }
+        }
+    }
+
+    @Override
+    public void initProgressList(List<PrintJobDetail> progressPrintJobDetails) {
+        progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+        if (progressFragment != null) {
+            progressFragment.initProgressRecyclerView(progressPrintJobDetails);
+        }
+    }
+
+    @Override
+    public void initHistoryList(List<PrintJobDetail> historyPrintJobDetails) {
+        historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
+        Log.d(TAG,"History Fragment" + historyFragment);
+        if (historyFragment != null) {
+            historyFragment.initHistoryRecyclerView(historyPrintJobDetails);
+        }
+    }
+
+    @Override
+    public void historyItemInserted(final PrintJobDetail historyDetail, final int i) {
+        if (isFinishing()) {
+            Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            finish();
+        } else {
+            historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
+            if (historyFragment != null) {
+                Log.d(TAG, "history item to be inserted");
+                historyFragment.addHistoryRecyclerView(historyDetail, i);
+            }
+            if (historyDetail.getStatus().equals("Printed")) {
+                showPrintConfirmDialog();
+            } else if (historyDetail.getStatus().equals("Rejected")) {
+                showRejectDialog();
+            }
+        }
+    }
+
+    @Override
+    public void showPrintConfirmDialog() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        printJobPager.setCurrentItem(1);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+         builder.setMessage("Your Document is printed").setPositiveButton("Check History", dialogClickListener)
+                    .setNegativeButton("Ok", dialogClickListener).show();
+    }
+
+    @Override
+    public void showRejectDialog() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        printJobPager.setCurrentItem(1);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Your Document is rejected").setPositiveButton("Check History", dialogClickListener)
+                .setNegativeButton("Ok", dialogClickListener).show();
     }
 
     private void selectNavMenu() {
@@ -346,6 +396,7 @@ public class PrintJobActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            finish();
             super.onBackPressed();
         }
     }
@@ -357,8 +408,15 @@ public class PrintJobActivity extends AppCompatActivity
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        printJobPresenter.onStopCalled();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
+        printJobPresenter = null;
         Log.d(TAG, "On destroy called");
     }
 
@@ -373,13 +431,34 @@ public class PrintJobActivity extends AppCompatActivity
     }
 
     @Override
-    public void getHistoryList() {
-        printJobPresenter.getHistorySession();
+    public void initHistoryFragment() {
+        printJobPresenter.getHistoryList();
     }
 
     @Override
-    public void cancelUpload(PrintJobDetail printJobDetail) {
-        printJobPresenter.cancelUpload(printJobDetail);
+    public void cancelUpload(final PrintJobDetail printJobDetail) {
+        try {
+            DialogInterface.OnClickListener cancelDialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case DialogInterface.BUTTON_POSITIVE:
+                            printJobPresenter.cancelUpload(printJobDetail);
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            //No button clicked
+                            break;
+                    }
+                }
+            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure you want to cancel?").setPositiveButton("Yes", cancelDialogClickListener)
+                    .setNegativeButton("No", cancelDialogClickListener).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @OnClick(R.id.print_float_button)
@@ -388,4 +467,75 @@ public class PrintJobActivity extends AppCompatActivity
         intent = new Intent(PrintJobActivity.this, TransactionActivity.class);
         startActivity(intent);
     }
+
+    private void requestWriteStoragePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+        }
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_PERMISSION_CODE);
+    }
+
+    private boolean isWriteStorageAllowed() {
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        //If permission is granted returning true
+        if (result == PackageManager.PERMISSION_GRANTED)
+            return true;
+
+        //If permission is not granted returning false
+        return false;
+    }
+
+    private boolean isReadStorageAllowed() {
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        //If permission is granted returning true
+        if (result == PackageManager.PERMISSION_GRANTED)
+            return true;
+
+        //If permission is not granted returning false
+        return false;
+    }
+
+    //Requesting permission
+    private void requestStoragePermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+        }
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+    }
+
+    //This method will be called when the user will tap on allow or deny
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        //Checking the request code of our request
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+
+            //If permission is granted
+            Log.d(TAG, "Grant result is for read " + grantResults[0]);
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                //Displaying a toast
+                Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
+            } else {
+                //Displaying another toast if permission is not granted
+                Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
+            }
+        } else if (requestCode == WRITE_STORAGE_PERMISSION_CODE) {
+            Log.d(TAG, "Grant result is for write " + grantResults[0]);
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                //Displaying a toast
+                Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
+            } else {
+                //Displaying another toast if permission is not granted
+                Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
 }

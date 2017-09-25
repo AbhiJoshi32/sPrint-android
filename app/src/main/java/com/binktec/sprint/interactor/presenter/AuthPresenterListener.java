@@ -15,4 +15,8 @@ public interface AuthPresenterListener {
     void validGoogleAcc(GoogleSignInAccount account);
 
     void invalidGoogleAcc();
+
+    void openInstructionActivity();
+
+    void openMainActity();
 }

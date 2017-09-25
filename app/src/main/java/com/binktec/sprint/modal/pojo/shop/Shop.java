@@ -13,6 +13,15 @@ public class Shop {
     private String shopId;
     private String shopLocation;
     private String shopName;
+    private int shopQueue;
+
+    public int getShopQueue() {
+        return shopQueue;
+    }
+
+    public void setShopQueue(int shopQueue) {
+        this.shopQueue = shopQueue;
+    }
 
     public List<String> getAvailBinding() {
         return availBinding;

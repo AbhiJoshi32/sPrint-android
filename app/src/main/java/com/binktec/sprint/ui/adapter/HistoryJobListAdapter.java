@@ -80,8 +80,8 @@ public class HistoryJobListAdapter extends RecyclerView.Adapter<HistoryJobListAd
         PrintJobDetail detail = userTransactions.get(position);
         if (detail != null) {
             String listOfFiles = "";
-            holder.dateText.setText(detail.getDate());
-            holder.timeText.setText(detail.getTime());
+            holder.dateText.setText(detail.getIssuedDate());
+            holder.timeText.setText(detail.getIssuedTime());
             holder.shopName.setText(detail.getPrintTransaction().getShop().getShopName());
             holder.location.setText(detail.getPrintTransaction().getShop().getShopLocation());
             int size = detail.getPrintTransaction().getFileDetails().size();

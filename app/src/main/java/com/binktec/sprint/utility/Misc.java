@@ -134,6 +134,9 @@ public class Misc {
                 case "A5":
                     costPerPage = shop.getShopCost().getShopColorCost().getColorA5Cost();
                     break;
+                case "GlossyA4":
+                    costPerPage = shop.getShopCost().getShopColorCost().getColorGlossyA4Cost();
+                    break;
             }
         }
 
@@ -147,6 +150,9 @@ public class Misc {
                     break;
                 case "A5":
                     costPerPage = shop.getShopCost().getShopGrayscaleCost().getGrayscaleA5Cost();
+                    break;
+                case "GlossyA4":
+                    costPerPage = shop.getShopCost().getShopGrayscaleCost().getGrayscaleGlossyA4Cost();
                     break;
             }
         }
@@ -186,7 +192,6 @@ public class Misc {
                 Log.d(TAG,"i value is" + i);
                 part1 = part[i];
                 part2 = part[i+1];
-
 
                 numOfDash = getOccurrence(part1,"-");
                 if (i==0) {
