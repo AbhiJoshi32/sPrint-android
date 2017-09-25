@@ -2,11 +2,7 @@ package com.binktec.sprint.presenter;
 
 
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
-//import android.util.Log;
 
 import com.binktec.sprint.interactor.modal.PrintJobModalListener;
 import com.binktec.sprint.interactor.presenter.PrintJobPresenterListener;
@@ -29,12 +25,9 @@ public class PrintJobPresenter implements PrintJobModalListener {
     private List<String> historyIds = new ArrayList<>();
     private List<PrintJobDetail> progressPrintJobDetails;
     private List<PrintJobDetail> historyPrintJobDetails;
-    private static Handler handler;
-    private static final int insertItem = 100;
 
     public PrintJobPresenter(final PrintJobPresenterListener printJobPresenterListener) {
         this.printJobPresenterListener = printJobPresenterListener;
-        handler = new Handler(Looper.getMainLooper());
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         progressPrintJobDetails = new ArrayList<>();
@@ -136,9 +129,13 @@ public class PrintJobPresenter implements PrintJobModalListener {
             printJobPresenterListener.progressItemInserted(transactionDetail,topIndex);
         } else {
             int transactionIndex = transactionIds.indexOf(key);
+            if (!transactionDetail.getStatus().equals(progressPrintJobDetails.get(transactionIndex).getStatus())) {
+                printJobPresenterListener.progressItemChanged(transactionDetail,transactionIndex);
+            }
             Log.d(TAG,"item present" + key + transactionDetail.getStatus());
             progressPrintJobDetails.set(transactionIndex,transactionDetail);
             SessionManager.saveApiPrintJob(progressPrintJobDetails);
+
         }
     }
 
@@ -183,6 +180,8 @@ public class PrintJobPresenter implements PrintJobModalListener {
                 printJobPresenterListener.openAuthActivity();
             } else {
                 printApi = new PrintApi(firebaseUser.getUid());
+                printApi.prepareHistoryListeners(this);
+                printApi.prepareTransactionListeners(this);
                 PrintJobDetail currPrintDetail = SessionManager.getCurrentPrintJobDetail();
                 progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
                 transactionIds = SessionManager.getTransactionIds();
@@ -208,6 +207,7 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
 
     public void onStopCalled() {
+        printApi.removeListeners();
     }
 
     public void getPrintJobList() {
@@ -215,10 +215,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
         transactionIds = SessionManager.getTransactionIds();
         printJobPresenterListener.initProgressList(SessionManager.getApiPrintJobDetail());
         firebaseUser = firebaseAuth.getCurrentUser();
-        if (printApi == null) {
-            printApi = new PrintApi(firebaseUser.getUid());
-        }
-        printApi.prepareTransactionListeners(this);
     }
 
     public void getHistoryList() {
@@ -234,10 +230,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
             SessionManager.setIsRejected(false);
         }
         firebaseUser = firebaseAuth.getCurrentUser();
-        if (printApi == null) {
-            printApi = new PrintApi(firebaseUser.getUid());
-        }
-        printApi.prepareHistoryListeners(this);
     }
 
     public void cancelUpload(PrintJobDetail printJobDetail) {
