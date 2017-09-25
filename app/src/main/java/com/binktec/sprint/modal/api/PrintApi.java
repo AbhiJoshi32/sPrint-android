@@ -45,6 +45,7 @@ public class PrintApi {
 
     private ChildEventListener transactionInfoListener;
     private ChildEventListener completedInfoListener;
+    private ValueEventListener shopListener;
 
     public PrintApi(String uid) {
         userCompletedRef = database.getReference("userCompleted/" + uid);
@@ -52,7 +53,10 @@ public class PrintApi {
     }
 
     public void getShopInfoApi(final TransactionModalListener callback) {
-        shopRef.addValueEventListener(new ValueEventListener() {
+        if (shopListener != null) {
+            shopRef.removeEventListener(shopListener);
+        }
+        shopListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Shop> apiShops = new ArrayList<>();
@@ -67,7 +71,8 @@ public class PrintApi {
             public void onCancelled(DatabaseError databaseError) {
                 callback.apiShopRetrievalUnsuccessful(databaseError.toString());
             }
-        });
+        };
+        shopRef.addValueEventListener(shopListener);
     }
 
     public void enterTransaction(PrintJobDetail printJobDetail) {
@@ -149,6 +154,9 @@ public class PrintApi {
     }
 
     public void prepareHistoryListeners(final PrintJobModalListener callback) {
+        if (completedInfoListener != null) {
+            userCompletedRef.removeEventListener(completedInfoListener);
+        }
         completedInfoListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -180,10 +188,13 @@ public class PrintApi {
     }
 
     public void prepareTransactionListeners(final PrintJobModalListener callback) {
+        if (transactionInfoListener != null) {
+            userTransactionRef.removeEventListener(transactionInfoListener);
+        }
         transactionInfoListener = new ChildEventListener() {
             @Override
             public void onChildAdded(final DataSnapshot dataSnapshot, final String prevKey) {
-                Log.d(TAG,"child added");
+                Log.d(TAG,"progress child added");
                 PrintJobDetail transactionDetail = dataSnapshot.getValue(PrintJobDetail.class);
                 callback.apiPrintTransactionAdded(transactionDetail,dataSnapshot.getKey(),prevKey);
             }
@@ -219,5 +230,17 @@ public class PrintApi {
             userTransactionRef.removeEventListener(transactionInfoListener);
             userCompletedRef.removeEventListener(completedInfoListener);
         }
+    }
+
+    public void removeShopListener() {
+        if (shopListener != null) {
+            shopRef.removeEventListener(shopListener);
+            Log.d(TAG,"Shop listener removed");
+        }
+    }
+
+    public void transactionOnStart() {
+        if (shopListener != null)
+            shopRef.addValueEventListener(shopListener);
     }
 }

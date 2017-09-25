@@ -3,6 +3,7 @@ package com.binktec.sprint.presenter;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
@@ -28,7 +29,7 @@ import java.util.regex.Pattern;
 public class TransactionPresenter implements TransactionModalListener {
 
     private static final String TAG = "Transaction Presenter";
-    private Handler handler;
+    private static Handler handler;
 
     private static final int FILE_PARSED = 0;
 
@@ -40,7 +41,7 @@ public class TransactionPresenter implements TransactionModalListener {
     public TransactionPresenter(final TransactionPresenterListener transactionPresenterListener) {
         this.transactionPresenterListener = transactionPresenterListener;
         firebaseAuth = FirebaseAuth.getInstance();
-        handler = new Handler(){
+        handler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message msg) {
                 switch(msg.what){
@@ -68,7 +69,6 @@ public class TransactionPresenter implements TransactionModalListener {
                             "");
                 }
             }
-
         }
         if (SessionManager.getFileDetail() != null) {
             chosenFiles = new ArrayList<>(SessionManager.getFileDetail());
@@ -250,6 +250,16 @@ public class TransactionPresenter implements TransactionModalListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public void onStopCalled() {
+        printApi.removeShopListener();
+    }
+
+    public void onDestroyCalled() {
+        transactionPresenterListener = null;
+    }
+
+    public void onStartCalled() {
     }
 }

@@ -168,29 +168,34 @@ public class PrintJobActivity extends AppCompatActivity
 
     @Override
     public void progressItemInserted(final PrintJobDetail transactionDetail, final int i) {
+        Log.d(TAG,"preogress inserted isfinishing" + isFinishing());
         if (isFinishing()) {
+
             Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
             finish();
-        }
-        progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
-        if (progressFragment != null) {
-            progressFragment.insertProgressRecyclerView(transactionDetail, i);
+        } else {
+            progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+            if (progressFragment != null) {
+                progressFragment.insertProgressRecyclerView(transactionDetail, i);
+            }
         }
     }
 
     @Override
     public void progressItemChanged(PrintJobDetail changedTransaction, int changedIndex) {
+        Log.d(TAG,"preogress changed isfinishing" + isFinishing());
         if (isFinishing()) {
             Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
             finish();
-        }
-        progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
-        if (progressFragment != null) {
-            progressFragment.changeProgressRecyclerView(changedTransaction, changedIndex);
+        } else {
+            progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+            if (progressFragment != null) {
+                progressFragment.changeProgressRecyclerView(changedTransaction, changedIndex);
+            }
         }
     }
 
@@ -201,10 +206,11 @@ public class PrintJobActivity extends AppCompatActivity
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
             finish();
-        }
-        progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
-        if (progressFragment != null) {
-            progressFragment.removeProgressRecyclerView(removeIndex);
+        } else {
+            progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+            if (progressFragment != null) {
+                progressFragment.removeProgressRecyclerView(removeIndex);
+            }
         }
     }
 
@@ -232,12 +238,17 @@ public class PrintJobActivity extends AppCompatActivity
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
             finish();
-        }
-        showPrintConfirmDialog();
-        historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
-        if (historyFragment != null) {
-            Log.d(TAG,"history item to be inserted");
-            historyFragment.addHistoryRecyclerView(historyDetail,i);
+        } else {
+            historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
+            if (historyFragment != null) {
+                Log.d(TAG, "history item to be inserted");
+                historyFragment.addHistoryRecyclerView(historyDetail, i);
+            }
+            if (historyDetail.getStatus().equals("Printed")) {
+                showPrintConfirmDialog();
+            } else if (historyDetail.getStatus().equals("Rejected")) {
+                showRejectDialog();
+            }
         }
     }
 
@@ -261,7 +272,30 @@ public class PrintJobActivity extends AppCompatActivity
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
          builder.setMessage("Your Document is printed").setPositiveButton("Check History", dialogClickListener)
-                    .setNegativeButton("Yes", dialogClickListener).show();
+                    .setNegativeButton("Ok", dialogClickListener).show();
+    }
+
+    @Override
+    public void showRejectDialog() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        printJobPager.setCurrentItem(1);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Your Document is rejected").setPositiveButton("Check History", dialogClickListener)
+                .setNegativeButton("Ok", dialogClickListener).show();
     }
 
     private void selectNavMenu() {
@@ -362,6 +396,7 @@ public class PrintJobActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            finish();
             super.onBackPressed();
         }
     }
@@ -381,7 +416,7 @@ public class PrintJobActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        printJobPresenter = null;
         Log.d(TAG, "On destroy called");
     }
 

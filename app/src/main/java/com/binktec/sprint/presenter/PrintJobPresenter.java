@@ -100,6 +100,11 @@ public class PrintJobPresenter implements PrintJobModalListener {
         historyPrintJobDetails = SessionManager.getHistoryPrintJobDetail();
         String tid = historyDetail.gettId();
         if (!historyIds.contains(historyDetail.gettId())) {
+            int transactionIndex = transactionIds.indexOf(historyDetail.gettId());
+            if (transactionIndex != -1) {
+                transactionIds.remove(transactionIndex);
+                progressPrintJobDetails.remove(transactionIndex);
+            }
             historyIds.add(0,tid);
             historyPrintJobDetails.add(0,historyDetail);
             SessionManager.saveHistoryPrintJob(historyPrintJobDetails);
@@ -123,11 +128,17 @@ public class PrintJobPresenter implements PrintJobModalListener {
         transactionIds = SessionManager.getTransactionIds();
         progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
         if (!transactionIds.contains(key)) {
+            Log.d(TAG,"Item Added");
             transactionIds.add(topIndex,key);
             progressPrintJobDetails.add(topIndex,transactionDetail);
             SessionManager.saveApiPrintJob(progressPrintJobDetails);
             SessionManager.saveTrasactionIds(transactionIds);
             printJobPresenterListener.progressItemInserted(transactionDetail,topIndex);
+        } else {
+            int transactionIndex = transactionIds.indexOf(key);
+            Log.d(TAG,"item present" + key + transactionDetail.getStatus());
+            progressPrintJobDetails.set(transactionIndex,transactionDetail);
+            SessionManager.saveApiPrintJob(progressPrintJobDetails);
         }
     }
 
@@ -152,10 +163,10 @@ public class PrintJobPresenter implements PrintJobModalListener {
         if (removedIndex > -1) {
             progressPrintJobDetails.remove(removedIndex);
             transactionIds.remove(removedIndex);
+            SessionManager.saveApiPrintJob(progressPrintJobDetails);
+            SessionManager.saveTrasactionIds(transactionIds);
             printJobPresenterListener.progressItemRemoved(removedIndex);
         }
-        SessionManager.saveApiPrintJob(progressPrintJobDetails);
-        SessionManager.saveTrasactionIds(transactionIds);
     }
 
     @Override

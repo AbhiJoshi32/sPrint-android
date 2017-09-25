@@ -95,15 +95,20 @@ public class ProgressFragment extends Fragment {
         Log.d(TAG,"Item inserted");
         Log.d(TAG,"trnsacciton detail is "+transactionDetail+" index is "+i);
         Log.d(TAG,"printjobDetail is " + printJobDetails + "/n size is" + printJobDetails.size());
-        progressRecyclerView.scrollToPosition(0);
+//        progressRecyclerView.scrollToPosition(0);
         printJobDetails.add(i,transactionDetail);
         printJobListAdapter.notifyItemInserted(i);
     }
 
     public void changeProgressRecyclerView(PrintJobDetail changedTransaction, int changedIndex) {
         Log.d(TAG,"item changed");
-        printJobDetails.set(changedIndex,changedTransaction);
-        printJobListAdapter.notifyItemChanged(changedIndex);
+        try {
+            Log.d(TAG,"printjb changed " + printJobDetails);
+            printJobDetails.set(changedIndex, changedTransaction);
+            printJobListAdapter.notifyItemChanged(changedIndex);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void removeProgressRecyclerView(int removeIndex) {
@@ -114,7 +119,7 @@ public class ProgressFragment extends Fragment {
     public void initProgressRecyclerView(List<PrintJobDetail> progressPrintJobDetails) {
         printJobDetails.clear();
         Log.d(TAG,"Init called" + progressPrintJobDetails);
-        progressRecyclerView.scrollToPosition(0);
+//        progressRecyclerView.scrollToPosition(0);
         printJobDetails.addAll(progressPrintJobDetails);
         printJobListAdapter.notifyDataSetChanged();
     }
