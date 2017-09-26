@@ -2,9 +2,9 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/content_main"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <include
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
@@ -12,5 +12,5 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/shopFragment" />
+        android:id="@+id/settingFragment" />
 </LinearLayout>

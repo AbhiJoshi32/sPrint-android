@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -28,7 +29,7 @@ import butterknife.Unbinder;
 public class ChooseFileFragment extends Fragment {
 
     private List<FileDetail> fragFileList = new ArrayList<>();
-    private String TAG = "Choose File Fragmetnt";
+//    private String TAG = "Choose File Fragmetnt";
 
     private TransactionFragmentListener transactionFragmentListener;
     private FileAdapter fileAdapter;
@@ -67,10 +68,14 @@ public class ChooseFileFragment extends Fragment {
                 transactionFragmentListener.removeFile(position);
             }
         });
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         fileRecyclerView.setLayoutManager(mLayoutManager);
         fileRecyclerView.setItemAnimator(new DefaultItemAnimator());
         fileRecyclerView.setAdapter(fileAdapter);
+        RecyclerView.ItemDecoration  mDividerItemDecoration = new DividerItemDecoration(
+                fileRecyclerView.getContext(),mLayoutManager.getOrientation()
+        );
+        fileRecyclerView.addItemDecoration(mDividerItemDecoration);
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback =
                 new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
                     @Override
