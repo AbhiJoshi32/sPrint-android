@@ -11,7 +11,7 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="8dp"
@@ -68,7 +68,10 @@
                 android:background="@android:drawable/screen_background_light_transparent"
                 app:layout_constraintLeft_toRightOf="@+id/mainFile"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_drop_down_arrow" />
+                app:srcCompat="@drawable/ic_drop_down_arrow"
+                app:layout_constraintRight_toLeftOf="@+id/pinNumber"
+                android:layout_marginRight="8dp"
+                app:layout_constraintHorizontal_bias="0.0" />
 
             <ImageButton
                 android:id="@+id/hideFiles"
@@ -90,6 +93,31 @@
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/mainFile" />
+
+            <TextView
+                android:id="@+id/pinNumberText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="15dp"
+                android:text="PIN"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                app:layout_constraintRight_toLeftOf="@+id/pinNumber"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/pinNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="15dp"
+                android:text="01"
+                android:textSize="80sp"
+                android:textColor="#7F000000"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/location"
