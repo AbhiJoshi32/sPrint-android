@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.binktec.sprint.R;
 import com.binktec.sprint.interactor.fragment.ManageFragmentListener;
@@ -26,13 +27,19 @@ import com.binktec.sprint.ui.fragment.ManageAccountFragment;
 import com.binktec.sprint.utility.CircleTransform;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class ManageAccountActivity extends AppCompatActivity implements ManageAccountPresenterListener,ManageFragmentListener{
+public class ManageAccountActivity extends AppCompatActivity implements ManageAccountPresenterListener,ManageFragmentListener, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "Manage Accounts";
     @BindView(R.id.progressBar2)
@@ -45,7 +52,6 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
     NavigationView navView;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-    private FirebaseAuth firebaseAuth;
 
 
     private String urlNavHeaderBg;
@@ -53,6 +59,7 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
     private TextView txtName;
     private ImageView imgNavHeaderBg;
     private ImageView imgProfile;
+    private GoogleApiClient mGoogleApiClient;
 
     private ManageAccountPresenter manageAccountPresenter;
 
@@ -62,7 +69,6 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
         setContentView(R.layout.activity_manage_account);
         ButterKnife.bind(this);
 
-        firebaseAuth = FirebaseAuth.getInstance();
         urlNavHeaderBg = getString(R.string.background_url);
         View navHeader = navView.getHeaderView(0);
         txtName = navHeader.findViewById(R.id.name);
@@ -70,6 +76,16 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
         imgProfile = navHeader.findViewById(R.id.img_profile);
         manageAccountPresenter = new ManageAccountPresenter(this);
         manageAccountPresenter.appStart();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
 
     }
 
@@ -205,17 +221,44 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
 
     @Override
     public void showToast(String s) {
-
+        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void manageSignOut() {
-        openAuthActivity();
+    public void emailSentSuccessful() {
+        ManageAccountFragment manageFrament = (ManageAccountFragment) getSupportFragmentManager().findFragmentById(R.id.manage_acct_fragment);
+        manageFrament.enableBtn();
+        showToast("Password reset mail has been sent to your email");
+    }
+
+    @Override
+    public void emailSentUnsuccessful() {
+        ManageAccountFragment manageFrament = (ManageAccountFragment) getSupportFragmentManager().findFragmentById(R.id.manage_acct_fragment);
+        manageFrament.enableBtn();
+        showToast("Unable to send email. Check net connectivity");
     }
 
     @Override
     public void changePassBtnClicked() {
+        showToast("Sending reset password mail to your email");
+        manageAccountPresenter.updatePassword();
+    }
 
+    @Override
+    public void signOutBtnClicked() {
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(@NonNull Status status) {
+                if (status.isSuccess()) {
+                    manageAccountPresenter.signOut();
+                }
+                else {
+                    showToast("Unable to logout");
+                    ManageAccountFragment manageFrament = (ManageAccountFragment) getSupportFragmentManager().findFragmentById(R.id.manage_acct_fragment);
+                    manageFrament.enableBtn();
+                }
+            }
+        });
     }
 
     @Override
@@ -230,5 +273,10 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
             finish();
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        showToast("No Internet Connection");
     }
 }

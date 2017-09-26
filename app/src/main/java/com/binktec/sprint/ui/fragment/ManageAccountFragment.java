@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.binktec.sprint.R;
@@ -26,6 +27,10 @@ public class ManageAccountFragment extends Fragment {
     @BindView(R.id.imageView)
     ImageView imageView;
     Unbinder unbinder;
+    @BindView(R.id.logoutButton)
+    Button logoutButton;
+    @BindView(R.id.changePassword)
+    Button changePassword;
     private ManageFragmentListener manageFragmentListener;
 
     public ManageAccountFragment() {
@@ -86,11 +91,18 @@ public class ManageAccountFragment extends Fragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.logoutButton:
-                manageFragmentListener.manageSignOut();
+                logoutButton.setEnabled(false);
+                manageFragmentListener.signOutBtnClicked();
                 break;
             case R.id.changePassword:
+                changePassword.setEnabled(false);
                 manageFragmentListener.changePassBtnClicked();
                 break;
         }
+    }
+
+    public void enableBtn() {
+        logoutButton.setEnabled(true);
+        changePassword.setEnabled(true);
     }
 }

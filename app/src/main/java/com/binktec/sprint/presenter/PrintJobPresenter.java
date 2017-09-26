@@ -135,7 +135,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
             Log.d(TAG,"item present" + key + transactionDetail.getStatus());
             progressPrintJobDetails.set(transactionIndex,transactionDetail);
             SessionManager.saveApiPrintJob(progressPrintJobDetails);
-
         }
     }
 
@@ -207,7 +206,9 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
 
     public void onStopCalled() {
-        printApi.removeListeners();
+        if (printApi != null) {
+            printApi.removeListeners();
+        }
     }
 
     public void getPrintJobList() {

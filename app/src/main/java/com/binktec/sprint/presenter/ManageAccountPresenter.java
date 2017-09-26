@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.binktec.sprint.interactor.presenter.ManageAccountPresenterListener;
 import com.binktec.sprint.ui.fragment.ForgotPasswordFragment;
+import com.binktec.sprint.utility.SessionManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
@@ -49,11 +50,17 @@ public class ManageAccountPresenter {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                manageAccountPresenterListener.showToast("Email has been sent to your mail");
+                                manageAccountPresenterListener.emailSentSuccessful();
                             } else {
-                                manageAccountPresenterListener.showToast("Some Error Occurred in sending the mail");
+                                manageAccountPresenterListener.emailSentUnsuccessful();
                             }
                         }
                 });
+    }
+
+    public void signOut() {
+        firebaseAuth.signOut();
+        SessionManager.clearAllSession();
+        manageAccountPresenterListener.openAuthActivity();
     }
 }

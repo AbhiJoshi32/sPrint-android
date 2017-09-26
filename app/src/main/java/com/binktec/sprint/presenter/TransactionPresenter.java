@@ -41,7 +41,7 @@ public class TransactionPresenter implements TransactionModalListener {
     public TransactionPresenter(final TransactionPresenterListener transactionPresenterListener) {
         this.transactionPresenterListener = transactionPresenterListener;
         firebaseAuth = FirebaseAuth.getInstance();
-        handler = new Handler(Looper.getMainLooper()){
+        handler = new Handler(Looper.myLooper()){
             @Override
             public void handleMessage(Message msg) {
                 switch(msg.what){

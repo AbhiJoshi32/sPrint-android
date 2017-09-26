@@ -104,6 +104,9 @@ public class AuthActivity extends AppCompatActivity implements
     @Override
     public void onStop() {
         super.onStop();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     private void loadAuthFragment() {

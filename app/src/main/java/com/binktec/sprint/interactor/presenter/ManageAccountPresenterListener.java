@@ -6,4 +6,8 @@ public interface ManageAccountPresenterListener {
     public void openAuthActivity();
 
     void showToast(String s);
+
+    void emailSentSuccessful();
+
+    void emailSentUnsuccessful();
 }
