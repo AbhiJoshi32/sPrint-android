@@ -206,7 +206,9 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
 
     public void onStopCalled() {
-        printApi.removeListeners();
+        if (printApi != null) {
+            printApi.removeListeners();
+        }
     }
 
     public void getPrintJobList() {
