@@ -12,7 +12,7 @@
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
@@ -31,13 +31,14 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/shopName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="Shop Name"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -62,6 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:background="@android:drawable/screen_background_light_transparent"
                 app:layout_constraintLeft_toRightOf="@+id/mainFile"
@@ -72,9 +74,6 @@
                 android:id="@+id/hideFiles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
                 android:background="@android:drawable/screen_background_light_transparent"
                 android:visibility="gone"
                 app:layout_constraintLeft_toRightOf="@+id/mainFile"
@@ -86,18 +85,17 @@
                 android:id="@+id/fileListText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
                 android:maxWidth="150dp"
                 android:text="FileList"
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mainFile" />
+                app:layout_constraintTop_toBottomOf="@+id/mainFile" />
 
             <TextView
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
                 android:text="Location"
@@ -151,8 +149,7 @@
                 android:text="Uploading..."
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/timeText"
-                app:layout_constraintVertical_bias="0.5" />
+                app:layout_constraintTop_toBottomOf="@+id/timeText" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

@@ -204,8 +204,18 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
     }
 
     @Override
+    public void showToast(String s) {
+
+    }
+
+    @Override
     public void manageSignOut() {
         openAuthActivity();
+    }
+
+    @Override
+    public void changePassBtnClicked() {
+
     }
 
     @Override
