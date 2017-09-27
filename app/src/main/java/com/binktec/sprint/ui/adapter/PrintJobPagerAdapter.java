@@ -10,7 +10,7 @@ import com.binktec.sprint.ui.fragment.HistoryFragment;
 import com.binktec.sprint.ui.fragment.ProgressFragment;
 
 public class PrintJobPagerAdapter extends FragmentStatePagerAdapter {
-    private SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
+    private SparseArray<Fragment> registeredFragments = new SparseArray<>();
     private static final int tabCount = 2;
     public PrintJobPagerAdapter(FragmentManager fm) {
         super(fm);

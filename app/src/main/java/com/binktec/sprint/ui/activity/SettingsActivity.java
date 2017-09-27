@@ -10,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -76,7 +75,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingFragme
                 Intent intent;
                 switch (menuItem.getItemId()) {
                     case R.id.nav_printing_job:
-                        Log.d(TAG, "Pritning job");
                         drawerLayout.closeDrawers();
                         intent = new Intent(SettingsActivity.this, PrintJobActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -88,7 +86,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingFragme
                         intent = new Intent(SettingsActivity.this, TransactionActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "start printing");
                         break;
                     case R.id.nav_available_shops:
                         intent = new Intent(SettingsActivity.this, AvailableShopActivity.class);
@@ -101,28 +98,24 @@ public class SettingsActivity extends AppCompatActivity implements SettingFragme
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
                         drawerLayout.closeDrawers();
-                        Log.d(TAG, "manage");
                         break;
                     case R.id.nav_settings:
                         drawerLayout.closeDrawers();
                         intent = new Intent(SettingsActivity.this, SettingsActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "Settings");
                         break;
                     case R.id.nav_about_us:
                         drawerLayout.closeDrawers();
                         intent = new Intent(SettingsActivity.this, AboutUs.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "About Us");
                         return true;
                     case R.id.nav_privacy_policy:
                         drawerLayout.closeDrawers();
                         intent = new Intent(SettingsActivity.this, PrivacyPolicyActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "privacy policy");
                         return true;
                 }
                 return true;

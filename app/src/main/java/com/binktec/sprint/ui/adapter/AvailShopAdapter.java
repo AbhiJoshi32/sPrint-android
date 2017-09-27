@@ -14,21 +14,20 @@ import java.util.List;
 
 public class AvailShopAdapter extends RecyclerView.Adapter<AvailShopAdapter.AvailShopViewHolder> {
     private List<Shop> shops;
-    private static String TAG = "Adapter shop";
 
     public interface AvailShopAdapterListener {
         void detailShop(View v, int position);
     }
 
 
-    public AvailShopAdapterListener shopClickListener;
+    private AvailShopAdapterListener shopClickListener;
 
     public AvailShopAdapter(List<Shop> retrievedShops, AvailShopAdapterListener listener) {
         this.shops = retrievedShops;
         this.shopClickListener = listener;
     }
 
-    public class AvailShopViewHolder extends RecyclerView.ViewHolder {
+    class AvailShopViewHolder extends RecyclerView.ViewHolder {
 //        @BindView(R.id.shopNameText)
         TextView shopNameText;
 //        @BindView(R.id.locationTextn)
@@ -40,7 +39,7 @@ public class AvailShopAdapter extends RecyclerView.Adapter<AvailShopAdapter.Avai
 //        @BindView(R.id.bindingTypeText)
         TextView bindingTypeText;
 
-        public AvailShopViewHolder(View itemView) {
+        AvailShopViewHolder(View itemView) {
             super(itemView);
             shopNameText = itemView.findViewById(R.id.shopNameText);
             locationText = itemView.findViewById(R.id.location);

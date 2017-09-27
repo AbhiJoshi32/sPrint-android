@@ -2,12 +2,10 @@ package com.binktec.sprint.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,10 +26,8 @@ public class ProgressFragment extends Fragment {
     @BindView(R.id.progress_recycler_view)
     RecyclerView progressRecyclerView;
     Unbinder unbinder;
-    private Handler progressFragHandler;
 
     private PrintJobFragmentListener printJobFragmentListener;
-    private static final String TAG = "Progress Frag";
 
     private PrintJobListAdapter printJobListAdapter;
     private List<PrintJobDetail> printJobDetails = new ArrayList<>();
@@ -48,7 +44,6 @@ public class ProgressFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_progress, container, false);
         unbinder = ButterKnife.bind(this, view);
-        progressFragHandler = new Handler();
         printJobListAdapter = new PrintJobListAdapter(printJobDetails, new PrintJobListAdapter.PrintJobListListener() {
             @Override
             public void showPrintDetail(View v, int position) {
@@ -92,23 +87,13 @@ public class ProgressFragment extends Fragment {
     }
 
     public void insertProgressRecyclerView(final PrintJobDetail transactionDetail, final int i) {
-        Log.d(TAG,"Item inserted");
-        Log.d(TAG,"trnsacciton detail is "+transactionDetail+" index is "+i);
-        Log.d(TAG,"printjobDetail is " + printJobDetails + "/n size is" + printJobDetails.size());
-//        progressRecyclerView.scrollToPosition(0);
         printJobDetails.add(i,transactionDetail);
         printJobListAdapter.notifyItemInserted(i);
     }
 
     public void changeProgressRecyclerView(PrintJobDetail changedTransaction, int changedIndex) {
-        Log.d(TAG,"item changed");
-        try {
-            Log.d(TAG,"printjb changed " + printJobDetails);
-            printJobDetails.set(changedIndex, changedTransaction);
-            printJobListAdapter.notifyItemChanged(changedIndex);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        printJobDetails.set(changedIndex, changedTransaction);
+        printJobListAdapter.notifyItemChanged(changedIndex);
     }
 
     public void removeProgressRecyclerView(int removeIndex) {
@@ -118,8 +103,6 @@ public class ProgressFragment extends Fragment {
 
     public void initProgressRecyclerView(List<PrintJobDetail> progressPrintJobDetails) {
         printJobDetails.clear();
-        Log.d(TAG,"Init called" + progressPrintJobDetails);
-//        progressRecyclerView.scrollToPosition(0);
         printJobDetails.addAll(progressPrintJobDetails);
         printJobListAdapter.notifyDataSetChanged();
     }

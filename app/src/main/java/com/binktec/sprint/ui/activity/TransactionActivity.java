@@ -14,7 +14,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,8 +45,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class TransactionActivity extends AppCompatActivity implements TransactionPresenterListener, TransactionFragmentListener {
-
-    private static final String TAG = "Print Process";
     @BindView(R.id.progressBar2)
     ProgressBar toolProgressBar;
 
@@ -90,6 +87,10 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         txtName = navHeader.findViewById(R.id.name);
         imgNavHeaderBg = navHeader.findViewById(R.id.img_header_bg);
         imgProfile = navHeader.findViewById(R.id.img_profile);
+        setToolbarTitle();
+        selectNavMenu();
+        setUpNavigationView();
+        setUpViewPager();
         transactionPresenter.appStart();
     }
 
@@ -102,10 +103,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         stepIndicator.setupWithViewPager(viewPager);
         stepIndicator.setClickable(false);
         loadNavHeader(displayName, photoUrl);
-        setToolbarTitle();
-        selectNavMenu();
-        setUpNavigationView();
-        setUpViewPager();
     }
 
     @Override
@@ -125,7 +122,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         PrintDetailFragment printDetailFrag = (PrintDetailFragment)
                 (getSupportFragmentManager().
                         findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + 1));
-        Log.d(TAG_CURR, "error is" + s);
         printDetailFrag.showPagesTextError();
         viewPager.setCurrentItem(1, true);
     }
@@ -139,26 +135,17 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
 
     @Override
     public void updatePrintDetails(int size) {
-
-        try {
-            viewPager.setCurrentItem(1, true);
-            PrintDetailFragment printDetailFrag = (PrintDetailFragment)
-                    (getSupportFragmentManager().
-                            findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + 1));
-            Log.d(TAG, "DOne chosing fule" + printDetailFrag);
+        viewPager.setCurrentItem(1, true);
+        PrintDetailFragment printDetailFrag = (PrintDetailFragment)
+                (getSupportFragmentManager().
+                        findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + 1));
+        if (printDetailFrag != null)
             printDetailFrag.updatePrintDetailFragment(size);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void proceedToShopSelection() {
-        try {
-            viewPager.setCurrentItem(2, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        viewPager.setCurrentItem(2, true);
     }
 
     @Override
@@ -188,13 +175,9 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
 
     @Override
     public void enableDone() {
-        try {
-            donePrintStatus = true;
-            toolProgressBar.setVisibility(View.GONE);
-            invalidateOptionsMenu();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        donePrintStatus = true;
+        toolProgressBar.setVisibility(View.GONE);
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -227,7 +210,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imgNavHeaderBg);
         if (photoUrl != null) {
-            Log.d(TAG, photoUrl);
             Glide.with(this).load(photoUrl)
                     .crossFade()
                     .thumbnail(0.5f)
@@ -252,7 +234,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
                 Intent intent;
                 switch (menuItem.getItemId()) {
                     case R.id.nav_printing_job:
-                        Log.d(TAG, "Pritning job");
                         drawer.closeDrawers();
                         intent = new Intent(TransactionActivity.this, PrintJobActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -260,7 +241,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
                         break;
                     case R.id.nav_start_print:
                         drawer.closeDrawers();
-                        Log.d(TAG, "start printing");
                         break;
                     case R.id.nav_available_shops:
                         drawer.closeDrawers();
@@ -273,11 +253,9 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
                         intent = new Intent(TransactionActivity.this, ManageAccountActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "manage");
                         break;
                     case R.id.nav_settings:
                         drawer.closeDrawers();
-                        Log.d(TAG, "Settings");
                         intent = new Intent(TransactionActivity.this, SettingsActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
@@ -288,14 +266,12 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
                         drawer.closeDrawers();
-                        Log.d(TAG, "About Us");
                         return true;
                     case R.id.nav_privacy_policy:
                         drawer.closeDrawers();
                         intent = new Intent(TransactionActivity.this, PrivacyPolicyActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "privacy policy");
                         return true;
                 }
                 return true;
@@ -329,8 +305,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
             }
 
             public void onPageSelected(int position) {
-
-                Log.d(TAG, "Selected Page position is" + position);
                 switch (position) {
                     case 0:
                         TAG_CURR = TAG_FILE;
@@ -350,21 +324,18 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
 
     @Override
     public void onStart() {
-        Log.d(TAG,"om stop called");
         transactionPresenter.onStartCalled();
         super.onStart();
     }
 
     @Override
     public void onStop() {
-        Log.d(TAG,"om stop called");
         transactionPresenter.onStopCalled();
         super.onStop();
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG,"om destroy called");
         transactionPresenter.onDestroyCalled();
         transactionPresenter = null;
         super.onDestroy();
@@ -421,7 +392,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
             }
             if (id == R.id.action_upload_done) {
                 transactionPresenter.doneChooseFile();
-                Log.d(TAG, "Upload Done");
             }
         } else if (TAG_CURR.equals(TAG_PRINT_DETAIL)) {
             if (id == R.id.action_print_option_done) {
@@ -434,7 +404,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     private void donePrintDetail() {
         if (TAG_CURR.equals(TAG_PRINT_DETAIL)) {
             try {
-                Log.d(TAG, "Done Print Detail");
                 PrintDetailFragment printOptFrag = (PrintDetailFragment)
                         (getSupportFragmentManager().
                                 findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + viewPager.getCurrentItem()));
@@ -471,7 +440,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
                     | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             getContentResolver().takePersistableUriPermission(selectedUri, takeFlags);
 
-            Log.d(TAG_CURR, selectedUri.toString());
             invalidateOptionsMenu();
             transactionPresenter.addFileDetailList(selectedUri, this);
         } else {
@@ -486,7 +454,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
 
     @Override
     public void shopCardClicked(final PrintTransaction printTransaction) {
-        Log.d(TAG_CURR, "cardClicked");
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

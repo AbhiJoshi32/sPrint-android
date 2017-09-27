@@ -22,7 +22,6 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 public class RegisterFragment extends Fragment {
-
     @BindView(R.id.registerBtn)
     Button registerBtn;
     @BindView(R.id.register_input_password)

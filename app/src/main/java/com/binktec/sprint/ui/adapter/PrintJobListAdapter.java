@@ -17,28 +17,23 @@ import java.util.List;
 public class PrintJobListAdapter extends RecyclerView.Adapter<PrintJobListAdapter.PrintJobViewHolder> {
 
     private List<PrintJobDetail> userTransactions;
-    private static String TAG = "Adapter shop";
 
     public interface PrintJobListListener {
         void showPrintDetail(View v, int position);
         void cancelPrintDetail(View v,int position);
     }
 
-    public PrintJobListAdapter.PrintJobListListener printJobListListener;
+    private PrintJobListAdapter.PrintJobListListener printJobListListener;
 
     public PrintJobListAdapter(List<PrintJobDetail> retrievedTransactions, PrintJobListAdapter.PrintJobListListener listener) {
         this.userTransactions = retrievedTransactions;
         this.printJobListListener = listener;
     }
 
-    public class PrintJobViewHolder extends RecyclerView.ViewHolder {
-        //        @BindView(R.id.shopNameText)
+    class PrintJobViewHolder extends RecyclerView.ViewHolder {
         TextView file1;
-        //        @BindView(R.id.locationText)
         TextView location;
         TextView fileListText;
-        TextView shopName;
-        //        @BindView(R.id.totalShopCost)
         TextView dateText;
         TextView timeText;
         TextView statusText;
@@ -47,7 +42,7 @@ public class PrintJobListAdapter extends RecyclerView.Adapter<PrintJobListAdapte
         ImageButton showFiles;
         ImageButton hideFiles;
 
-        public PrintJobViewHolder(View itemView) {
+        PrintJobViewHolder(View itemView) {
             super(itemView);
 //            ButterKnife.bind(itemView,itemView);
             file1 = itemView.findViewById(R.id.mainFile);

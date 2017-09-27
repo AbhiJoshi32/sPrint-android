@@ -4,7 +4,6 @@ package com.binktec.sprint.ui.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +22,6 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 public class LoginFragment extends Fragment {
-
-    private static final String TAG = "Login Fragment";
-
     @BindView(R.id.login_input_password)
     EditText loginInputPassword;
     @BindView(R.id.login_input_email)
@@ -107,7 +103,6 @@ public class LoginFragment extends Fragment {
     }
 
     public void hideLoginFragProgressBar() {
-        Log.d(TAG, "Hiding Progress Bar");
         loginProgessbar.setVisibility(View.GONE);
         registerText.setEnabled(true);
         loginInputEmail.setEnabled(true);
@@ -117,7 +112,6 @@ public class LoginFragment extends Fragment {
     }
 
     public void showLoginFragProgressBar() {
-        Log.d(TAG, "Showing progress bar");
         registerText.setEnabled(false);
         loginbutton.setEnabled(false);
         googleButton.setEnabled(false);

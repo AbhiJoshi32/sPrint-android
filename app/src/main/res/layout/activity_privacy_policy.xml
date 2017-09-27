@@ -3,7 +3,6 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true"
@@ -31,7 +30,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_width="wrap_content"
-            android:text="POLICY SUMMARY"
+            android:text="@string/policy_summary"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintHorizontal_bias="0.502"
@@ -42,12 +41,10 @@
             android:id="@+id/PP2"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_width="0dp"
-            android:text="Personal Data collected for the following purposes and using the following services:"
+            android:text="@string/pp2"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/PP1" />
@@ -57,30 +54,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="
-1.	Infrastructure monitoring\n
-•	Firebase Crash Reporting\n
-Personal Data: various types of Data as specified in the privacy policy of the service\n
-\n
-2.	Managing contacts and sending messages\n
-•	Firebase Notifications\n
-Personal Data: various types of Data as specified in the privacy policy of the service\n
-\n
-•	Firebase Cloud Messaging\n
-Personal Data: various types of Data as specified in the privacy policy of the service\n
-\n
-3.	Device permissions for Personal Data access\n
-•	Device permissions for Personal Data access\n
-Personal Data: Storage permission\n
-\n
-4.	Registration and authentication\n
-•	Firebase Authentication\n
-Personal Data: email address, first name, last name, profile picture and username\n
-"
+            android:text="@string/pp3"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/PP2" />
@@ -90,46 +66,9 @@ Personal Data: email address, first name, last name, profile picture and usernam
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="Detailed information on the processing of Personal Data\n
-Personal Data is collected for the following purposes and using the following services:\n\n
-•	Device permissions for Personal Data access\n
-This Application requests certain permissions from Users that allow it to access the User's device Data as described below.\n
-Device permissions for Personal Data access (This Application)\n
-This Application requests certain permissions from Users that allow it to access the User's device Data as summarized here and described within this document.
-Personal Data collected: Storage permission.\n\n
-   •	Managing contacts and sending messages\n
-This type of service makes it possible to manage a database of email contacts, phone contacts or any other contact information to communicate with the User.\n
-These services may also collect data concerning the date and time when the message was viewed by the User, as well as when the User interacted with it, such as by clicking on links included in the message.\n
-Firebase Cloud Messaging (Google Inc.)\n
-Firebase Cloud Messaging is a message sending service provided by Google, Inc. Firebase Cloud Messaging allows the Owner to send messages and notifications to Users across platforms such as Android, iOS, and the web. Messages can be sent to single devices, groups of devices, or specific topics or User segments.\n
-Personal Data collected: various types of Data as specified in the privacy policy of the service.\n
-Place of processing: India – Privacy Policy\n\n
-•	Registration and authentication\n
-By registering or authenticating, Users allow this Application to identify them and give them access to dedicated services.\n
-Depending on what is described below, third parties may provide registration and authentication services. In this case, this Application will be able to access some Data, stored by these third party services, for registration or identification purposes.\n
-Firebase Authentication (Google Inc.)\n
-Firebase Authentication is a registration and authentication service provided by Google Inc. To simplify the registration and authentication process, Firebase Authentication can make use of third party identity providers and save the information on its platform.\n
-Personal Data collected: email address, first name, last name, profile picture and username.\n
-Place of processing: India – Privacy Policy\n\n
-•	Infrastructure monitoring\n
-This type of service allows this Application to monitor the use and behaviour of its components so its performance, operation, maintenance and troubleshooting can be improved.\n
-Which Personal Data are processed depends on the characteristics and mode of implementation of these services, whose function is to filter the activities of this Application.\n
-Firebase Crash Reporting (Google Inc.)\n
-Firebase Crash Reporting is a monitoring service provided by Google, Inc.\n
-Personal Data collected: various types of Data as specified in the privacy policy of the service.\n
-Place of processing: India – Privacy Policy\n\n
-•	Managing contacts and sending messages\n
-This type of service makes it possible to manage a database of email contacts, phone contacts or any other contact information to communicate with the User.\n
-These services may also collect data concerning the date and time when the message was viewed by the User, as well as when the User interacted with it, such as by clicking on links included in the message.\n
-Firebase Notifications (Google Inc.)\n
-Firebase Notifications is a message sending service provided by Google Inc. Firebase Notifications can be integrated with Firebase Analytics to target analytics-based audiences and track opening and conversion events.\n
-Personal Data collected: various types of Data as specified in the privacy policy of the service.\n
-Place of processing: India – Privacy Policy\n
-"
+            android:text="@string/pp4"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/PP3" />

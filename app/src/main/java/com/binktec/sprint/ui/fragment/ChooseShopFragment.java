@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +25,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class ChooseShopFragment extends Fragment {
-
-    private static final String TAG = "Chose shop fragment" ;
     @BindView(R.id.shop_recycler_view)
     RecyclerView shopRecyclerView;
     @BindView(R.id.shopProgessBar)
@@ -73,10 +70,7 @@ public class ChooseShopFragment extends Fragment {
         shopAdapter = new ShopAdapter(printTransactions, new ShopAdapter.ShopAdapterListener() {
             @Override
             public void confirmShop(View v, int position) {
-                Log.d(TAG,"the sizr of print transaction" + printTransactions.size());
-                Log.d(TAG,"position is" + position);
                 try {
-                    Log.d(TAG,"card is" + printTransactions.get(position));
                     transactionFragmentListener.shopCardClicked(printTransactions.get(position));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -97,14 +91,11 @@ public class ChooseShopFragment extends Fragment {
     }
 
     public void updateShopRecyclerView(List<PrintTransaction> apiPrintTransactions) {
-        try {
+        if (apiPrintTransactions != null && shopAdapter != null) {
             hideShopProgressBar();
             printTransactions.clear();
             printTransactions.addAll(apiPrintTransactions);
-            Log.d(TAG,"the list of printttransactions" + printTransactions);
             shopAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

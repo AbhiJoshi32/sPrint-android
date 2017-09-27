@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">sPrint</string>
     <string name="image_logo_des">Logo</string>
     <string name="login_btn_txt">Login</string>
@@ -29,7 +29,7 @@
     <string name="resendButton">Resend</string>
     <string name="resendText">Didn\'t receive the mail yet?</string>
     <string name="hello_blank_fragment">Hello</string>
-    <string name="requestIdToken">566404411615-1jbgkpp3rlb4bn3prldhtb0nfi3sf9fk.apps.googleusercontent.com</string>
+    <string name="requestIdToken" tools:ignore="TypographyDashes">566404411615-1jbgkpp3rlb4bn3prldhtb0nfi3sf9fk.apps.googleusercontent.com</string>
     <string name="logout">Login</string>
     <string name="background_url">https://api.androidhive.info/images/nav-menu-header-bg.jpg</string>
     <string name="print_your_files">Print Your Files</string>
@@ -48,6 +48,39 @@
 \n\n5.	Rejected – The shop has rejected your print request
 \n\n6.	Cancelled – You have cancelled your print job
 \n\nNOTE: Print jobs cannot be cancelled after your documents have been printed</string>
+    <string name="about_us_text">As Arabella Weir has said, \"I cry at everything, even the length of the queue at Sainsbury\'s\". Only in our case, it’s not Sainsbury’s. It’s the printing shops in our institute. And to console ourselves, we, an ambitious team of four engineers in the making have come up with an innovative solution and have decided to share it with you! *insert more buttered up stuff here*. Now, seriously. Most probably, you or someone you know have stood in a queue for a long time to maybe get just a sheet of paper printed. And man, are those minutes irritating. So, we have come up with an app which would solve this problem. Also, sPrint uses Google’s high-end servers so your data is secure. That’s all folks. </string>
+    <string name="policy_summary">POLICY SUMMARY</string>
+    <string name="pp2">Personal Data collected for the following purposes and using the following services:</string>
+    <string name="pp3">1. Infrastructure monitoring  • Firebase Crash Reporting  Personal Data: various types of Data as specified in the privacy policy of the service    2. Managing contacts and sending messages  • Firebase Notifications  Personal Data: various types of Data as specified in the privacy policy of the service    • Firebase Cloud Messaging  Personal Data: various types of Data as specified in the privacy policy of the service    3. Device permissions for Personal Data access  • Device permissions for Personal Data access  Personal Data: Storage permission    4. Registration and authentication  • Firebase Authentication  Personal Data: email address, first name, last name, profile picture and username</string>
+    <string name="pp4">Detailed information on the processing of Personal Data  Personal Data is collected for the following purposes and using the following services:   • Device permissions for Personal Data access  This Application requests certain permissions from Users that allow it to access the User\'s device Data as described below.  Device permissions for Personal Data access (This Application)  This Application requests certain permissions from Users that allow it to access the User\'s device Data as summarized here and described within this document. Personal Data collected: Storage permission.   • Managing contacts and sending messages  This type of service makes it possible to manage a database of email contacts, phone contacts or any other contact information to communicate with the User.  These services may also collect data concerning the date and time when the message was viewed by the User, as well as when the User interacted with it, such as by clicking on links included in the message.  Firebase Cloud Messaging (Google Inc.)  Firebase Cloud Messaging is a message sending service provided by Google, Inc. Firebase Cloud Messaging allows the Owner to send messages and notifications to Users across platforms such as Android, iOS, and the web. Messages can be sent to single devices, groups of devices, or specific topics or User segments.  Personal Data collected: various types of Data as specified in the privacy policy of the service.  Place of processing: India – Privacy Policy   • Registration and authentication  By registering or authenticating, Users allow this Application to identify them and give them access to dedicated services.  Depending on what is described below, third parties may provide registration and authentication services. In this case, this Application will be able to access some Data, stored by these third party services, for registration or identification purposes.  Firebase Authentication (Google Inc.)  Firebase Authentication is a registration and authentication service provided by Google Inc. To simplify the registration and authentication process, Firebase Authentication can make use of third party identity providers and save the information on its platform.  Personal Data collected: email address, first name, last name, profile picture and username.  Place of processing: India – Privacy Policy   • Infrastructure monitoring  This type of service allows this Application to monitor the use and behaviour of its components so its performance, operation, maintenance and troubleshooting can be improved.  Which Personal Data are processed depends on the characteristics and mode of implementation of these services, whose function is to filter the activities of this Application.  Firebase Crash Reporting (Google Inc.)  Firebase Crash Reporting is a monitoring service provided by Google, Inc.  Personal Data collected: various types of Data as specified in the privacy policy of the service.  Place of processing: India – Privacy Policy   • Managing contacts and sending messages  This type of service makes it possible to manage a database of email contacts, phone contacts or any other contact information to communicate with the User.  These services may also collect data concerning the date and time when the message was viewed by the User, as well as when the User interacted with it, such as by clicking on links included in the message.  Firebase Notifications (Google Inc.)  Firebase Notifications is a message sending service provided by Google Inc. Firebase Notifications can be integrated with Firebase Analytics to target analytics-based audiences and track opening and conversion events.  Personal Data collected: various types of Data as specified in the privacy policy of the service.  Place of processing: India – Privacy Policy</string>
+    <string name="shop_name">Shop Name:</string>
+    <string name="location">Location:</string>
+    <string name="paper_sizes_available">Paper Sizes Available:</string>
+    <string name="colour">Colour:</string>
+    <string name="binding">Binding:</string>
+    <string name="printing_cost">Printing Cost:</string>
+    <string name="binding_cost">Binding Cost:</string>
+    <string name="total_cost">Total Cost:</string>
+    <string name="chev_right">chev_right</string>
+    <string name="queue">Queue:</string>
+    <string name="pin">PIN</string>
+    <string name="cancel">Cancel</string>
+    <string name="enter_email_id">Enter Email ID</string>
+    <string name="password_reset_msg">An email with a password reset link has been sent. Go to the link and reset your password.</string>
+    <string name="password_reset_enter_email">Enter your email and we will send you a link to reset your password</string>
+    <string name="send">Send</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="change_password">Change Password</string>
+    <string name="pages">Pages</string>
+    <string name="paper_type">Paper Type</string>
+    <string name="color">Color</string>
+    <string name="orientation">Orientation</string>
+    <string name="copies_default">1</string>
+    <string name="copies">Copies</string>
+    <string name="page_text_hint">Range (1, 3–5)</string>
+    <string name="sides_per_sheet">Sides per sheet</string>
+    <string name="remove_button">Remove button</string>
+    <string name="ok">OK</string>
 
     <string-array name="nav_item_activity_titles">
         <item>Printing Jobs</item>

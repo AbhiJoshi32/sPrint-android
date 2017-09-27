@@ -1,7 +1,5 @@
 package com.binktec.sprint.presenter;
 
-import android.util.Log;
-
 import com.binktec.sprint.interactor.modal.SyncListener;
 import com.binktec.sprint.interactor.modal.UserModalListener;
 import com.binktec.sprint.interactor.presenter.AuthPresenterListener;
@@ -33,7 +31,6 @@ public class AuthPresenter implements UserModalListener, SyncListener {
 
     private static final Pattern p = Pattern.compile(Constants.vitRegex);
     private Matcher m;
-    private static final String TAG = "Auth Presenter";
 
     public AuthPresenter(AuthPresenterListener authPresenterListener) {
         this.authPresenterListener = authPresenterListener;
@@ -123,7 +120,6 @@ public class AuthPresenter implements UserModalListener, SyncListener {
 
     @Override
     public void setProgressSession(List<PrintJobDetail> printJobDetailList, List<String> transactionIds) {
-        Log.d(TAG,"Progress sync" + printJobDetailList);
         List<PrintJobDetail> emptyJobDetails = new ArrayList<>();
         List<String> emptyId = new ArrayList<>();
         if (printJobDetailList != null && transactionIds != null) {
@@ -142,7 +138,6 @@ public class AuthPresenter implements UserModalListener, SyncListener {
 
     @Override
     public void setHistorySession(List<PrintJobDetail> printJobDetailList, List<String> historyIds) {
-        Log.d(TAG,"History sync" + printJobDetailList + "history id is" + historyIds);
         if (printJobDetailList != null && historyIds != null) {
             SessionManager.saveHistoryPrintJob(printJobDetailList);
             SessionManager.saveHistoryIds(historyIds);

@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +25,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class AvailableShopFragment extends Fragment {
-
-
-    private static final String TAG = "Avail shop Fragment";
     @BindView(R.id.avail_shop_recycler_view)
     RecyclerView availShopRecyclerView;
     @BindView(R.id.avail_shop_progessBar)
@@ -92,7 +88,6 @@ public class AvailableShopFragment extends Fragment {
             hideShopProgressBar();
             availShops.clear();
             availShops.addAll(apiShops);
-            Log.d(TAG,"the list of printttransactions" + apiShops);
             availShopAdapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();

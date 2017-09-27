@@ -4,7 +4,6 @@ package com.binktec.sprint.ui.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -12,8 +11,6 @@ import android.widget.ListView;
 import com.binktec.sprint.interactor.fragment.SettingFragmentListener;
 
 public class SettingFragment extends ListFragment {
-
-    private static final String TAG = "Setting Frament";
     SettingFragmentListener settingFragmentListener;
 
     public SettingFragment() {
@@ -22,7 +19,6 @@ public class SettingFragment extends ListFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(TAG,"omAttack called");
         if (context instanceof SettingFragmentListener) {
             settingFragmentListener = (SettingFragmentListener) context;
         } else {

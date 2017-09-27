@@ -20,7 +20,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -112,7 +111,6 @@ public class PrintJobActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG,"on Pause Called");
     }
 
     private void setUpTabLayout() {
@@ -168,7 +166,6 @@ public class PrintJobActivity extends AppCompatActivity
 
     @Override
     public void progressItemInserted(final PrintJobDetail transactionDetail, final int i) {
-        Log.d(TAG,"preogress inserted isfinishing" + isFinishing());
         if (isFinishing()) {
 
             Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
@@ -185,7 +182,6 @@ public class PrintJobActivity extends AppCompatActivity
 
     @Override
     public void progressItemChanged(PrintJobDetail changedTransaction, int changedIndex) {
-        Log.d(TAG,"preogress changed isfinishing" + isFinishing());
         if (!isFinishing()) {
             progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
             if (progressFragment != null) {
@@ -220,7 +216,6 @@ public class PrintJobActivity extends AppCompatActivity
     @Override
     public void initHistoryList(List<PrintJobDetail> historyPrintJobDetails) {
         historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
-        Log.d(TAG,"History Fragment" + historyFragment);
         if (historyFragment != null) {
             historyFragment.initHistoryRecyclerView(historyPrintJobDetails);
         }
@@ -236,7 +231,6 @@ public class PrintJobActivity extends AppCompatActivity
         } else {
             historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
             if (historyFragment != null) {
-                Log.d(TAG, "history item to be inserted");
                 historyFragment.addHistoryRecyclerView(historyDetail, i);
             }
             if (historyDetail.getStatus().equals("Printed")) {
@@ -311,7 +305,6 @@ public class PrintJobActivity extends AppCompatActivity
                 Intent intent;
                 switch (menuItem.getItemId()) {
                     case R.id.nav_printing_job:
-                        Log.d(TAG, "Pritning job");
                         drawer.closeDrawers();
                         break;
                     case R.id.nav_start_print:
@@ -322,14 +315,12 @@ public class PrintJobActivity extends AppCompatActivity
                         break;
                     case R.id.nav_available_shops:
                         drawer.closeDrawers();
-                        Log.d(TAG, "Available shop");
                         intent = new Intent(PrintJobActivity.this, AvailableShopActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
                         break;
                     case R.id.nav_manage_accounts:
                         drawer.closeDrawers();
-                        Log.d(TAG, "Manage account");
                         intent = new Intent(PrintJobActivity.this, ManageAccountActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
@@ -342,15 +333,12 @@ public class PrintJobActivity extends AppCompatActivity
                         break;
                     case R.id.nav_about_us:
                         drawer.closeDrawers();
-                        Log.d(TAG, "About Us");
                         intent = new Intent(PrintJobActivity.this, AboutUs.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
                         break;
                     case R.id.nav_privacy_policy:
                         drawer.closeDrawers();
-                        Log.d(TAG, "privacy policy");
-                        Log.d(TAG, "About Us");
                         intent = new Intent(PrintJobActivity.this, PrivacyPolicyActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
@@ -417,12 +405,10 @@ public class PrintJobActivity extends AppCompatActivity
     public void onDestroy() {
         super.onDestroy();
         printJobPresenter = null;
-        Log.d(TAG, "On destroy called");
     }
 
     @Override
     public void printCardClicked() {
-        Log.d(TAG, "Print Caed Clicked");
     }
 
     @Override
@@ -511,14 +497,10 @@ public class PrintJobActivity extends AppCompatActivity
     //This method will be called when the user will tap on allow or deny
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
         //Checking the request code of our request
         if (requestCode == STORAGE_PERMISSION_CODE) {
-
             //If permission is granted
-            Log.d(TAG, "Grant result is for read " + grantResults[0]);
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                 //Displaying a toast
                 Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
             } else {
@@ -526,9 +508,7 @@ public class PrintJobActivity extends AppCompatActivity
                 Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
             }
         } else if (requestCode == WRITE_STORAGE_PERMISSION_CODE) {
-            Log.d(TAG, "Grant result is for write " + grantResults[0]);
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                 //Displaying a toast
                 Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
             } else {
@@ -537,5 +517,4 @@ public class PrintJobActivity extends AppCompatActivity
             }
         }
     }
-
 }

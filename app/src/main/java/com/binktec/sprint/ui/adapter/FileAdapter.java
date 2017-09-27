@@ -16,7 +16,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.MyViewHolder>{
 
     private List<FileDetail> files;
 
-    public MyAdapterListener onClickListener;
+    private MyAdapterListener onClickListener;
 
     public interface MyAdapterListener {
 
@@ -47,11 +47,11 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.MyViewHolder>{
         return files.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView fileName;
         private ImageButton deleteBtn;
 
-        public MyViewHolder(View itemView) {
+        MyViewHolder(View itemView) {
             super(itemView);
             fileName = itemView.findViewById(R.id.shopNameText);
             deleteBtn = itemView.findViewById(R.id.deleteBtn);

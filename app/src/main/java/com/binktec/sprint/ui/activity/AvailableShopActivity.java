@@ -10,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -68,7 +67,6 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
 
     @Override
     public void getShops() {
-        Log.d(TAG,"retrieving shops");
         availableShopPresenter.retrieveShopList();
     }
 
@@ -107,7 +105,6 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
                 Intent intent;
                 switch (menuItem.getItemId()) {
                     case R.id.nav_printing_job:
-                        Log.d(TAG, "Pritning job");
                         drawer.closeDrawers();
                         intent = new Intent(AvailableShopActivity.this, PrintJobActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -119,7 +116,6 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
                         intent = new Intent(AvailableShopActivity.this, TransactionActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "start printing");
                         break;
                     case R.id.nav_available_shops:
                         drawer.closeDrawers();
@@ -129,14 +125,12 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
                         intent = new Intent(AvailableShopActivity.this, ManageAccountActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "manage");
                         break;
                     case R.id.nav_settings:
                         drawer.closeDrawers();
                         intent = new Intent(AvailableShopActivity.this, SettingsActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "Settings");
                         break;
                     case R.id.nav_about_us:
                         drawer.closeDrawers();
@@ -144,14 +138,12 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
                         drawer.closeDrawers();
-                        Log.d(TAG, "About Us");
                         return true;
                     case R.id.nav_privacy_policy:
                         drawer.closeDrawers();
                         intent = new Intent(AvailableShopActivity.this, PrivacyPolicyActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "privacy policy");
                         return true;
                 }
                 return true;
@@ -191,7 +183,6 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imgNavHeaderBg);
         if (photoUrl != null) {
-            Log.d(TAG, photoUrl);
             Glide.with(this).load(photoUrl)
                     .crossFade()
                     .thumbnail(0.5f)

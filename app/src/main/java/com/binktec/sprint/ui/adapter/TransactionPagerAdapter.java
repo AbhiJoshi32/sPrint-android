@@ -12,7 +12,7 @@ import com.binktec.sprint.ui.fragment.ChooseShopFragment;
 import com.binktec.sprint.ui.fragment.PrintDetailFragment;
 
 public class TransactionPagerAdapter extends FragmentPagerAdapter {
-    SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
+    private SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
     public TransactionPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -33,7 +33,6 @@ public class TransactionPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 6 total pages.
         return 3;
     }
 
@@ -48,10 +47,6 @@ public class TransactionPagerAdapter extends FragmentPagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         registeredFragments.remove(position);
         super.destroyItem(container, position, object);
-    }
-
-    public Fragment getRegisteredFragment(int position) {
-        return registeredFragments.get(position);
     }
 
     @Override

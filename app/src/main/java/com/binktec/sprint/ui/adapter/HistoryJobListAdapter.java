@@ -15,20 +15,19 @@ import java.util.List;
 public class HistoryJobListAdapter extends RecyclerView.Adapter<HistoryJobListAdapter.HistoryJobViewHolder> {
 
     private List<PrintJobDetail> userTransactions;
-    private static String TAG = "Adapter shop";
 
     public interface HistoryJobListListener {
         void showPrintDetail(View v, int position);
     }
 
-    public HistoryJobListAdapter.HistoryJobListListener printJobListListener;
+    private HistoryJobListAdapter.HistoryJobListListener printJobListListener;
 
     public HistoryJobListAdapter(List<PrintJobDetail> retrievedTransactions, HistoryJobListAdapter.HistoryJobListListener listener) {
         this.userTransactions = retrievedTransactions;
         this.printJobListListener = listener;
     }
 
-    public class HistoryJobViewHolder extends RecyclerView.ViewHolder {
+    class HistoryJobViewHolder extends RecyclerView.ViewHolder {
         //        @BindView(R.id.shopNameText)
         TextView file1;
         //        @BindView(R.id.locationText)
@@ -45,7 +44,7 @@ public class HistoryJobListAdapter extends RecyclerView.Adapter<HistoryJobListAd
         ImageButton hideFiles;
         TextView pinNumber;
 
-        public HistoryJobViewHolder(View itemView) {
+        HistoryJobViewHolder(View itemView) {
             super(itemView);
 //            ButterKnife.bind(itemView,itemView);
             file1 = itemView.findViewById(R.id.mainFile);
@@ -82,11 +81,12 @@ public class HistoryJobListAdapter extends RecyclerView.Adapter<HistoryJobListAd
         PrintJobDetail detail = userTransactions.get(position);
         if (detail != null) {
             String listOfFiles = "";
+            String pin = Integer.toString(detail.getPin());
             holder.dateText.setText(detail.getIssuedDate());
             holder.timeText.setText(detail.getIssuedTime());
             holder.shopName.setText(detail.getPrintTransaction().getShop().getShopName());
             holder.location.setText(detail.getPrintTransaction().getShop().getShopLocation());
-            holder.pinNumber.setText(Integer.toString(detail.getPin()));
+            holder.pinNumber.setText(pin);
             int size = detail.getPrintTransaction().getFileDetails().size();
             if (size>1) {
                 for (int i=1;i<size;i++) {
@@ -128,7 +128,6 @@ public class HistoryJobListAdapter extends RecyclerView.Adapter<HistoryJobListAd
 
     @Override
     public int getItemCount() {
-//        Log.d(TAG,"shop obj is"+shops.toString());
         return this.userTransactions.size();
     }
 }

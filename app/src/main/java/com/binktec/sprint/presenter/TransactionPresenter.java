@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import com.binktec.sprint.interactor.modal.TransactionModalListener;
 import com.binktec.sprint.interactor.presenter.TransactionPresenterListener;
@@ -28,7 +27,6 @@ import java.util.regex.Pattern;
 
 public class TransactionPresenter implements TransactionModalListener {
 
-    private static final String TAG = "Transaction Presenter";
     private static final int FILE_ERROR = 1;
     private static Handler handler;
 
@@ -87,14 +85,10 @@ public class TransactionPresenter implements TransactionModalListener {
     public void doneChooseFile() {
         try {
             if (chosenFiles == null) {
-                Log.d(TAG,"Null chosen File");
                 transactionPresenterListener.showFileError("empty");
             } else if (chosenFiles.isEmpty()) {
-                Log.d(TAG,"Empty chosed file");
                 transactionPresenterListener.showFileError("empty");
             } else {
-                Log.d(TAG,"Updating");
-                Log.d(TAG,"Size is " +chosenFiles.size());
                 transactionPresenterListener.updatePrintDetails(chosenFiles.size());
             }
         } catch (Exception e) {
@@ -115,17 +109,14 @@ public class TransactionPresenter implements TransactionModalListener {
             fileAdded.setUri(selectedUri.toString());
             fileAdded.setFilename(nameAndPath[0]);
             fileAdded.setPath(nameAndPath[1]);
-            Log.d(TAG,fileAdded.getPath());
             chosenFiles.add(fileAdded);
             transactionPresenterListener.disableDone();
             new Thread() {
                 public void run() {
-                    Log.d(TAG,"Thhread ran");
                     fileAdded.setNumberOfPages(Misc.getNumPages(fileAdded.getPath()));
                     chosenFiles.remove(chosenFiles.size()-1);
                     chosenFiles.add(fileAdded);
                     SessionManager.fileDetailSave(chosenFiles);
-                    Log.d(TAG,"number of pages updated +"+SessionManager.getFileDetail().get(0).getNumberOfPages());
                     Message msg = Message.obtain();
                     if (fileAdded.getNumberOfPages() < 1)
                         msg.what = FILE_ERROR;
@@ -134,8 +125,6 @@ public class TransactionPresenter implements TransactionModalListener {
                     handler.sendMessage(msg);
                 }
             }.start();
-            Log.d(TAG, "Added from non thread");
-            Log.d(TAG, "The size of the file list is " + chosenFiles.size());
             SessionManager.fileDetailSave(chosenFiles);
             transactionPresenterListener.updateChooseFileFragment(chosenFiles);
         } catch (Exception e) {
@@ -156,9 +145,6 @@ public class TransactionPresenter implements TransactionModalListener {
             chosenFiles = new ArrayList<>(SessionManager.getFileDetail());
             chosenFiles.remove(position);
             SessionManager.fileDetailSave(chosenFiles);
-            Log.d(TAG, Integer.toString(chosenFiles.size()));
-        } else {
-            Log.d(TAG,"Nothong to remove in list");
         }
         transactionPresenterListener.updateChooseFileFragment(chosenFiles);
     }
@@ -220,8 +206,6 @@ public class TransactionPresenter implements TransactionModalListener {
             List<FileDetail> fileDetail = SessionManager.getFileDetail();
             if (fileDetail != null && printDetail != null) {
                 for (Shop shop : apiShops) {
-                    Log.d(TAG,"shop binding"+shop.getAvailBinding().contains(printDetail.getBindingType()));
-                    Log.d(TAG,"shop Paper type"+shop.getShopAvailPaperType().contains(printDetail.getPrintPaperType()));
                     if (((printDetail.getPrintColor().equals("Color") && shop.getShopAvailColor().equals("yes"))
                             ||printDetail.getPrintColor().equals("Grayscale"))
                             && shop.getAvailBinding().contains(printDetail.getBindingType())
@@ -233,8 +217,6 @@ public class TransactionPresenter implements TransactionModalListener {
                         printTransaction.setPrintDetail(printDetail);
                         printTransaction.setPrintCost(Misc.getPrintCost(printDetail, shop));
                         printTransaction.setBindingCost(Misc.getBindCost(shop, printDetail));
-                        Log.d(TAG, "the detail from api" + printDetail + SessionManager.getFileDetail() + printTransactions);
-
                         printTransactions.add(printTransaction);
                     }
                 }
@@ -258,7 +240,6 @@ public class TransactionPresenter implements TransactionModalListener {
             printJobDetail.setIssuedDate(Misc.getDate());
             printJobDetail.setIssuedTime(Misc.getTime());
             SessionManager.saveCurrentPrintJob(printJobDetail);
-            Log.d(TAG, "uploading done");
             transactionPresenterListener.openPrintJobActivity();
         } catch (Exception e) {
             e.printStackTrace();

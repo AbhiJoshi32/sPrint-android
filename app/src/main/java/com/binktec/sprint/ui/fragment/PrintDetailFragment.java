@@ -3,7 +3,6 @@ package com.binktec.sprint.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.binktec.sprint.R;
-import com.binktec.sprint.interactor.fragment.TransactionFragmentListener;
 import com.binktec.sprint.modal.pojo.PrintDetail;
 
 import butterknife.BindView;
@@ -21,11 +19,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class PrintDetailFragment extends Fragment implements AdapterView.OnItemSelectedListener{
-
-    private static final String TAG = "Print Detail Fragmenr";
-    private TransactionFragmentListener transactionFragmentListener;
-
-
     @BindView(R.id.PaperTypeSpinner)
     Spinner PaperTypeSpinner;
     @BindView(R.id.ColourSpinner)
@@ -123,12 +116,10 @@ public class PrintDetailFragment extends Fragment implements AdapterView.OnItemS
     public void updatePrintDetailFragment(int size) {
         try {
             if (size == 1) {
-                Log.d(TAG, "Pages spinner disabled");
                 PagesSpinner.setEnabled(true);
                 PagesSpinner.setSelection(0);
             } else {
                 PagesSpinner.setEnabled(false);
-                Log.d(TAG, "Pages spinner disabled");
             }
         }catch (Exception e) {
             e.printStackTrace();

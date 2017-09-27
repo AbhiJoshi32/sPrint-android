@@ -1,7 +1,5 @@
 package com.binktec.sprint.presenter;
 
-import android.util.Log;
-
 import com.binktec.sprint.interactor.modal.TransactionModalListener;
 import com.binktec.sprint.interactor.presenter.AvailableShopPresenterListener;
 import com.binktec.sprint.modal.api.PrintApi;
@@ -14,7 +12,6 @@ import java.util.List;
 
 public class AvailableShopPresenter implements TransactionModalListener{
 
-    private static final String TAG = "'Availavle shop";
     private AvailableShopPresenterListener availShopPreseneterListener;
     private PrintApi printApi;
     private FirebaseAuth firebaseAuth;
@@ -42,7 +39,6 @@ public class AvailableShopPresenter implements TransactionModalListener{
     }
 
     public void retrieveShopList() {
-        Log.d(TAG,"retrieving data ");
         if (SessionManager.getShops() != null) {
             availShopPreseneterListener.updateShopList(SessionManager.getShops());
         }

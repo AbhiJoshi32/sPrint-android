@@ -62,7 +62,6 @@ public class AuthActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG_CURR,"create auth activity");
         setContentView(R.layout.activity_auth);
         authPresenter = new AuthPresenter(this);
         // [START initialize_auth]
@@ -111,8 +110,6 @@ public class AuthActivity extends AppCompatActivity implements
 
     private void loadAuthFragment() {
         Fragment loadFragment = getAuthFragment();
-        Log.d(TAG_CURR,"The fragment that is being loaded is");
-        Log.d(TAG_CURR,loadFragment.toString());
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
         fragmentTransaction.replace(R.id.authenticateFrame, loadFragment, TAG_CURR);
@@ -168,7 +165,6 @@ public class AuthActivity extends AppCompatActivity implements
 
     @Override
     public void googleSignInClicked() {
-        Log.d(TAG_CURR,"Google Sign In clicked");
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -179,18 +175,10 @@ public class AuthActivity extends AppCompatActivity implements
 
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            try {
-                Log.d(TAG_CURR, String.valueOf(result.getStatus().getStatusCode()));
-            } catch (Exception e){
-                e.printStackTrace();
-            }
             if (result.isSuccess()) {
-                Log.d(TAG_CURR,"Google Sign In was sucessful");
                 showProgressBar();
                 GoogleSignInAccount account = result.getSignInAccount();
                 authPresenter.verifyGoogleSignInEmail(account);
-            } else {
-                Log.d(TAG_CURR,"Google sign In returned");
             }
         }
     }
@@ -223,7 +211,6 @@ public class AuthActivity extends AppCompatActivity implements
 
     @Override
     public void forgotPassTxtClicked() {
-        Log.d(TAG_CURR,"Forgot Pass clicked");
         TAG_CURR = TAG_FORGOT_PASSWORD;
         loadAuthFragment();
     }
@@ -266,23 +253,13 @@ public class AuthActivity extends AppCompatActivity implements
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG_CURR, "createUserWithEmail:success");
                             authPresenter.registerUser();
                             sendEmailVerification();
-
                         } else {
-                            Log.w(TAG_CURR, "createUserWithEmail:failure", task.getException());
                             try {
                                 throw task.getException();
-                            } catch (FirebaseAuthException e){
-                                String err = e.getErrorCode();
-                                Log.d(TAG_CURR, err);
+                            } catch (Exception e){
                                 toastErr = e.getMessage();
-
-                            }catch (FirebaseNetworkException e){
-                                toastErr = e.getMessage();
-                            }catch(Exception e) {
-                                Log.e(TAG_CURR, e.getMessage());
                             }
                             showToastError(toastErr);
                             hideProgressBar();
@@ -298,7 +275,6 @@ public class AuthActivity extends AppCompatActivity implements
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Log.d(TAG_CURR, "createUserWithEmail:success");
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     if (user != null) {
                         if (user.isEmailVerified()) {
@@ -312,18 +288,10 @@ public class AuthActivity extends AppCompatActivity implements
                     }
                 } else {
                     hideProgressBar();
-                    Log.w(TAG_CURR, "createUserWithEmail:failure", task.getException());
                     try {
                         throw task.getException();
-                    } catch (FirebaseAuthException e){
-                        String err = e.getErrorCode();
-                        Log.d(TAG_CURR, err);
+                    } catch (Exception e){
                         toastErr = e.getMessage();
-
-                    }catch (FirebaseNetworkException e){
-                        toastErr = e.getMessage();
-                    }catch(Exception e) {
-                        Log.e(TAG_CURR, e.getMessage());
                     }
                     showToastError(toastErr);
                 }

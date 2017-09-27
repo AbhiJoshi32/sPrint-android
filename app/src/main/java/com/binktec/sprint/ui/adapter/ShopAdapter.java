@@ -13,21 +13,20 @@ import java.util.List;
 
 public class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ShopViewHolder> {
     private List<PrintTransaction> printTransactions;
-    private static String TAG = "Adapter shop";
 
     public interface ShopAdapterListener {
         void confirmShop(View v, int position);
     }
 
 
-    public ShopAdapter.ShopAdapterListener shopClickListener;
+    private ShopAdapter.ShopAdapterListener shopClickListener;
 
     public ShopAdapter(List<PrintTransaction> retrievedTransactions, ShopAdapter.ShopAdapterListener listener) {
         this.printTransactions = retrievedTransactions;
         this.shopClickListener = listener;
     }
 
-    public class ShopViewHolder extends RecyclerView.ViewHolder {
+    class ShopViewHolder extends RecyclerView.ViewHolder {
         //        @BindView(R.id.shopNameText)
         TextView shopNameText;
         //        @BindView(R.id.locationText)
@@ -41,7 +40,7 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ShopViewHolder
 
         TextView queueNumber;
 
-        public ShopViewHolder(View itemView) {
+        ShopViewHolder(View itemView) {
             super(itemView);
 //            ButterKnife.bind(itemView,itemView);
             shopNameText = itemView.findViewById(R.id.shopNameText);
@@ -73,13 +72,16 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ShopViewHolder
         float bindinCost = printTransaction.getBindingCost();
         float printCost = printTransaction.getPrintCost();
         float totalCost = bindinCost + printCost;
-        holder.printCost.setText("Printing Cost : " + printCost);
-        holder.bindingCost.setText("Binding Cost : " + bindinCost );
+        String printCostString = "Printing Cost : " + printCost;
+        String bindCostString = "Binding Cost : " + bindinCost;
+        String totalCostString = "Total : " + totalCost;
+        holder.printCost.setText(printCostString);
+        holder.bindingCost.setText(bindCostString);
         holder.locationText.setText(printTransaction.getShop().getShopLocation());
         holder.shopNameText.setText(printTransaction.getShop().getShopName());
         String queueNumber = Integer.toString(printTransaction.getShop().getShopQueue());
         holder.queueNumber.setText(queueNumber);
-        holder.totalShopCost.setText("Total : " + totalCost);
+        holder.totalShopCost.setText(totalCostString);
     }
 
     @Override

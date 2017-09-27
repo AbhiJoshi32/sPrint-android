@@ -2,7 +2,6 @@ package com.binktec.sprint.presenter;
 
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.binktec.sprint.interactor.modal.PrintJobModalListener;
 import com.binktec.sprint.interactor.presenter.PrintJobPresenterListener;
@@ -15,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PrintJobPresenter implements PrintJobModalListener {
-
-    private static final String TAG = "Print Job Presenter";
     private PrintJobPresenterListener printJobPresenterListener;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
@@ -128,7 +125,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
         transactionIds = SessionManager.getTransactionIds();
         progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
         if (!transactionIds.contains(key)) {
-            Log.d(TAG,"Item Added");
             transactionIds.add(topIndex,key);
             progressPrintJobDetails.add(topIndex,transactionDetail);
             SessionManager.saveApiPrintJob(progressPrintJobDetails);
@@ -139,7 +135,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
             if (!transactionDetail.getStatus().equals(progressPrintJobDetails.get(transactionIndex).getStatus())) {
                 printJobPresenterListener.progressItemChanged(transactionDetail,transactionIndex);
             }
-            Log.d(TAG,"item present" + key + transactionDetail.getStatus());
             progressPrintJobDetails.set(transactionIndex,transactionDetail);
             SessionManager.saveApiPrintJob(progressPrintJobDetails);
         }
@@ -161,7 +156,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
     public void apiPrintTransactionRemoved(PrintJobDetail deletedTransaction, String key) {
         transactionIds = SessionManager.getTransactionIds();
         progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
-        Log.d(TAG,"transaction id on item removed" + transactionIds);
         int removedIndex = transactionIds.indexOf(key);
         if (removedIndex > -1) {
             progressPrintJobDetails.remove(removedIndex);
@@ -203,8 +197,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
                         SessionManager.saveTrasactionIds(transactionIds);
                     }
                 }
-                Log.d(TAG,"app start transaction ids" + transactionIds);
-                Log.d(TAG,"app start progressjobdetail" + progressPrintJobDetails);
                 String displayName = firebaseUser.getDisplayName();
                 Uri photoUrl = firebaseUser.getPhotoUrl();
                 printJobPresenterListener.initializePrintJob(displayName, photoUrl);
@@ -244,9 +236,7 @@ public class PrintJobPresenter implements PrintJobModalListener {
         progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
         transactionIds = SessionManager.getTransactionIds();
         if (printJobDetail.getStatus().equals("Uploading")) {
-            Log.d(TAG,"transaction ids are"+transactionIds);
             int uploadingIndex = transactionIds.indexOf("Uploading");
-            Log.d(TAG,"Uploading index is" + uploadingIndex);
             if (uploadingIndex != -1) {
                 progressPrintJobDetails.remove(uploadingIndex);
                 transactionIds.remove(uploadingIndex);

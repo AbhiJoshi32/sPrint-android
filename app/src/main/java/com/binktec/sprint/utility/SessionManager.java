@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SessionManager {
-
-    private static final String TAG = "Session Manager";
     private static final String KEY_FILE_DETAILS = "file details";
     private static final String KEY_PRINT_DETAIL = "Print Detail";
     private static final String KEY_CURR_PRINT_TRANSACTION = "Print Transaction";
@@ -29,7 +27,6 @@ public class SessionManager {
     private static final String KEY_HISTORY_SYNC_DATE = "History Sync date";
     private static final String KEY_TRNSACTION_IDS = "Transaction ids";
     private static final String KEY_HISTORY_IDS = "History Id";
-    private static final String KEY_INSERT_PROGRESS = "Progress Inserted";
     private static final String KEY_IS_PRINTED = "IS Printed";
     private static final String KEY_IS_REJECTED = "Is Rejected";
     private static SharedPreferences pref;
@@ -171,9 +168,6 @@ public class SessionManager {
         return gson.fromJson(json,User.class);
     }
 
-    public static void clearApiPrintTransaction() {
-        pref.edit().remove(KEY_API_PRINT_JOBS).apply();
-    }
 
     public static void saveTrasactionIds(List<String>transactionIds) {
         String json;
@@ -215,34 +209,10 @@ public class SessionManager {
         editor.apply();
     }
 
-    public static String getProgressSyncDate() {
-        return pref.getString(KEY_PROGRESS_SYNC_DATE,null);
-    }
-
     public static void saveHistorySyncDate(String currentDateTimeString) {
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(KEY_HISTORY_SYNC_DATE,currentDateTimeString);
         editor.apply();
-    }
-
-    public static String getHistorySyncDate() {
-        return pref.getString(KEY_HISTORY_SYNC_DATE,null);
-    }
-
-    public static void saveProgreeInsert(PrintJobDetail insertedJobDetail) {
-        String json;
-        Gson gson=new Gson();
-        SharedPreferences.Editor editor = pref.edit();
-        json = gson.toJson(insertedJobDetail);
-        editor.putString(KEY_INSERT_PROGRESS,json);
-        editor.apply();
-    }
-
-    public static PrintJobDetail getInsertJobDetail(){
-        String json;
-        Gson gson=new Gson();
-        json = pref.getString(KEY_INSERT_PROGRESS,null);
-        return gson.fromJson(json,PrintJobDetail.class);
     }
 
     public static void clearAllSession() {

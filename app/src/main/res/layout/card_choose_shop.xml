@@ -37,10 +37,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Shop Name"
+                android:text="@string/shop_name"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -50,8 +49,8 @@
                 android:id="@+id/Location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Location:"
-                android:layout_marginLeft="16dp"
+                android:text="@string/location"
+                android:layout_marginStart="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginTop="8dp"
                 app:layout_constraintTop_toBottomOf="@+id/shopNameText" />
@@ -61,18 +60,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Location"
                 app:layout_constraintTop_toBottomOf="@+id/shopNameText"
                 app:layout_constraintLeft_toRightOf="@+id/Location"
-                android:layout_marginLeft="8dp" />
+                android:layout_marginStart="8dp" />
 
             <TextView
                 android:id="@+id/printingCostText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="Printing Cost: "
+                android:text="@string/printing_cost"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/location" />
 
@@ -80,9 +78,9 @@
                 android:id="@+id/bindingCostText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
+                android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
-                android:text="Binding Cost: "
+                android:text="@string/binding_cost"
                 app:layout_constraintLeft_toRightOf="@+id/printingCostText"
                 app:layout_constraintTop_toBottomOf="@+id/location" />
 
@@ -91,9 +89,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="Total Cost: "
+                android:text="@string/total_cost"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/printingCostText" />
@@ -114,26 +112,26 @@
                 app:srcCompat="@drawable/ic_chevron_right"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginRight="8dp"
-                app:layout_constraintRight_toRightOf="parent" />
+                android:layout_marginEnd="8dp"
+                app:layout_constraintRight_toRightOf="parent"
+                android:contentDescription="@string/chev_right" />
 
             <TextView
                 android:id="@+id/queue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Queue:"
+                android:text="@string/queue"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toLeftOf="@+id/queueNumber"
-                android:layout_marginRight="8dp" />
+                android:layout_marginEnd="8dp" />
 
             <TextView
                 android:id="@+id/queueNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginRight="8dp"
-                android:text="3"
+                android:layout_marginEnd="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
 

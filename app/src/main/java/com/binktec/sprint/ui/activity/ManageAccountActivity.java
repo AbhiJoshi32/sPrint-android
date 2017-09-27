@@ -10,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -105,7 +104,6 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
                 Intent intent;
                 switch (menuItem.getItemId()) {
                     case R.id.nav_printing_job:
-                        Log.d(TAG, "Pritning job");
                         drawerLayout.closeDrawers();
                         intent = new Intent(ManageAccountActivity.this, PrintJobActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -117,7 +115,6 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
                         intent = new Intent(ManageAccountActivity.this, TransactionActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "start printing");
                         break;
                     case R.id.nav_available_shops:
                         intent = new Intent(ManageAccountActivity.this, AvailableShopActivity.class);
@@ -127,28 +124,24 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
                         break;
                     case R.id.nav_manage_accounts:
                         drawerLayout.closeDrawers();
-                        Log.d(TAG, "manage");
                         break;
                     case R.id.nav_settings:
                         drawerLayout.closeDrawers();
                         intent = new Intent(ManageAccountActivity.this, SettingsActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "Settings");
                         break;
                     case R.id.nav_about_us:
                         drawerLayout.closeDrawers();
                         intent = new Intent(ManageAccountActivity.this, AboutUs.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "About Us");
                         return true;
                     case R.id.nav_privacy_policy:
                         drawerLayout.closeDrawers();
                         intent = new Intent(ManageAccountActivity.this, PrivacyPolicyActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
-                        Log.d(TAG, "privacy policy");
                         return true;
                 }
                 return true;
@@ -188,7 +181,6 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imgNavHeaderBg);
         if (photoUrl != null) {
-            Log.d(TAG, photoUrl);
             Glide.with(this).load(photoUrl)
                     .crossFade()
                     .thumbnail(0.5f)
