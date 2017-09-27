@@ -133,6 +133,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     @Override
     public void showFileError(String empty) {
         viewPager.setCurrentItem(0, true);
+        toolProgressBar.setVisibility(View.VISIBLE);
         showToastError("Please add file");
     }
 
@@ -210,6 +211,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
                         findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + viewPager.getCurrentItem()));
         chooseFileFragment.clearFileList();
         showToastError("File Not Found. Check if the file is present");
+
     }
 
     private void setToolbarTitle() {

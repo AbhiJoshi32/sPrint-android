@@ -9,6 +9,15 @@ public class PrintJobDetail {
     private String completedTime;
     private User user;
     private String tId;
+    private int pin;
+
+    public int getPin() {
+        return pin;
+    }
+
+    public void setPin(int pin) {
+        this.pin = pin;
+    }
 
     public String getIssuedDate() {
         return issuedDate;

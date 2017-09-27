@@ -43,6 +43,7 @@ public class HistoryJobListAdapter extends RecyclerView.Adapter<HistoryJobListAd
 
         ImageButton showFiles;
         ImageButton hideFiles;
+        TextView pinNumber;
 
         public HistoryJobViewHolder(View itemView) {
             super(itemView);
@@ -57,6 +58,7 @@ public class HistoryJobListAdapter extends RecyclerView.Adapter<HistoryJobListAd
             statusText = itemView.findViewById(R.id.statusText);
             showFiles = itemView.findViewById(R.id.showFiles);
             hideFiles = itemView.findViewById(R.id.hideFiles);
+            pinNumber = itemView.findViewById(R.id.pinNumber);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -84,6 +86,7 @@ public class HistoryJobListAdapter extends RecyclerView.Adapter<HistoryJobListAd
             holder.timeText.setText(detail.getIssuedTime());
             holder.shopName.setText(detail.getPrintTransaction().getShop().getShopName());
             holder.location.setText(detail.getPrintTransaction().getShop().getShopLocation());
+            holder.pinNumber.setText(Integer.toString(detail.getPin()));
             int size = detail.getPrintTransaction().getFileDetails().size();
             if (size>1) {
                 for (int i=1;i<size;i++) {

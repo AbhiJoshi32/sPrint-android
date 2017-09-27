@@ -30,10 +30,10 @@ public class PrintJobPresenter implements PrintJobModalListener {
         this.printJobPresenterListener = printJobPresenterListener;
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
-        progressPrintJobDetails = new ArrayList<>();
-        historyPrintJobDetails = new ArrayList<>();
-        transactionIds = new ArrayList<>();
-        historyIds = new ArrayList<>();
+        progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
+        historyPrintJobDetails = SessionManager.getHistoryPrintJobDetail();
+        transactionIds = SessionManager.getTransactionIds();
+        historyIds = SessionManager.getHistoryIds();
     }
 
 
@@ -92,16 +92,16 @@ public class PrintJobPresenter implements PrintJobModalListener {
         historyIds = SessionManager.getHistoryIds();
         historyPrintJobDetails = SessionManager.getHistoryPrintJobDetail();
         String tid = historyDetail.gettId();
-        if (!historyIds.contains(historyDetail.gettId())) {
-            int transactionIndex = transactionIds.indexOf(historyDetail.gettId());
-            if (transactionIndex != -1) {
-                transactionIds.remove(transactionIndex);
-                progressPrintJobDetails.remove(transactionIndex);
-            }
-            historyIds.add(0,tid);
-            historyPrintJobDetails.add(0,historyDetail);
+        int transactionIndex = transactionIds.indexOf(historyDetail.gettId());
+        if (transactionIndex != -1) {
+            transactionIds.remove(transactionIndex);
+            progressPrintJobDetails.remove(transactionIndex);
             SessionManager.saveHistoryPrintJob(historyPrintJobDetails);
             SessionManager.saveHistoryIds(historyIds);
+        }
+        if (!historyIds.contains(historyDetail.gettId())) {
+            historyIds.add(0,tid);
+            historyPrintJobDetails.add(0,historyDetail);
             if (historyDetail.getStatus().equals("Printed"))
                 SessionManager.setIsPrinted(true);
             if (historyDetail.getStatus().equals("Rejected"))
