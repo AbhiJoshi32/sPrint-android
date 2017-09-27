@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.binktec.sprint.interactor.presenter.ManageAccountPresenterListener;
+import com.binktec.sprint.modal.api.PrintApi;
 import com.binktec.sprint.ui.fragment.ForgotPasswordFragment;
 import com.binktec.sprint.utility.SessionManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -59,6 +60,9 @@ public class ManageAccountPresenter {
     }
 
     public void signOut() {
+        firebaseAuth = FirebaseAuth.getInstance();
+        PrintApi printApi = new PrintApi(firebaseAuth.getCurrentUser().getUid());
+        printApi.removeListeners();
         firebaseAuth.signOut();
         SessionManager.clearAllSession();
         manageAccountPresenterListener.openAuthActivity();
