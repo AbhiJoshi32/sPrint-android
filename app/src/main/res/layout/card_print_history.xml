@@ -42,7 +42,10 @@
                 android:layout_marginTop="8dp"
                 android:text="Shop Name"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/fileListText" />
+                app:layout_constraintTop_toBottomOf="@+id/fileListText"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/dateText"
+                app:layout_constraintVertical_bias="1.0" />
 
             <TextView
                 android:id="@+id/mainFile"
@@ -77,11 +80,16 @@
                 android:id="@+id/hideFiles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
                 android:background="@android:drawable/screen_background_light_transparent"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintLeft_toRightOf="@+id/mainFile"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_drop_up_arrow" />
+                app:srcCompat="@drawable/ic_drop_up_arrow"
+                app:layout_constraintRight_toLeftOf="@+id/location"
+                android:layout_marginRight="8dp"
+                app:layout_constraintHorizontal_bias="0.0" />
 
 
             <TextView
@@ -92,7 +100,9 @@
                 android:text="FileList"
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mainFile" />
+                app:layout_constraintTop_toBottomOf="@+id/mainFile"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="0dp" />
 
             <TextView
                 android:id="@+id/pinNumberText"
@@ -111,7 +121,7 @@
                 android:id="@+id/pinNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="6dp"
+                android:layout_marginRight="8dp"
                 android:text="01"
                 android:textColor="#7F000000"
                 android:textSize="48sp"
@@ -138,8 +148,8 @@
                 android:layout_marginStart="16dp"
                 android:text="DD/MM/YYYY"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/shopName" />
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/totalCostText" />
 
             <TextView
                 android:id="@+id/timeText"
@@ -149,8 +159,8 @@
                 android:layout_marginStart="8dp"
                 android:text="HH:MM AM/PM"
                 app:layout_constraintLeft_toRightOf="@+id/dateText"
-                android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/shopName" />
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/totalCostText" />
 
             <TextView
                 android:id="@+id/totalCostText"
@@ -161,9 +171,7 @@
                 android:layout_marginStart="16dp"
                 android:text="Total Cost: "
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/pinNumber" />
+                app:layout_constraintLeft_toLeftOf="parent" />
 
             <TextView
                 android:id="@+id/statusText"
