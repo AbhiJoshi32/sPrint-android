@@ -27,4 +27,6 @@ public interface TransactionPresenterListener {
     void enableDone();
 
     void ongoingUpload();
+
+    void FileError();
 }

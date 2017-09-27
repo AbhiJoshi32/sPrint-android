@@ -120,4 +120,9 @@ public class ChooseFileFragment extends Fragment {
         fragFileList.addAll(chosenFiles);
         fileAdapter.notifyDataSetChanged();
     }
+
+    public void clearFileList() {
+        fragFileList.clear();
+        fileAdapter.notifyDataSetChanged();
+    }
 }

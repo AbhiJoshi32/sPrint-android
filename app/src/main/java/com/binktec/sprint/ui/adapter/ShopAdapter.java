@@ -39,6 +39,8 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ShopViewHolder
 
         TextView bindingCost;
 
+        TextView queueNumber;
+
         public ShopViewHolder(View itemView) {
             super(itemView);
 //            ButterKnife.bind(itemView,itemView);
@@ -47,6 +49,7 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ShopViewHolder
             totalShopCost = itemView.findViewById(R.id.totalShopCost);
             printCost = itemView.findViewById(R.id.printingCostText);
             bindingCost = itemView.findViewById(R.id.bindingCostText);
+            queueNumber = itemView.findViewById(R.id.queueNumber);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -74,6 +77,8 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ShopViewHolder
         holder.bindingCost.setText("Binding Cost : " + bindinCost );
         holder.locationText.setText(printTransaction.getShop().getShopLocation());
         holder.shopNameText.setText(printTransaction.getShop().getShopName());
+        String queueNumber = Integer.toString(printTransaction.getShop().getShopQueue());
+        holder.queueNumber.setText(queueNumber);
         holder.totalShopCost.setText("Total : " + totalCost);
     }
 

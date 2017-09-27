@@ -1,21 +1,19 @@
 package com.binktec.sprint.ui.fragment;
 
 
-import android.app.ListActivity;
-import android.app.ListFragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
+import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.binktec.sprint.R;
-import com.binktec.sprint.interactor.fragment.AvailShopFragmentListener;
 import com.binktec.sprint.interactor.fragment.SettingFragmentListener;
 
 public class SettingFragment extends ListFragment {
 
+    private static final String TAG = "Setting Frament";
     SettingFragmentListener settingFragmentListener;
 
     public SettingFragment() {
@@ -24,6 +22,7 @@ public class SettingFragment extends ListFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.d(TAG,"omAttack called");
         if (context instanceof SettingFragmentListener) {
             settingFragmentListener = (SettingFragmentListener) context;
         } else {
@@ -43,8 +42,8 @@ public class SettingFragment extends ListFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         String[] values = new String[] { "Instruction", "Help"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, values);
@@ -53,10 +52,14 @@ public class SettingFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        if (position == 0) {
-            settingFragmentListener.openInstructionActivity();
-        } else if (position == 1) {
-            settingFragmentListener.openHelpActivity();
+        try {
+            if (position == 0) {
+                settingFragmentListener.openInstructionActivity();
+            } else if (position == 1) {
+                settingFragmentListener.openHelpActivity();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

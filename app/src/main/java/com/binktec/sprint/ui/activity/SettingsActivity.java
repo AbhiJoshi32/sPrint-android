@@ -1,11 +1,11 @@
 package com.binktec.sprint.ui.activity;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -35,8 +35,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingFragme
     private SettingPresenter settingPresenter;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.settings_frame)
-    FrameLayout settingsFrame;
     @BindView(R.id.settingFragment)
     FrameLayout settingFragment;
     @BindView(R.id.nav_view)
@@ -154,7 +152,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingFragme
     }
 
     private void selectNavMenu() {
-        navView  .getMenu().getItem(2).setChecked(true);
+        navView  .getMenu().getItem(4).setChecked(true);
     }
 
 
@@ -177,7 +175,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingFragme
 
     @Override
     public void openHelpActivity() {
-
+        Intent intent;
+        intent = new Intent(SettingsActivity.this, HelpActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -199,7 +199,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingFragme
     }
 
     private void loadFragment() {
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         SettingFragment settingFragment = SettingFragment.mewInstance();
         ft.replace(R.id.settingFragment, settingFragment);
         ft.commitAllowingStateLoss();

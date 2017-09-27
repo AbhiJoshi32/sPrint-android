@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 public class TransactionPresenter implements TransactionModalListener {
 
     private static final String TAG = "Transaction Presenter";
+    private static final int FILE_ERROR = 1;
     private static Handler handler;
 
     private static final int FILE_PARSED = 0;
@@ -48,9 +49,17 @@ public class TransactionPresenter implements TransactionModalListener {
                     case FILE_PARSED:
                         transactionPresenterListener.enableDone();
                         break;
+                    case FILE_ERROR:
+                        clearTransactionSession();
+                        transactionPresenterListener.FileError();
                 }
             }
         };
+    }
+
+    private void clearTransactionSession() {
+        SessionManager.clearFileDetail();
+        SessionManager.clearPrintDetail();
     }
 
     public void appStart() {
@@ -118,7 +127,10 @@ public class TransactionPresenter implements TransactionModalListener {
                     SessionManager.fileDetailSave(chosenFiles);
                     Log.d(TAG,"number of pages updated +"+SessionManager.getFileDetail().get(0).getNumberOfPages());
                     Message msg = Message.obtain();
-                    msg.what = FILE_PARSED;
+                    if (fileAdded.getNumberOfPages() < 1)
+                        msg.what = FILE_ERROR;
+                    else
+                        msg.what = FILE_PARSED;
                     handler.sendMessage(msg);
                 }
             }.start();

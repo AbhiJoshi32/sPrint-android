@@ -12,17 +12,16 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/logo_icon"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
+        android:theme="@style/AppTheme">
         <service
-            android:name="com.binktec.sprint.service.MyFirebaseMessagingService"
+            android:name=".service.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name="com.binktec.sprint.service.MyFirebaseInstanceIDService"
+            android:name=".service.MyFirebaseInstanceIDService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -31,7 +30,7 @@
         <!-- [END firebase_iid_service] -->
 
         <activity
-            android:name="com.binktec.sprint.ui.activity.PrintJobActivity"
+            android:name=".ui.activity.PrintJobActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -60,24 +59,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.binktec.sprint.ui.activity.AuthActivity"
+            android:name=".ui.activity.AuthActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.binktec.sprint.ui.activity.PrivacyPolicyActivity"
+            android:name=".ui.activity.PrivacyPolicyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.binktec.sprint.ui.activity.AboutUs"
+            android:name=".ui.activity.AboutUs"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.binktec.sprint.ui.activity.TransactionActivity"
+            android:name=".ui.activity.TransactionActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.binktec.sprint.ui.activity.AvailableShopActivity"
+            android:name=".ui.activity.AvailableShopActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.binktec.sprint.ui.activity.SettingsActivity" />
-        <activity android:name="com.binktec.sprint.ui.activity.ManageAccountActivity" />
-        <activity android:name="com.binktec.sprint.ui.activity.InstructionActivity" />
+        <activity android:name=".ui.activity.SettingsActivity" />
+        <activity android:name=".ui.activity.ManageAccountActivity" />
+        <activity android:name=".ui.activity.InstructionActivity" />
+        <activity android:name=".ui.activity.HelpActivity"></activity>
     </application>
 
 </manifest>

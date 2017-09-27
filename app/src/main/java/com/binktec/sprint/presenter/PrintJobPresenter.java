@@ -178,6 +178,7 @@ public class PrintJobPresenter implements PrintJobModalListener {
             if (!firebaseUser.isEmailVerified()) {
                 printJobPresenterListener.openAuthActivity();
             } else {
+                clearTransactionSession();
                 printApi = new PrintApi(firebaseUser.getUid());
                 printApi.prepareHistoryListeners(this);
                 printApi.prepareTransactionListeners(this);
@@ -203,7 +204,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
             }
         }
     }
-
 
     public void onStopCalled() {
         if (printApi != null) {
@@ -251,5 +251,10 @@ public class PrintJobPresenter implements PrintJobModalListener {
             printJobDetail.setStatus("Cancelled");
             printApi.cancelTransaction(printJobDetail);
         }
+    }
+
+    private void clearTransactionSession() {
+        SessionManager.clearFileDetail();
+        SessionManager.clearPrintDetail();
     }
 }

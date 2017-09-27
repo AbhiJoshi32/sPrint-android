@@ -202,6 +202,16 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         openPrintJobActivity();
     }
 
+    @Override
+    public void FileError() {
+        viewPager.setCurrentItem(0, true);
+        ChooseFileFragment chooseFileFragment = (ChooseFileFragment)
+                (getSupportFragmentManager().
+                        findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + viewPager.getCurrentItem()));
+        chooseFileFragment.clearFileList();
+        showToastError("File Not Found. Check if the file is present");
+    }
+
     private void setToolbarTitle() {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(TAG_CURR);
@@ -426,8 +436,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
                 PrintDetailFragment printOptFrag = (PrintDetailFragment)
                         (getSupportFragmentManager().
                                 findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + viewPager.getCurrentItem()));
-                Log.d(TAG, printOptFrag + "the index is" + viewPager.getCurrentItem());
-
                 PrintDetail detail = printOptFrag.getSpninnerDetails();
                 transactionPresenter.confirmPrintDetail(detail);
             } catch (Exception e) {
