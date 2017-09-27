@@ -59,7 +59,7 @@ public class Misc {
 
         final boolean isKitKat = Build.VERSION.SDK_INT >=
                 Build.VERSION_CODES.KITKAT;
-        String filePath = "";
+        String filePath;
         // DocumentProvider
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
 
