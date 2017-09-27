@@ -28,4 +28,6 @@ public interface PrintJobPresenterListener {
     void showPrintConfirmDialog();
 
     void showRejectDialog();
+
+    void finishActivity();
 }

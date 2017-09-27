@@ -151,8 +151,8 @@ public class PrintJobActivity extends AppCompatActivity
     public void openAuthActivity() {
         Intent intent = new Intent(PrintJobActivity.this, AuthActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
         finish();
+        startActivity(intent);
     }
 
     @Override
@@ -293,6 +293,11 @@ public class PrintJobActivity extends AppCompatActivity
                 .setNegativeButton("Ok", dialogClickListener).show();
     }
 
+    @Override
+    public void finishActivity() {
+        finish();
+    }
+
     private void selectNavMenu() {
         navigationView.getMenu().getItem(0).setChecked(true);
     }
@@ -399,7 +404,7 @@ public class PrintJobActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "On resumed called");
+        printJobPresenter.appResumed();
     }
 
     @Override

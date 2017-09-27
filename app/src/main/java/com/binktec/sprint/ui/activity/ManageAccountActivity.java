@@ -33,7 +33,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -213,10 +212,10 @@ public class ManageAccountActivity extends AppCompatActivity implements ManageAc
 
     @Override
     public void openAuthActivity() {
-        Intent intent = new Intent(ManageAccountActivity.this, AuthActivity.class);
+        Intent intent = new Intent(ManageAccountActivity.this, PrintJobActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
         finish();
+        startActivity(intent);
     }
 
     @Override

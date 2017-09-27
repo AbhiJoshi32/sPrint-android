@@ -264,4 +264,14 @@ public class PrintJobPresenter implements PrintJobModalListener {
         SessionManager.clearFileDetail();
         SessionManager.clearPrintDetail();
     }
+
+    public void appResumed() {
+        firebaseUser = firebaseAuth.getCurrentUser();
+        if (firebaseUser == null) {
+            if (printApi != null) {
+                printApi.removeListeners();
+            }
+            printJobPresenterListener.finishActivity();
+        }
+    }
 }

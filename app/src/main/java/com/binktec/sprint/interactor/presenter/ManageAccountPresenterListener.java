@@ -1,9 +1,10 @@
 package com.binktec.sprint.interactor.presenter;
 
 public interface ManageAccountPresenterListener {
-    public void initializePrintJob(String displayName, String s);
 
-    public void openAuthActivity();
+    void initializePrintJob(String displayName, String s);
+
+    void openAuthActivity();
 
     void showToast(String s);
 
