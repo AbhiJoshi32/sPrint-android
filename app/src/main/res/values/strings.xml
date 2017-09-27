@@ -39,9 +39,8 @@
     <string name="web_client_id">496914499075-aqhame5fds8d98aec77d58q4ros1su2m.apps.googleusercontent.com</string>
     <string name="arrow_down">Arrow down</string>
     <string name="arrow_up">Arrow up</string>
-    <string name="help">Status of print jobs:
-\nPrint Job cards show the status of that print job in the bottom right corner. These statuses indicate the progress of the job:
-\n1.	Uploading – Your files are being uploaded
+    <string name="help">Print Job cards show the status of that print job in the bottom right corner. These statuses indicate the progress of the job:
+\n\n1.	Uploading – Your files are being uploaded
 \n\n2.	Waiting – Files have been uploaded and are awaiting the shop’s confirmation
 \n\n3.	Printing – The chosen shop has accepted your print job
 \n\n4.	Printed – Your documents have been printed and can be collected from the shop
