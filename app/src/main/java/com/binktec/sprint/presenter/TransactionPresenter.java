@@ -139,6 +139,7 @@ public class TransactionPresenter implements TransactionModalListener {
             SessionManager.fileDetailSave(chosenFiles);
             transactionPresenterListener.updateChooseFileFragment(chosenFiles);
         } catch (Exception e) {
+            transactionPresenterListener.FileError();
             e.printStackTrace();
         }
     }

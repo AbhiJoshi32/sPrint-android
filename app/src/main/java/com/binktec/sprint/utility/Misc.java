@@ -59,23 +59,26 @@ public class Misc {
 
         final boolean isKitKat = Build.VERSION.SDK_INT >=
                 Build.VERSION_CODES.KITKAT;
-
+        String filePath;
         // DocumentProvider
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
 
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
+                Log.d(TAG,"isexternal storage" + isExternalStorageDocument(uri));
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
                 final String type = split[0];
 
                 if ("primary".equalsIgnoreCase(type)) {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
+                } else {
+                    filePath = "/storage/" + type + "/" + split[1];
+                    return filePath;
                 }
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
-
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));

@@ -89,26 +89,33 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
     @Override
     public void apiHistoryAdded(PrintJobDetail historyDetail) {
-        historyIds = SessionManager.getHistoryIds();
-        historyPrintJobDetails = SessionManager.getHistoryPrintJobDetail();
-        String tid = historyDetail.gettId();
-        int transactionIndex = transactionIds.indexOf(historyDetail.gettId());
-        if (transactionIndex != -1) {
-            transactionIds.remove(transactionIndex);
-            progressPrintJobDetails.remove(transactionIndex);
-            SessionManager.saveHistoryPrintJob(historyPrintJobDetails);
-            SessionManager.saveHistoryIds(historyIds);
-        }
-        if (!historyIds.contains(historyDetail.gettId())) {
-            historyIds.add(0,tid);
-            historyPrintJobDetails.add(0,historyDetail);
-            if (historyDetail.getStatus().equals("Printed"))
-                SessionManager.setIsPrinted(true);
-            if (historyDetail.getStatus().equals("Rejected"))
-                SessionManager.setIsRejected(true);
-            printJobPresenterListener.historyItemInserted(historyDetail,0);
-            SessionManager.setIsPrinted(false);
-            SessionManager.setIsRejected(false);
+        if (!historyDetail.getStatus().equals("Cancelled")) {
+            historyIds = SessionManager.getHistoryIds();
+            historyPrintJobDetails = SessionManager.getHistoryPrintJobDetail();
+            progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
+            transactionIds = SessionManager.getTransactionIds();
+            String tid = historyDetail.gettId();
+            int transactionIndex = transactionIds.indexOf(historyDetail.gettId());
+            if (transactionIndex != -1) {
+                transactionIds.remove(transactionIndex);
+                progressPrintJobDetails.remove(transactionIndex);
+                SessionManager.saveApiPrintJob(progressPrintJobDetails);
+                SessionManager.saveTrasactionIds(transactionIds);
+                printJobPresenterListener.progressItemRemoved(transactionIndex);
+            }
+            if (!historyIds.contains(historyDetail.gettId())) {
+                historyIds.add(0, tid);
+                historyPrintJobDetails.add(0, historyDetail);
+                SessionManager.saveHistoryPrintJob(historyPrintJobDetails);
+                SessionManager.saveHistoryIds(historyIds);
+                if (historyDetail.getStatus().equals("Printed"))
+                    SessionManager.setIsPrinted(true);
+                if (historyDetail.getStatus().equals("Rejected"))
+                    SessionManager.setIsRejected(true);
+                printJobPresenterListener.historyItemInserted(historyDetail, 0);
+                SessionManager.setIsPrinted(false);
+                SessionManager.setIsRejected(false);
+            }
         }
     }
 
