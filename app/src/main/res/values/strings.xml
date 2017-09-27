@@ -81,6 +81,7 @@
     <string name="sides_per_sheet">Sides per sheet</string>
     <string name="remove_button">Remove button</string>
     <string name="ok">OK</string>
+    <string name="help_text_1">Status of print jobs:</string>
 
     <string-array name="nav_item_activity_titles">
         <item>Printing Jobs</item>
