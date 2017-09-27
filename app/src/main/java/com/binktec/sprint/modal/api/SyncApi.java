@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SyncApi {
-    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     private SyncListener syncListener;
     private DatabaseReference progressRef;
@@ -20,6 +19,7 @@ public class SyncApi {
 
     public SyncApi(SyncListener syncListener, String uid) {
         this.syncListener = syncListener;
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         progressRef = database.getReference("userTransaction/"+uid);
         historyRef = database.getReference("userCompleted/"+uid);
     }
@@ -30,7 +30,7 @@ public class SyncApi {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<PrintJobDetail> printJobDetailList = new ArrayList<>();
-                List<String> transactionIds = new ArrayList<String>();
+                List<String> transactionIds = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     PrintJobDetail printJobDetail = snapshot.getValue(PrintJobDetail.class);
                     printJobDetailList.add(0,printJobDetail);
@@ -51,12 +51,17 @@ public class SyncApi {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<PrintJobDetail> printJobDetailList = new ArrayList<>();
                 List<String> historyIds = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    PrintJobDetail printJobDetail = snapshot.getValue(PrintJobDetail.class);
-                    printJobDetailList.add(0,printJobDetail);
-                    historyIds.add(0,snapshot.getKey());
+                if (dataSnapshot.getValue() != null) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        PrintJobDetail printJobDetail = snapshot.getValue(PrintJobDetail.class);
+                        if (printJobDetail != null && !printJobDetail.getStatus().equals("Cancelled")) {
+                            printJobDetailList.add(0, printJobDetail);
+                            historyIds.add(0, snapshot.getKey());
+                        }
+                    }
                 }
                 syncListener.setHistorySession(printJobDetailList,historyIds);
+
             }
 
             @Override
