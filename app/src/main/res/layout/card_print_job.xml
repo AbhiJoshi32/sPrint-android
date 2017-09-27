@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:background="@android:drawable/screen_background_light_transparent"
                 app:layout_constraintLeft_toRightOf="@+id/mainFile"
                 app:layout_constraintTop_toTopOf="parent"
@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:background="@android:drawable/screen_background_light_transparent"
                 android:visibility="visible"
                 app:layout_constraintLeft_toRightOf="@+id/mainFile"
@@ -72,11 +72,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="0dp"
                 android:maxWidth="150dp"
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mainFile" />
+                app:layout_constraintTop_toBottomOf="@+id/mainFile"
+                android:layout_marginLeft="16dp" />
 
             <TextView
                 android:id="@+id/Location"
