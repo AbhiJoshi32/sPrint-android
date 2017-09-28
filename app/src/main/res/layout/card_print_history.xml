@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:background="@android:drawable/screen_background_light_transparent"
                 app:layout_constraintLeft_toRightOf="@+id/mainFile"
                 app:layout_constraintTop_toTopOf="parent"
@@ -81,15 +81,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@android:drawable/screen_background_light_transparent"
-                android:visibility="visible"
-                app:layout_constraintLeft_toRightOf="@+id/mainFile"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_drop_up_arrow"
-                app:layout_constraintRight_toLeftOf="@+id/location"
                 android:layout_marginRight="8dp"
-                app:layout_constraintHorizontal_bias="0.0" />
+                android:layout_marginTop="8dp"
+                android:background="@android:drawable/screen_background_light_transparent"
+                android:visibility="gone"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintLeft_toRightOf="@+id/mainFile"
+                app:layout_constraintRight_toLeftOf="@+id/location"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_drop_up_arrow" />
 
 
             <TextView

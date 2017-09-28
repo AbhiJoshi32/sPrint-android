@@ -90,16 +90,6 @@ public class PrintJobActivity extends AppCompatActivity
         imgProfile = navHeader.findViewById(R.id.img_profile);
         printJobPresenter = new PrintJobPresenter(this);
         setSupportActionBar(toolbar);
-        setToolbarTitle();
-        setUpTabLayout();
-        setUpNavigationView();
-
-        if (!isReadStorageAllowed()) {
-            requestStoragePermission();
-        }
-        if (!isWriteStorageAllowed()) {
-            requestWriteStoragePermission();
-        }
     }
 
     @Override
@@ -155,6 +145,9 @@ public class PrintJobActivity extends AppCompatActivity
 
     @Override
     public void initializePrintJob(String displayName, Uri photoUrl) {
+        setToolbarTitle();
+        setUpTabLayout();
+        setUpNavigationView();
         selectNavMenu();
         loadNavHeader(displayName, photoUrl);
     }
@@ -393,6 +386,9 @@ public class PrintJobActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
         printJobPresenter.appResumed();
+        if (!isReadStorageAllowed()) {
+            requestStoragePermission();
+        }
     }
 
     @Override
@@ -509,11 +505,11 @@ public class PrintJobActivity extends AppCompatActivity
             }
         } else if (requestCode == WRITE_STORAGE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //Displaying a toast
+                printJobPresenter.appStart();
                 Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
             } else {
                 //Displaying another toast if permission is not granted
-                Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Permission was denied. Provide permission in setting to use app", Toast.LENGTH_LONG).show();
             }
         }
     }

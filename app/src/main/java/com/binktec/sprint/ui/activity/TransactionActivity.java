@@ -48,13 +48,14 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     @BindView(R.id.progressBar2)
     ProgressBar toolProgressBar;
 
-    private String TAG_CURR;
     private boolean donePrintStatus = true;
 
     private static final String TAG_FILE = "Choose File";
     private static final String TAG_PRINT_DETAIL = "Print Details";
     private static final String TAG_SHOP = "Choose Shop";
     private static final int UPLOAD_CODE = 1000;
+
+    private String TAG_CURR = TAG_FILE;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -87,6 +88,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         txtName = navHeader.findViewById(R.id.name);
         imgNavHeaderBg = navHeader.findViewById(R.id.img_header_bg);
         imgProfile = navHeader.findViewById(R.id.img_profile);
+        setSupportActionBar(toolbar);
         setToolbarTitle();
         selectNavMenu();
         setUpNavigationView();
@@ -97,7 +99,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     @Override
     public void initTransactionActivity(String displayName, String photoUrl) {
         TAG_CURR = TAG_FILE;
-        setSupportActionBar(toolbar);
         transactionPagerAdapter = new TransactionPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(transactionPagerAdapter);
         stepIndicator.setupWithViewPager(viewPager);
@@ -129,7 +130,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     @Override
     public void showFileError(String empty) {
         viewPager.setCurrentItem(0, true);
-        toolProgressBar.setVisibility(View.VISIBLE);
+        toolProgressBar.setVisibility(View.GONE);
         showToastError("Please add file");
     }
 

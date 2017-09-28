@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "496914499075-08usu7sntacb77jjeqqki2qab8kdi0jf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.binktec.sprint",
+            "certificate_hash": "3076812c615c11fb4158397ae64bee87ca945791"
+          }
+        },
+        {
           "client_id": "496914499075-nsnat45pg1kn6r1gbuptctm3ipplm5mh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

@@ -39,6 +39,7 @@ public class HistoryJobListAdapter extends RecyclerView.Adapter<HistoryJobListAd
         TextView timeText;
         TextView statusText;
         TextView totalCostText;
+        TextView pinText;
 
         ImageButton showFiles;
         ImageButton hideFiles;
@@ -58,7 +59,7 @@ public class HistoryJobListAdapter extends RecyclerView.Adapter<HistoryJobListAd
             showFiles = itemView.findViewById(R.id.showFiles);
             hideFiles = itemView.findViewById(R.id.hideFiles);
             pinNumber = itemView.findViewById(R.id.pinNumber);
-
+            pinText = itemView.findViewById(R.id.pinNumberText);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -81,12 +82,17 @@ public class HistoryJobListAdapter extends RecyclerView.Adapter<HistoryJobListAd
         PrintJobDetail detail = userTransactions.get(position);
         if (detail != null) {
             String listOfFiles = "";
-            String pin = Integer.toString(detail.getPin());
             holder.dateText.setText(detail.getIssuedDate());
             holder.timeText.setText(detail.getIssuedTime());
             holder.shopName.setText(detail.getPrintTransaction().getShop().getShopName());
             holder.location.setText(detail.getPrintTransaction().getShop().getShopLocation());
-            holder.pinNumber.setText(pin);
+            if (detail.getStatus().equals("Printed")) {
+                String pin = Integer.toString(detail.getPin());
+                holder.pinNumber.setText(pin);
+            } else {
+                holder.pinNumber.setVisibility(View.INVISIBLE);
+                holder.pinText.setVisibility(View.INVISIBLE);
+            }
             int size = detail.getPrintTransaction().getFileDetails().size();
             if (size>1) {
                 for (int i=1;i<size;i++) {

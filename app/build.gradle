@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'sprintkeystore'
+            keyPassword 'teamwork1045'
+            storeFile file('/home/abhishek/BinkTec/sPrint/sPrint/sprintkeystore.jks')
+            storePassword 'teamwork1045'
+        }
+    }
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
     defaultConfig {
@@ -17,6 +25,11 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            debuggable true
+        }
+        debug {
+            debuggable true
         }
     }
 }
