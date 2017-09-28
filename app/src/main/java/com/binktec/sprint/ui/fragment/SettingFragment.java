@@ -40,7 +40,7 @@ public class SettingFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String[] values = new String[] { "Instruction", "Help"};
+        String[] values = new String[] { "Instructions", "Help"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, values);
         setListAdapter(adapter);setListAdapter(adapter);

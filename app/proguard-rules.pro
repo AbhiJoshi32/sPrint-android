@@ -25,3 +25,4 @@
 #-renamesourcefileattribute SourceFile
 -keep class com.itextpdf.** { *; }
 -dontwarn com.itextpdf.**
+-keepclassmembers class com.binktec.sprint.modal.pojo.** { *; }

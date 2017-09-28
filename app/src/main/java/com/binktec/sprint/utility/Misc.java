@@ -184,36 +184,71 @@ public class Misc {
         String color = printDetail.getPrintColor();
         float costPerPage = 0;
         if (color.equals("Color")){
-            switch (printDetail.getPrintPaperType()) {
-                case "A4":
-                    costPerPage = shop.getShopCost().getShopColorCost().getColorA4Cost();
-                    break;
-                case "A3":
-                    costPerPage = shop.getShopCost().getShopColorCost().getColorA3Cost();
-                    break;
-                case "A5":
-                    costPerPage = shop.getShopCost().getShopColorCost().getColorA5Cost();
-                    break;
-                case "GlossyA4":
-                    costPerPage = shop.getShopCost().getShopColorCost().getColorGlossyA4Cost();
-                    break;
+            if (printDetail.getPagesPerSheet() == 1) {
+                switch (printDetail.getPrintPaperType()) {
+                    case "A4":
+                        costPerPage = shop.getShopCost().getShopColorCost().getColorA4Cost();
+                        break;
+                    case "A3":
+                        costPerPage = shop.getShopCost().getShopColorCost().getColorA3Cost();
+                        break;
+                    case "A5":
+                        costPerPage = shop.getShopCost().getShopColorCost().getColorA5Cost();
+                        break;
+                    case "GlossyA4":
+                        costPerPage = shop.getShopCost().getShopColorCost().getColorGlossyA4Cost();
+                        break;
+                }
+            } else {
+                switch (printDetail.getPrintPaperType()) {
+                    case "A4":
+                        costPerPage = shop.getShopCost().getShopColorDoubleCost().getColorDoubleA4Cost();
+                        break;
+                    case "A3":
+                        costPerPage = shop.getShopCost().getShopColorDoubleCost().getColorDoubleA3Cost();
+                        break;
+                    case "A5":
+                        costPerPage = shop.getShopCost().getShopColorDoubleCost().getColorDoubleA5Cost();
+                        break;
+                    case "GlossyA4":
+                        costPerPage = shop.getShopCost().getShopColorDoubleCost().getColorDoubleGlossyA4Cost();
+                        break;
+
+                }
             }
         }
 
         else {
-            switch (printDetail.getPrintPaperType()) {
-                case "A4":
-                    costPerPage = shop.getShopCost().getShopGrayscaleCost().getGrayscaleA4Cost();
-                    break;
-                case "A3":
-                    costPerPage = shop.getShopCost().getShopGrayscaleCost().getGrayscaleA3Cost();
-                    break;
-                case "A5":
-                    costPerPage = shop.getShopCost().getShopGrayscaleCost().getGrayscaleA5Cost();
-                    break;
-                case "GlossyA4":
-                    costPerPage = shop.getShopCost().getShopGrayscaleCost().getGrayscaleGlossyA4Cost();
-                    break;
+            if (printDetail.getPagesPerSheet() == 1) {
+                switch (printDetail.getPrintPaperType()) {
+                    case "A4":
+                        costPerPage = shop.getShopCost().getShopGrayscaleCost().getGrayscaleA4Cost();
+                        break;
+                    case "A3":
+                        costPerPage = shop.getShopCost().getShopGrayscaleCost().getGrayscaleA3Cost();
+                        break;
+                    case "A5":
+                        costPerPage = shop.getShopCost().getShopGrayscaleCost().getGrayscaleA5Cost();
+                        break;
+                    case "GlossyA4":
+                        costPerPage = shop.getShopCost().getShopGrayscaleCost().getGrayscaleGlossyA4Cost();
+                        break;
+                }
+            } else {
+                switch (printDetail.getPrintPaperType()) {
+                    case "A4":
+                        costPerPage = shop.getShopCost().getShopGrayscaleDoubleCost().getGrayscaleDoubleA4Cost();
+                        break;
+                    case "A3":
+                        costPerPage = shop.getShopCost().getShopGrayscaleDoubleCost().getGrayscaleDoubleA3Cost();
+                        break;
+                    case "A5":
+                        costPerPage = shop.getShopCost().getShopGrayscaleDoubleCost().getGrayscaleDoubleA5Cost();
+                        break;
+                    case "GlossyA4":
+                        costPerPage = shop.getShopCost().getShopGrayscaleDoubleCost().getGrayscaleDoubleGlossyA4Cost();
+                        break;
+                }
             }
         }
 

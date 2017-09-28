@@ -389,6 +389,9 @@ public class PrintJobActivity extends AppCompatActivity
         if (!isReadStorageAllowed()) {
             requestStoragePermission();
         }
+        if (!isWriteStorageAllowed()) {
+            requestWriteStoragePermission();
+        }
     }
 
     @Override

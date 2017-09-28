@@ -7,6 +7,24 @@ public class ShopCost {
     private ShopBindingCost shopBindingCost;
     private ShopColorCost shopColorCost;
     private ShopGrayscaleCost shopGrayscaleCost;
+    private ShopColorDoubleCost shopColorDoubleCost;
+    private ShopGrayscaleDoubleCost shopGrayscaleDoubleCost;
+
+    public ShopColorDoubleCost getShopColorDoubleCost() {
+        return shopColorDoubleCost;
+    }
+
+    public void setShopColorDoubleCost(ShopColorDoubleCost shopColorDoubleCost) {
+        this.shopColorDoubleCost = shopColorDoubleCost;
+    }
+
+    public ShopGrayscaleDoubleCost getShopGrayscaleDoubleCost() {
+        return shopGrayscaleDoubleCost;
+    }
+
+    public void setShopGrayscaleDoubleCost(ShopGrayscaleDoubleCost shopGrayscaleDoubleCost) {
+        this.shopGrayscaleDoubleCost = shopGrayscaleDoubleCost;
+    }
 
     public ShopBindingCost getShopBindingCost() {
         return shopBindingCost;

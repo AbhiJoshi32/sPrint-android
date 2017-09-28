@@ -94,8 +94,8 @@ public class AuthPresenter implements UserModalListener, SyncListener {
         user.setDateOfJoin(Misc.getDate());
         user.setRequestToken(FirebaseInstanceId.getInstance().getToken());
         user.setUid(firebaseUser.getUid());
-        SessionManager.saveUser(user);
         userApi.syncUserWithBackEnd(user,this);
+        SessionManager.saveUser(user);
     }
 
     @Override
@@ -161,7 +161,7 @@ public class AuthPresenter implements UserModalListener, SyncListener {
         user.setDateOfJoin(Misc.getDate());
         user.setRequestToken(FirebaseInstanceId.getInstance().getToken());
         user.setUid(firebaseUser.getUid());
-        SessionManager.saveUser(user);
         userApi.registerToBackend(user);
+        SessionManager.saveUser(user);
     }
 }
