@@ -68,13 +68,7 @@ public class TransactionPresenter implements TransactionModalListener {
             if (SessionManager.getCurrentPrintJobDetail() != null) {
                 transactionPresenterListener.ongoingUpload();
             } else {
-                if (firebaseUser.getPhotoUrl() != null) {
-                    transactionPresenterListener.initTransactionActivity(firebaseUser.getDisplayName(),
-                            firebaseUser.getPhotoUrl().toString());
-                } else {
-                    transactionPresenterListener.initTransactionActivity(firebaseUser.getDisplayName(),
-                            "");
-                }
+                transactionPresenterListener.initTransactionActivity();
             }
         }
         if (SessionManager.getFileDetail() != null) {
@@ -247,7 +241,9 @@ public class TransactionPresenter implements TransactionModalListener {
     }
 
     public void onStopCalled() {
-        printApi.removeShopListener();
+        if (printApi != null) {
+            printApi.removeShopListener();
+        }
     }
 
     public void onDestroyCalled() {

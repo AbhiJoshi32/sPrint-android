@@ -75,9 +75,9 @@
             android:name=".ui.activity.AvailableShopActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.activity.SettingsActivity" />
-        <activity android:name=".ui.activity.ManageAccountActivity" />
         <activity android:name=".ui.activity.InstructionActivity" />
-        <activity android:name=".ui.activity.HelpActivity"></activity>
+        <activity android:name=".ui.activity.HelpActivity" />
+        <activity android:name=".ui.activity.PrintJobDetailActivity"></activity>
     </application>
 
 </manifest>

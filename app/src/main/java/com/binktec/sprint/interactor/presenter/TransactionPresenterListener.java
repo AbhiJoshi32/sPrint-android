@@ -6,7 +6,7 @@ import com.binktec.sprint.modal.pojo.PrintTransaction;
 import java.util.List;
 
 public interface TransactionPresenterListener {
-    void initTransactionActivity(String displayName, String photoUrl);
+    void initTransactionActivity();
 
     void updateChooseFileFragment(List<FileDetail> chosenFiles);
 
@@ -29,4 +29,6 @@ public interface TransactionPresenterListener {
     void ongoingUpload();
 
     void FileError();
+
+    void openAuthActivity();
 }

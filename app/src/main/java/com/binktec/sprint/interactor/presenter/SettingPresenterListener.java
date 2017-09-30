@@ -5,5 +5,9 @@ import android.net.Uri;
 public interface SettingPresenterListener {
     void openAuthActivity();
 
-    void initializePrintJob(String displayName, Uri photoUrl);
+    void initializePrintJob();
+
+    void emailSentSuccessful();
+
+    void emailSentUnsuccessful();
 }

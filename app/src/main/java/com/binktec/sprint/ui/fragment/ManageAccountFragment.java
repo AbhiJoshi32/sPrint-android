@@ -11,11 +11,6 @@ import android.widget.ImageView;
 
 import com.binktec.sprint.R;
 import com.binktec.sprint.interactor.fragment.ManageFragmentListener;
-import com.binktec.sprint.utility.CircleTransform;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,15 +47,6 @@ public class ManageAccountFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_manage_account, container, false);
         unbinder = ButterKnife.bind(this, view);
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null && firebaseUser.getPhotoUrl() != null) {
-            Glide.with(this).load(firebaseUser.getPhotoUrl())
-                    .crossFade()
-                    .thumbnail(0.5f)
-                    .bitmapTransform(new CircleTransform(getContext()))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imageView);
-        }
         return view;
     }
 

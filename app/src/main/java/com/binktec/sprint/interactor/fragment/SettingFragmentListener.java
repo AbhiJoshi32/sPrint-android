@@ -1,7 +1,11 @@
 package com.binktec.sprint.interactor.fragment;
 
-public interface SettingFragmentListener {
-    void openInstructionActivity();
+import com.binktec.sprint.ui.activity.InstructionActivity;
 
-    void openHelpActivity();
+public interface SettingFragmentListener {
+    void openNewActivity(Class activityClass);
+
+    void changePassClicked();
+
+    void logoutClicked();
 }

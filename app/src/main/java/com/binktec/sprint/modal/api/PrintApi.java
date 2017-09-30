@@ -153,7 +153,7 @@ public class PrintApi {
 
     public void prepareHistoryListeners(final PrintJobModalListener callback) {
         if (completedInfoListener != null) {
-            userCompletedRef.removeEventListener(completedInfoListener);
+            removeListeners();
         }
         completedInfoListener = new ChildEventListener() {
             @Override
@@ -187,6 +187,7 @@ public class PrintApi {
 
     public void prepareTransactionListeners(final PrintJobModalListener callback) {
         if (transactionInfoListener != null) {
+            removeListeners();
             userTransactionRef.removeEventListener(transactionInfoListener);
         }
         transactionInfoListener = new ChildEventListener() {
@@ -224,6 +225,7 @@ public class PrintApi {
     }
 
     public void removeListeners() {
+        Log.d(TAG,"listener removed");
         if (transactionInfoListener != null) {
             userTransactionRef.removeEventListener(transactionInfoListener);
             transactionInfoListener = null;

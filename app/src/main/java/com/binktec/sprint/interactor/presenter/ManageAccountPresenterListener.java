@@ -2,7 +2,7 @@ package com.binktec.sprint.interactor.presenter;
 
 public interface ManageAccountPresenterListener {
 
-    void initializePrintJob(String displayName, String s);
+    void initializePrintJob();
 
     void openAuthActivity();
 

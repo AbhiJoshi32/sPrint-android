@@ -9,7 +9,7 @@ import java.util.List;
 public interface PrintJobPresenterListener {
     void openAuthActivity();
 
-    void initializePrintJob(String displayName, Uri photoUrl);
+    void initializePrintJob();
 
     void showToastError(String s);
 
@@ -28,6 +28,4 @@ public interface PrintJobPresenterListener {
     void showPrintConfirmDialog();
 
     void showRejectDialog();
-
-    void finishActivity();
 }

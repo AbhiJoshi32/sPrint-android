@@ -12,9 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.binktec.sprint.R;
 import com.binktec.sprint.interactor.fragment.AvailShopFragmentListener;
@@ -22,9 +21,6 @@ import com.binktec.sprint.interactor.presenter.AvailableShopPresenterListener;
 import com.binktec.sprint.modal.pojo.shop.Shop;
 import com.binktec.sprint.presenter.AvailableShopPresenter;
 import com.binktec.sprint.ui.fragment.AvailableShopFragment;
-import com.binktec.sprint.utility.CircleTransform;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -43,11 +39,11 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
 
-    private String urlNavHeaderBg;
+    boolean toOpenActivity = false;
+    Class newActivityClass;
 
-    private TextView txtName;
-    private ImageView imgNavHeaderBg;
-    private ImageView imgProfile;
+    View headerView;
+
 
     private AvailableShopPresenter availableShopPresenter;
 
@@ -56,16 +52,20 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_available_shop);
         ButterKnife.bind(this);
-        urlNavHeaderBg = getString(R.string.background_url);
         availableShopPresenter = new AvailableShopPresenter(this);
-        View navHeader = navigationView.getHeaderView(0);
-        txtName = navHeader.findViewById(R.id.name);
-        imgNavHeaderBg = navHeader.findViewById(R.id.img_header_bg);
-        imgProfile = navHeader.findViewById(R.id.img_profile);
-        availableShopPresenter.appStart();
+        setSupportActionBar(toolbar);
+        setToolbarTitle();
+        selectNavMenu();
+        headerView =  navigationView.getHeaderView(0);
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        availableShopPresenter.appStart();
+    }
+
+        @Override
     public void getShops() {
         availableShopPresenter.retrieveShopList();
     }
@@ -79,13 +79,25 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
     }
 
     @Override
-    public void initTransactionActivity(String displayName, String photoUrl) {
-        setSupportActionBar(toolbar);
-        loadNavHeader(displayName, photoUrl);
-        setToolbarTitle();
-        selectNavMenu();
-        setUpNavigationView();
+    public void initTransactionActivity() {
         loadFragment();
+        setUpNavigationView();
+        headerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toOpenActivity = true;
+                newActivityClass = SettingsActivity.class;
+            }
+        });
+    }
+
+    @Override
+    public void showToast() {
+        Toast.makeText(this, "Network Error", Toast.LENGTH_SHORT).show();
+        AvailableShopFragment availableShopFragment = (AvailableShopFragment) getSupportFragmentManager().findFragmentById(R.id.shopFragment);
+        if (availableShopFragment != null) {
+            availableShopFragment.hideShopProgressBar();
+        }
     }
 
     private void loadFragment() {
@@ -102,49 +114,30 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
             // This method will trigger on item Click of navigation menu
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Intent intent;
                 switch (menuItem.getItemId()) {
                     case R.id.nav_printing_job:
+                        toOpenActivity = true;
+                        newActivityClass = PrintJobActivity.class;
                         drawer.closeDrawers();
-                        intent = new Intent(AvailableShopActivity.this, PrintJobActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
                         break;
                     case R.id.nav_start_print:
+                        toOpenActivity = true;
+                        newActivityClass = TransactionActivity.class;
                         drawer.closeDrawers();
-                        intent = new Intent(AvailableShopActivity.this, TransactionActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
                         break;
                     case R.id.nav_available_shops:
                         drawer.closeDrawers();
                         break;
-                    case R.id.nav_manage_accounts:
-                        drawer.closeDrawers();
-                        intent = new Intent(AvailableShopActivity.this, ManageAccountActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        break;
-                    case R.id.nav_settings:
-                        drawer.closeDrawers();
-                        intent = new Intent(AvailableShopActivity.this, SettingsActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        break;
                     case R.id.nav_about_us:
+                        toOpenActivity = true;
+                        newActivityClass = AboutUs.class;
                         drawer.closeDrawers();
-                        intent = new Intent(AvailableShopActivity.this, AboutUs.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        drawer.closeDrawers();
-                        return true;
+                        break;
                     case R.id.nav_privacy_policy:
+                        toOpenActivity = true;
+                        newActivityClass = PrivacyPolicyActivity.class;
                         drawer.closeDrawers();
-                        intent = new Intent(AvailableShopActivity.this, PrivacyPolicyActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        return true;
+                        break;
                 }
                 return true;
             }
@@ -154,6 +147,12 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                if (toOpenActivity) {
+                    Intent intent = new Intent(AvailableShopActivity.this, newActivityClass);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                }
             }
 
             @Override
@@ -176,24 +175,6 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
         navigationView.getMenu().getItem(2).setChecked(true);
     }
 
-    private void loadNavHeader(String displayName, String photoUrl) {
-        txtName.setText(displayName);
-        Glide.with(this).load(urlNavHeaderBg)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgNavHeaderBg);
-        if (photoUrl != null) {
-            Glide.with(this).load(photoUrl)
-                    .crossFade()
-                    .thumbnail(0.5f)
-                    .bitmapTransform(new CircleTransform(this))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imgProfile);
-        }
-
-        navigationView.getMenu().getItem(0).setActionView(R.layout.menu_dot);
-    }
-
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -201,7 +182,7 @@ public class AvailableShopActivity extends AppCompatActivity implements AvailSho
         } else {
             Intent intent;
             intent = new Intent(AvailableShopActivity.this, PrintJobActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
             super.onBackPressed();

@@ -94,10 +94,9 @@ public class AvailableShopFragment extends Fragment {
         }
     }
 
-    private void hideShopProgressBar() {
+    public void hideShopProgressBar() {
         availShopProgessBar.setVisibility(View.GONE);
     }
-
 
     @Override
     public void onDestroyView() {

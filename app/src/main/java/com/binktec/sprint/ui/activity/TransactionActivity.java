@@ -14,12 +14,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.binktec.sprint.R;
@@ -34,9 +33,6 @@ import com.binktec.sprint.ui.fragment.ChooseFileFragment;
 import com.binktec.sprint.ui.fragment.ChooseShopFragment;
 import com.binktec.sprint.ui.fragment.PrintDetailFragment;
 import com.binktec.sprint.ui.ui_utility.CustomViewPager;
-import com.binktec.sprint.utility.CircleTransform;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.layer_net.stepindicator.StepIndicator;
 
 import java.util.List;
@@ -55,6 +51,9 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     private static final String TAG_SHOP = "Choose Shop";
     private static final int UPLOAD_CODE = 1000;
 
+    boolean toOpenActivity = false;
+    Class newActivityClass;
+
     private String TAG_CURR = TAG_FILE;
 
     @BindView(R.id.toolbar)
@@ -69,25 +68,17 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     CustomViewPager viewPager;
     private TransactionPresenter transactionPresenter;
 
-    private String urlNavHeaderBg;
-
-    private TextView txtName;
-    private ImageView imgNavHeaderBg;
-    private ImageView imgProfile;
-
     TransactionPagerAdapter transactionPagerAdapter;
+
+    View headerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction);
         ButterKnife.bind(this);
-        urlNavHeaderBg = getString(R.string.background_url);
         transactionPresenter = new TransactionPresenter(this);
-        View navHeader = navigationView.getHeaderView(0);
-        txtName = navHeader.findViewById(R.id.name);
-        imgNavHeaderBg = navHeader.findViewById(R.id.img_header_bg);
-        imgProfile = navHeader.findViewById(R.id.img_profile);
+        headerView =  navigationView.getHeaderView(0);
         setSupportActionBar(toolbar);
         setToolbarTitle();
         selectNavMenu();
@@ -97,25 +88,28 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     }
 
     @Override
-    public void initTransactionActivity(String displayName, String photoUrl) {
+    public void initTransactionActivity() {
         TAG_CURR = TAG_FILE;
         transactionPagerAdapter = new TransactionPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(transactionPagerAdapter);
         stepIndicator.setupWithViewPager(viewPager);
         stepIndicator.setClickable(false);
-        loadNavHeader(displayName, photoUrl);
+        headerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.closeDrawers();
+                toOpenActivity = true;
+                newActivityClass = SettingsActivity.class;
+            }
+        });
     }
 
     @Override
     public void updateChooseFileFragment(List<FileDetail> chosenFiles) {
-        try {
-            ChooseFileFragment chooseFileFragment = (ChooseFileFragment)
-                    (getSupportFragmentManager().
-                            findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + viewPager.getCurrentItem()));
-            chooseFileFragment.updateFileList(chosenFiles);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ChooseFileFragment chooseFileFragment = (ChooseFileFragment)
+                (getSupportFragmentManager().
+                        findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + viewPager.getCurrentItem()));
+        chooseFileFragment.updateFileList(chosenFiles);
     }
 
     @Override
@@ -136,6 +130,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
 
     @Override
     public void updatePrintDetails(int size) {
+        Log.d(TAG_CURR,"update print detauls" + size);
         viewPager.setCurrentItem(1, true);
         PrintDetailFragment printDetailFrag = (PrintDetailFragment)
                 (getSupportFragmentManager().
@@ -161,7 +156,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     @Override
     public void openPrintJobActivity() {
         Intent intent = new Intent(TransactionActivity.this, PrintJobActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         finish();
         startActivity(intent);
@@ -192,34 +186,24 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         viewPager.setCurrentItem(0, true);
         ChooseFileFragment chooseFileFragment = (ChooseFileFragment)
                 (getSupportFragmentManager().
-                        findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + viewPager.getCurrentItem()));
+                        findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + 0));
         chooseFileFragment.clearFileList();
         showToastError("File Not Found. Check if the file is present");
 
+    }
+
+    @Override
+    public void openAuthActivity() {
+        Intent intent = new Intent(TransactionActivity.this, AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        finish();
+        startActivity(intent);
     }
 
     private void setToolbarTitle() {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(TAG_CURR);
         }
-    }
-
-    private void loadNavHeader(String displayName, String photoUrl) {
-        txtName.setText(displayName);
-        Glide.with(this).load(urlNavHeaderBg)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgNavHeaderBg);
-        if (photoUrl != null) {
-            Glide.with(this).load(photoUrl)
-                    .crossFade()
-                    .thumbnail(0.5f)
-                    .bitmapTransform(new CircleTransform(this))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imgProfile);
-        }
-
-        navigationView.getMenu().getItem(0).setActionView(R.layout.menu_dot);
     }
 
     private void selectNavMenu() {
@@ -232,48 +216,31 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
             // This method will trigger on item Click of navigation menu
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Intent intent;
                 switch (menuItem.getItemId()) {
                     case R.id.nav_printing_job:
+                        newActivityClass = PrintJobActivity.class;
+                        toOpenActivity = true;
                         drawer.closeDrawers();
-                        intent = new Intent(TransactionActivity.this, PrintJobActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
                         break;
                     case R.id.nav_start_print:
                         drawer.closeDrawers();
                         break;
                     case R.id.nav_available_shops:
+                        newActivityClass = AvailableShopActivity.class;
+                        toOpenActivity = true;
                         drawer.closeDrawers();
-                        intent = new Intent(TransactionActivity.this,AvailableShopActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        break;
-                    case R.id.nav_manage_accounts:
-                        drawer.closeDrawers();
-                        intent = new Intent(TransactionActivity.this, ManageAccountActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        break;
-                    case R.id.nav_settings:
-                        drawer.closeDrawers();
-                        intent = new Intent(TransactionActivity.this, SettingsActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
                         break;
                     case R.id.nav_about_us:
                         drawer.closeDrawers();
-                        intent = new Intent(TransactionActivity.this, AboutUs.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
+                        newActivityClass = AboutUs.class;
+                        toOpenActivity = true;
                         drawer.closeDrawers();
-                        return true;
+                        break;
                     case R.id.nav_privacy_policy:
+                        newActivityClass = PrivacyPolicyActivity.class;
+                        toOpenActivity = true;
                         drawer.closeDrawers();
-                        intent = new Intent(TransactionActivity.this, PrivacyPolicyActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        return true;
+                        break;
                 }
                 return true;
             }
@@ -283,6 +250,9 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                if (toOpenActivity) {
+                    openActivity(newActivityClass);
+                }
             }
 
             @Override
@@ -293,6 +263,12 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         drawer.addDrawerListener(actionBarDrawerToggle);
 
         actionBarDrawerToggle.syncState();
+    }
+
+    private void openActivity(Class newActivityClass) {
+        Intent intent = new Intent(TransactionActivity.this, newActivityClass);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private void setUpViewPager() {
@@ -351,12 +327,10 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         } else if (TAG_CURR.equals(TAG_SHOP)) {
             viewPager.setCurrentItem(1, true);
         } else {
-            Intent intent;
-            intent = new Intent(TransactionActivity.this, PrintJobActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent intent = new Intent(TransactionActivity.this, PrintJobActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
-            super.onBackPressed();
         }
     }
 
@@ -404,15 +378,14 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
 
     private void donePrintDetail() {
         if (TAG_CURR.equals(TAG_PRINT_DETAIL)) {
-            try {
-                PrintDetailFragment printOptFrag = (PrintDetailFragment)
-                        (getSupportFragmentManager().
-                                findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + viewPager.getCurrentItem()));
+            PrintDetailFragment printOptFrag = (PrintDetailFragment)
+                    (getSupportFragmentManager().
+                            findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + 1));
+            if (printOptFrag !=  null) {
                 PrintDetail detail = printOptFrag.getSpninnerDetails();
                 transactionPresenter.confirmPrintDetail(detail);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+
         }
     }
 
@@ -477,7 +450,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
 
     @Override
     public void initShopFragment() {
-
         transactionPresenter.getShopList();
     }
 

@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -22,8 +22,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.binktec.sprint.R;
@@ -34,10 +32,7 @@ import com.binktec.sprint.presenter.PrintJobPresenter;
 import com.binktec.sprint.ui.adapter.PrintJobPagerAdapter;
 import com.binktec.sprint.ui.fragment.HistoryFragment;
 import com.binktec.sprint.ui.fragment.ProgressFragment;
-import com.binktec.sprint.utility.CircleTransform;
 import com.binktec.sprint.utility.SessionManager;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -50,8 +45,12 @@ public class PrintJobActivity extends AppCompatActivity
 
     private static final String TAG = "Print Jobs";
     private static final int WRITE_STORAGE_PERMISSION_CODE = 24;
-    private String urlNavHeaderBg;
 
+    boolean toOpenActivity = false;
+    Class newActivityClass;
+
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.nav_view)
@@ -63,10 +62,6 @@ public class PrintJobActivity extends AppCompatActivity
     @BindView(R.id.print_job_pager)
     ViewPager printJobPager;
 
-    private TextView txtName;
-    private ImageView imgNavHeaderBg;
-    private ImageView imgProfile;
-
     PrintJobPagerAdapter printJobPagerAdapter;
     private PrintJobPresenter printJobPresenter;
 
@@ -75,6 +70,7 @@ public class PrintJobActivity extends AppCompatActivity
     private ProgressFragment progressFragment;
     private HistoryFragment historyFragment;
     private Context context;
+    View headerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,14 +78,13 @@ public class PrintJobActivity extends AppCompatActivity
         setContentView(R.layout.activity_print_job);
         context = this;
         SessionManager.initInstance(this);
-        urlNavHeaderBg = getApplicationContext().getString(R.string.background_url);
         ButterKnife.bind(this);
-        View navHeader = navigationView.getHeaderView(0);
-        txtName = navHeader.findViewById(R.id.name);
-        imgNavHeaderBg = navHeader.findViewById(R.id.img_header_bg);
-        imgProfile = navHeader.findViewById(R.id.img_profile);
-        printJobPresenter = new PrintJobPresenter(this);
         setSupportActionBar(toolbar);
+        setToolbarTitle();
+        setUpTabLayout();
+        selectNavMenu();
+        printJobPresenter = new PrintJobPresenter(this);
+        headerView =  navigationView.getHeaderView(0);
     }
 
     @Override
@@ -98,9 +93,17 @@ public class PrintJobActivity extends AppCompatActivity
         printJobPresenter.appStart();
     }
 
+
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onResume() {
+        super.onResume();
+//        printJobPresenter.appResumed();
+        if (!isReadStorageAllowed()) {
+            requestStoragePermission();
+        }
+        if (!isWriteStorageAllowed()) {
+            requestWriteStoragePermission();
+        }
     }
 
     private void setUpTabLayout() {
@@ -116,51 +119,36 @@ public class PrintJobActivity extends AppCompatActivity
         }
     }
 
-    private void loadNavHeader(String displayName, Uri photoUrl) {
-        txtName.setText(displayName);
-
-        Glide.with(this).load(urlNavHeaderBg)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgNavHeaderBg);
-
-        if (photoUrl != null) {
-            Glide.with(this).load(photoUrl)
-                    .crossFade()
-                    .thumbnail(0.5f)
-                    .bitmapTransform(new CircleTransform(this))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imgProfile);
-        }
-        navigationView.getMenu().getItem(0).setActionView(R.layout.menu_dot);
-    }
-
     @Override
     public void openAuthActivity() {
         Intent intent = new Intent(PrintJobActivity.this, AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        finish();
         startActivity(intent);
+        finish();
     }
 
     @Override
-    public void initializePrintJob(String displayName, Uri photoUrl) {
-        setToolbarTitle();
-        setUpTabLayout();
+    public void initializePrintJob() {
         setUpNavigationView();
-        selectNavMenu();
-        loadNavHeader(displayName, photoUrl);
+        headerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.closeDrawers();
+                toOpenActivity = true;
+                newActivityClass = SettingsActivity.class;
+            }
+        });
     }
 
     @Override
     public void showToastError(String s) {
-
+        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void progressItemInserted(final PrintJobDetail transactionDetail, final int i) {
         if (isFinishing()) {
-
             Intent intent = new Intent(PrintJobActivity.this, PrintJobActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
@@ -200,19 +188,22 @@ public class PrintJobActivity extends AppCompatActivity
 
     @Override
     public void initProgressList(List<PrintJobDetail> progressPrintJobDetails) {
-        progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
-        if (progressFragment != null) {
-            progressFragment.initProgressRecyclerView(progressPrintJobDetails);
+        if (printJobPagerAdapter != null) {
+            progressFragment = (ProgressFragment) printJobPagerAdapter.getRegisteredFragment(0);
+            if (progressFragment != null) {
+                progressFragment.initProgressRecyclerView(progressPrintJobDetails);
+            }
         }
     }
 
     @Override
     public void initHistoryList(List<PrintJobDetail> historyPrintJobDetails) {
-        historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
-        if (historyFragment != null) {
-            historyFragment.initHistoryRecyclerView(historyPrintJobDetails);
-        }
-    }
+        if (printJobPagerAdapter != null) {
+            historyFragment = (HistoryFragment) printJobPagerAdapter.getRegisteredFragment(1);
+            if (historyFragment != null) {
+                historyFragment.initHistoryRecyclerView(historyPrintJobDetails);
+            }
+        }    }
 
     @Override
     public void historyItemInserted(final PrintJobDetail historyDetail, final int i) {
@@ -253,8 +244,8 @@ public class PrintJobActivity extends AppCompatActivity
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-         builder.setMessage("Your Document is printed").setPositiveButton("Check History", dialogClickListener)
-                    .setNegativeButton("Ok", dialogClickListener).show();
+        builder.setMessage("Your Document is printed").setPositiveButton("Check History", dialogClickListener)
+                .setNegativeButton("Ok", dialogClickListener).show();
     }
 
     @Override
@@ -280,11 +271,6 @@ public class PrintJobActivity extends AppCompatActivity
                 .setNegativeButton("Ok", dialogClickListener).show();
     }
 
-    @Override
-    public void finishActivity() {
-        finish();
-    }
-
     private void selectNavMenu() {
         navigationView.getMenu().getItem(0).setChecked(true);
     }
@@ -295,46 +281,29 @@ public class PrintJobActivity extends AppCompatActivity
             // This method will trigger on item Click of navigation menu
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Intent intent;
                 switch (menuItem.getItemId()) {
                     case R.id.nav_printing_job:
                         drawer.closeDrawers();
                         break;
                     case R.id.nav_start_print:
+                        newActivityClass = TransactionActivity.class;
+                        toOpenActivity = true;
                         drawer.closeDrawers();
-                        intent = new Intent(PrintJobActivity.this, TransactionActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
                         break;
                     case R.id.nav_available_shops:
+                        toOpenActivity = true;
+                        newActivityClass = AvailableShopActivity.class;
                         drawer.closeDrawers();
-                        intent = new Intent(PrintJobActivity.this, AvailableShopActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        break;
-                    case R.id.nav_manage_accounts:
-                        drawer.closeDrawers();
-                        intent = new Intent(PrintJobActivity.this, ManageAccountActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        break;
-                    case R.id.nav_settings:
-                        drawer.closeDrawers();
-                        intent = new Intent(PrintJobActivity.this, SettingsActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
                         break;
                     case R.id.nav_about_us:
+                        toOpenActivity = true;
+                        newActivityClass = AboutUs.class;
                         drawer.closeDrawers();
-                        intent = new Intent(PrintJobActivity.this, AboutUs.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
                         break;
                     case R.id.nav_privacy_policy:
+                        toOpenActivity = true;
+                        newActivityClass = PrivacyPolicyActivity.class;
                         drawer.closeDrawers();
-                        intent = new Intent(PrintJobActivity.this, PrivacyPolicyActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
                         break;
                 }
                 return true;
@@ -345,6 +314,11 @@ public class PrintJobActivity extends AppCompatActivity
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                if (toOpenActivity) {
+                    Intent intent = new Intent(PrintJobActivity.this, newActivityClass);
+                    startActivity(intent);
+                    finish();
+                }
             }
 
             @Override
@@ -377,22 +351,10 @@ public class PrintJobActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            finish();
-            super.onBackPressed();
+            moveTaskToBack(true);
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        printJobPresenter.appResumed();
-        if (!isReadStorageAllowed()) {
-            requestStoragePermission();
-        }
-        if (!isWriteStorageAllowed()) {
-            requestWriteStoragePermission();
-        }
-    }
 
     @Override
     public void onStop() {
@@ -403,7 +365,6 @@ public class PrintJobActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         super.onDestroy();
-        printJobPresenter = null;
     }
 
     @Override
@@ -509,7 +470,7 @@ public class PrintJobActivity extends AppCompatActivity
         } else if (requestCode == WRITE_STORAGE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 printJobPresenter.appStart();
-                Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Permission granted.", Toast.LENGTH_LONG).show();
             } else {
                 //Displaying another toast if permission is not granted
                 Toast.makeText(this, "Permission was denied. Provide permission in setting to use app", Toast.LENGTH_LONG).show();

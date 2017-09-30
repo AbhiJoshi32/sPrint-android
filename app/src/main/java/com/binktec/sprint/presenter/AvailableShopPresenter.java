@@ -5,8 +5,6 @@ import com.binktec.sprint.interactor.presenter.AvailableShopPresenterListener;
 import com.binktec.sprint.modal.api.PrintApi;
 import com.binktec.sprint.modal.pojo.shop.Shop;
 import com.binktec.sprint.utility.SessionManager;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
@@ -14,28 +12,14 @@ public class AvailableShopPresenter implements TransactionModalListener{
 
     private AvailableShopPresenterListener availShopPreseneterListener;
     private PrintApi printApi;
-    private FirebaseAuth firebaseAuth;
 
     public AvailableShopPresenter(AvailableShopPresenterListener availShopPreseneterListener) {
         this.availShopPreseneterListener = availShopPreseneterListener;
-        firebaseAuth = FirebaseAuth.getInstance();
+        printApi = new PrintApi(SessionManager.getUser().getUid());
     }
 
     public void appStart() {
-        if (firebaseAuth == null) {
-            firebaseAuth = FirebaseAuth.getInstance();
-        }
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        if (firebaseUser != null) {
-            printApi = new PrintApi(firebaseUser.getUid());
-            if (firebaseUser.getPhotoUrl() != null) {
-                availShopPreseneterListener.initTransactionActivity(firebaseUser.getDisplayName(),
-                        firebaseUser.getPhotoUrl().toString());
-            } else {
-                availShopPreseneterListener.initTransactionActivity(firebaseUser.getDisplayName(),
-                        "");
-            }
-        }
+        availShopPreseneterListener.initTransactionActivity();
     }
 
     public void retrieveShopList() {
@@ -53,6 +37,6 @@ public class AvailableShopPresenter implements TransactionModalListener{
 
     @Override
     public void apiShopRetrievalUnsuccessful(String s) {
-
+        availShopPreseneterListener.showToast();
     }
 }

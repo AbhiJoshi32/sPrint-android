@@ -7,5 +7,6 @@ import java.util.List;
 public interface AvailableShopPresenterListener {
     void updateShopList(List<Shop> apiShops);
 
-    void initTransactionActivity(String displayName, String s);
+    void initTransactionActivity();
+    void showToast();
 }

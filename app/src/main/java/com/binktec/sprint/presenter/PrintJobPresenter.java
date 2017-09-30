@@ -1,7 +1,6 @@
 package com.binktec.sprint.presenter;
 
-
-import android.net.Uri;
+import android.util.Log;
 
 import com.binktec.sprint.interactor.modal.PrintJobModalListener;
 import com.binktec.sprint.interactor.presenter.PrintJobPresenterListener;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PrintJobPresenter implements PrintJobModalListener {
+    private static final String TAG = "Print job presnter";
     private PrintJobPresenterListener printJobPresenterListener;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
@@ -27,13 +27,26 @@ public class PrintJobPresenter implements PrintJobModalListener {
         this.printJobPresenterListener = printJobPresenterListener;
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
-        progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
-        historyPrintJobDetails = SessionManager.getHistoryPrintJobDetail();
-        transactionIds = SessionManager.getTransactionIds();
-        historyIds = SessionManager.getHistoryIds();
+        if (SessionManager.getHistoryPrintJobDetail()!= null && SessionManager.getApiPrintJobDetail() != null) {
+            progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
+            historyPrintJobDetails = SessionManager.getHistoryPrintJobDetail();
+            transactionIds = SessionManager.getTransactionIds();
+            historyIds = SessionManager.getHistoryIds();
+        } else {
+            progressPrintJobDetails = new ArrayList<>();
+            historyPrintJobDetails = new ArrayList<>();
+            transactionIds = new ArrayList<>();
+            historyIds = new ArrayList<>();
+            syncSessions();
+        }
     }
 
-
+    private void syncSessions() {
+        SessionManager.saveApiPrintJob(progressPrintJobDetails);
+        SessionManager.saveTrasactionIds(transactionIds);
+        SessionManager.saveHistoryPrintJob(historyPrintJobDetails);
+        SessionManager.saveHistoryIds(historyIds);
+    }
 
     @Override
     public void uploadFailed(String s) {
@@ -87,10 +100,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
     @Override
     public void apiHistoryAdded(PrintJobDetail historyDetail) {
         if (!historyDetail.getStatus().equals("Cancelled")) {
-            historyIds = SessionManager.getHistoryIds();
-            historyPrintJobDetails = SessionManager.getHistoryPrintJobDetail();
-            progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
-            transactionIds = SessionManager.getTransactionIds();
             String tid = historyDetail.gettId();
             int transactionIndex = transactionIds.indexOf(historyDetail.gettId());
             if (transactionIndex != -1) {
@@ -118,12 +127,11 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
     @Override
     public void apiPrintTransactionAdded(final PrintJobDetail transactionDetail, final String key, String prevKey) {
+        Log.d(TAG,"Transaction addrd" + transactionDetail);
         int topIndex = 0;
         if (SessionManager.getCurrentPrintJobDetail() != null) {
             topIndex = 1;
         }
-        transactionIds = SessionManager.getTransactionIds();
-        progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
         if (!transactionIds.contains(key)) {
             transactionIds.add(topIndex,key);
             progressPrintJobDetails.add(topIndex,transactionDetail);
@@ -142,8 +150,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
     @Override
     public void apiPrintTransactionChanged(PrintJobDetail changedTransaction, String key) {
-        transactionIds = SessionManager.getTransactionIds();
-        progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
         int changedIndex = transactionIds.indexOf(key);
         if (changedIndex > -1) {
             progressPrintJobDetails.set(changedIndex,changedTransaction);
@@ -154,8 +160,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
     @Override
     public void apiPrintTransactionRemoved(PrintJobDetail deletedTransaction, String key) {
-        transactionIds = SessionManager.getTransactionIds();
-        progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
         int removedIndex = transactionIds.indexOf(key);
         if (removedIndex > -1) {
             progressPrintJobDetails.remove(removedIndex);
@@ -172,8 +176,10 @@ public class PrintJobPresenter implements PrintJobModalListener {
     }
 
     public void appStart() {
+        Log.d(TAG,"app start");
         firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser == null) {
+            Log.d(TAG,"userr is null");
             printJobPresenterListener.openAuthActivity();
         } else {
             if (!firebaseUser.isEmailVerified()) {
@@ -197,9 +203,8 @@ public class PrintJobPresenter implements PrintJobModalListener {
                         SessionManager.saveTrasactionIds(transactionIds);
                     }
                 }
-                String displayName = firebaseUser.getDisplayName();
-                Uri photoUrl = firebaseUser.getPhotoUrl();
-                printJobPresenterListener.initializePrintJob(displayName, photoUrl);
+                printJobPresenterListener.initializePrintJob();
+
             }
         }
     }
@@ -214,7 +219,6 @@ public class PrintJobPresenter implements PrintJobModalListener {
         progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
         transactionIds = SessionManager.getTransactionIds();
         printJobPresenterListener.initProgressList(SessionManager.getApiPrintJobDetail());
-        firebaseUser = firebaseAuth.getCurrentUser();
     }
 
     public void getHistoryList() {
@@ -229,12 +233,9 @@ public class PrintJobPresenter implements PrintJobModalListener {
             printJobPresenterListener.showRejectDialog();
             SessionManager.setIsRejected(false);
         }
-        firebaseUser = firebaseAuth.getCurrentUser();
     }
 
     public void cancelUpload(PrintJobDetail printJobDetail) {
-        progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
-        transactionIds = SessionManager.getTransactionIds();
         if (printJobDetail.getStatus().equals("Uploading")) {
             int uploadingIndex = transactionIds.indexOf("Uploading");
             if (uploadingIndex != -1) {
@@ -256,12 +257,9 @@ public class PrintJobPresenter implements PrintJobModalListener {
     }
 
     public void appResumed() {
-        firebaseUser = firebaseAuth.getCurrentUser();
-        if (firebaseUser == null) {
-            if (printApi != null) {
-                printApi.removeListeners();
-            }
-            printJobPresenterListener.finishActivity();
-        }
+//        if (printApi != null) {
+//            printApi.transactionOnStart();
+//        }
+
     }
 }

@@ -97,6 +97,7 @@ public class ProgressFragment extends Fragment {
     }
 
     public void removeProgressRecyclerView(int removeIndex) {
+
         printJobDetails.remove(removeIndex);
         printJobListAdapter.notifyItemRemoved(removeIndex);
     }
