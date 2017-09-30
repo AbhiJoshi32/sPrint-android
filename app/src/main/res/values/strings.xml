@@ -83,6 +83,15 @@
     <string name="help_text_1">Status of print jobs:</string>
     <string name="paper_stack_svg">paper stack svg</string>
     <string name="history_svg_file">history svg file</string>
+    <string name="file_details">File Details</string>
+    <string name="total_pages">Total Pages:</string>
+    <string name="printing_details">Printing Details</string>
+    <string name="status">Status:</string>
+    <string name="date">Date:</string>
+    <string name="request_time">Request Time:</string>
+    <string name="print_time">Print Time:</string>
+    <string name="cost_details">Cost Details</string>
+    <string name="cost_per_page">Cost per page:</string>
 
     <string-array name="nav_item_activity_titles">
         <item>Printing Jobs</item>
