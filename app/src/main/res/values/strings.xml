@@ -92,6 +92,9 @@
     <string name="print_time">Print Time:</string>
     <string name="cost_details">Cost Details</string>
     <string name="cost_per_page">Cost per page:</string>
+    <string name="choose_a_pdf_file">- Choose a PDF file -</string>
+    <string name="no_ongoing_print_jobs">- No ongoing print jobs -</string>
+    <string name="no_print_jobs_yet">- No print jobs yet -</string>
 
     <string-array name="nav_item_activity_titles">
         <item>Printing Jobs</item>
