@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.binktec.sprint.R;
 import com.binktec.sprint.interactor.fragment.TransactionFragmentListener;
@@ -29,6 +30,8 @@ public class ChooseShopFragment extends Fragment {
     RecyclerView shopRecyclerView;
     @BindView(R.id.shopProgessBar)
     ProgressBar shopProgessBar;
+    @BindView(R.id.textView8)
+    TextView textView8;
 
     private ShopAdapter shopAdapter;
     private List<PrintTransaction> printTransactions;
@@ -96,11 +99,23 @@ public class ChooseShopFragment extends Fragment {
             printTransactions.clear();
             printTransactions.addAll(apiPrintTransactions);
             shopAdapter.notifyDataSetChanged();
+            if (printTransactions.isEmpty()){
+                textView8.setText(R.string.no_shop_match);
+                textView8.setVisibility(View.VISIBLE);
+            } else {
+                textView8.setVisibility(View.GONE);
+            }
         }
     }
 
     private void hideShopProgressBar() {
         shopProgessBar.setVisibility(View.GONE);
+    }
+
+    public void showConnectionError() {
+        hideShopProgressBar();
+        textView8.setText(R.string.no_internet_connection);
+        textView8.setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -10,7 +10,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.util.Log;
 
 import com.binktec.sprint.modal.pojo.PrintDetail;
 import com.binktec.sprint.modal.pojo.shop.Shop;
@@ -21,7 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Misc {
-    private final static String TAG ="Miscellaneous";
     public static String getDate(){
         Calendar c = Calendar.getInstance();
         System.out.println("Current time => " + c.getTime());
@@ -51,7 +49,6 @@ public class Misc {
             }
         }
         result[1] = getPath(context,uri);
-        Log.d(TAG,"The name is "+result[0] +"Path is"+ result[1]);
         return result;
     }
 
@@ -60,12 +57,8 @@ public class Misc {
         final boolean isKitKat = Build.VERSION.SDK_INT >=
                 Build.VERSION_CODES.KITKAT;
         String filePath;
-        // DocumentProvider
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-
-            // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
-                Log.d(TAG,"isexternal storage" + isExternalStorageDocument(uri));
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
                 final String type = split[0];
@@ -77,7 +70,6 @@ public class Misc {
                     return filePath;
                 }
             }
-            // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
@@ -85,7 +77,6 @@ public class Misc {
 
                 return getDataColumn(context, contentUri, null, null);
             }
-            // MediaProvider
             else if (isMediaDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
@@ -108,7 +99,6 @@ public class Misc {
                 return getDataColumn(context, contentUri, selection, selectionArgs);
             }
         }
-        // MediaStore (and general)
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
 
             // Return the remote address
@@ -117,7 +107,6 @@ public class Misc {
 
             return getDataColumn(context, uri, null, null);
         }
-        // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
         }
@@ -147,40 +136,25 @@ public class Misc {
         return null;
     }
 
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is ExternalStorageProvider.
-     */
     private static boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is DownloadsProvider.
-     */
     private static boolean isDownloadsDocument(Uri uri) {
         return
                 "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is MediaProvider.
-     */
     private static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is Google Photos.
-     */
     private static boolean isGooglePhotosUri(Uri uri) {
         return
                 "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
-    public static float getPrintCost(PrintDetail printDetail, Shop shop) {
+
+    public static float costPerPage(PrintDetail printDetail,Shop shop) {
         String color = printDetail.getPrintColor();
         float costPerPage = 0;
         if (color.equals("Color")){
@@ -195,7 +169,7 @@ public class Misc {
                     case "A5":
                         costPerPage = shop.getShopCost().getShopColorCost().getColorA5Cost();
                         break;
-                    case "GlossyA4":
+                    case "Glossy A4":
                         costPerPage = shop.getShopCost().getShopColorCost().getColorGlossyA4Cost();
                         break;
                 }
@@ -210,7 +184,7 @@ public class Misc {
                     case "A5":
                         costPerPage = shop.getShopCost().getShopColorDoubleCost().getColorDoubleA5Cost();
                         break;
-                    case "GlossyA4":
+                    case "Glossy A4":
                         costPerPage = shop.getShopCost().getShopColorDoubleCost().getColorDoubleGlossyA4Cost();
                         break;
 
@@ -251,7 +225,11 @@ public class Misc {
                 }
             }
         }
+        return costPerPage;
+    }
 
+    public static float getPrintCost(PrintDetail printDetail,Shop shop) {
+        float costPerPage = costPerPage(printDetail,shop);
         float printCost;
         printCost = costPerPage*printDetail.getPagesToPrint();
         return printCost;
@@ -263,7 +241,6 @@ public class Misc {
             if (path != null) {
                 PdfReader reader = new PdfReader(path);
                 filePages = reader.getNumberOfPages();
-                Log.d(TAG, "Number of pages is +" + String.valueOf(filePages));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -282,9 +259,7 @@ public class Misc {
         String part2;
         if (numOfcommas > 0) {
             String[] part = pagesText.split(",");
-            Log.d(TAG,"num of commas is"+numOfcommas);
             for (int i = 0 ;i < numOfcommas;i++) {
-                Log.d(TAG,"i value is" + i);
                 part1 = part[i];
                 part2 = part[i+1];
 
@@ -381,8 +356,6 @@ public class Misc {
 
     public static float getBindCost(Shop shop, PrintDetail printDetail) {
         float bindCost;
-        Log.d(TAG,shop.getShopCost().toString());
-
         switch (printDetail.getBindingType()) {
             case "Soft":
                 bindCost = shop.getShopCost().getShopBindingCost().getSoftBindingCost();

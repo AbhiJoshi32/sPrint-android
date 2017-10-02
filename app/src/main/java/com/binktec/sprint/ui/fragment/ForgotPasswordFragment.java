@@ -8,10 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.binktec.sprint.R;
 import com.binktec.sprint.interactor.fragment.AuthFragmentListener;
+import com.binktec.sprint.utility.Constants;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,8 +29,10 @@ public class ForgotPasswordFragment extends Fragment {
     EditText enterEmailText;
 
     Unbinder unbinder;
-    @BindView(R.id.confirm_text)
-    TextView confirmText;
+    @BindView(R.id.linkText2)
+    TextView linkText2;
+    @BindView(R.id.forgot_pass_progress_bar)
+    ProgressBar forgotPassProgressBar;
     private AuthFragmentListener authFragmentListener;
 
 
@@ -72,11 +79,29 @@ public class ForgotPasswordFragment extends Fragment {
 
     @OnClick(R.id.forgot_button)
     public void onViewClicked() {
+        Pattern p = Pattern.compile(Constants.vitRegex);
+        Matcher m;
         String email = enterEmailText.getText().toString();
-        authFragmentListener.forgotPassBtnClicked(email);
+        m = p.matcher(email);
+        if (email.isEmpty()) {
+            enterEmailText.setError("Input email");
+            enterEmailText.requestFocus();
+        } else if (!m.matches()) {
+            enterEmailText.setError("Only vit email allowed");
+            enterEmailText.requestFocus();
+        } else {
+            authFragmentListener.forgotPassBtnClicked(email);
+            forgotPassProgressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     public void showConfirmText() {
-        confirmText.setVisibility(View.VISIBLE);
+        linkText2.setText(getString(R.string.password_reset_msg));
+        forgotPassProgressBar.setVisibility(View.GONE);
+    }
+
+    public void showSendError() {
+        linkText2.setText(getString(R.string.password_reset_error));
+        forgotPassProgressBar.setVisibility(View.GONE);
     }
 }

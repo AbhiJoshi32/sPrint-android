@@ -2,7 +2,6 @@ package com.binktec.sprint.modal.api;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.binktec.sprint.interactor.modal.PrintJobModalListener;
 import com.binktec.sprint.interactor.modal.TransactionModalListener;
@@ -22,7 +21,6 @@ import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
@@ -33,7 +31,6 @@ public class PrintApi {
 
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private static String TAG="ShopApi";
     private DatabaseReference shopRef = database.getReference("shop-client/shop-info");
     private DatabaseReference userTransactionRef;
     private DatabaseReference userCompletedRef;
@@ -100,12 +97,11 @@ public class PrintApi {
                             child("docs/" + printJobDetail.getUser()
                                     .getUid() + "/" + file.getFilename() + uri.getLastPathSegment())
                             .putFile(uri,metadata);
-                    StorageTask<UploadTask.TaskSnapshot> taskSnapshotStorageTask = uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            int progress = (int) ((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
-                            Log.d(TAG,"Upload is " + progress + "% done");
-                        }
+
+                      }
                     }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
@@ -125,8 +121,7 @@ public class PrintApi {
                                 uploadFiles.add(file);
                                 numFileUploded++;
                                 if (numFileUploded == numOfFiles) {
-//                                    Log.d(TAG,"File Uploaded");
-                                    printJobDetail.getPrintTransaction().setFileDetails(uploadFiles);
+                                printJobDetail.getPrintTransaction().setFileDetails(uploadFiles);
                                     callback.filesUploaded(printJobDetail);
                                 }
                             } else {
@@ -158,8 +153,7 @@ public class PrintApi {
         completedInfoListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                Log.d(TAG,"history child added");
-                PrintJobDetail historyDetail = dataSnapshot.getValue(PrintJobDetail.class);
+            PrintJobDetail historyDetail = dataSnapshot.getValue(PrintJobDetail.class);
                 callback.apiHistoryAdded(historyDetail);
             }
 
@@ -193,22 +187,19 @@ public class PrintApi {
         transactionInfoListener = new ChildEventListener() {
             @Override
             public void onChildAdded(final DataSnapshot dataSnapshot, final String prevKey) {
-                Log.d(TAG,"progress child added");
-                PrintJobDetail transactionDetail = dataSnapshot.getValue(PrintJobDetail.class);
+              PrintJobDetail transactionDetail = dataSnapshot.getValue(PrintJobDetail.class);
                 callback.apiPrintTransactionAdded(transactionDetail,dataSnapshot.getKey(),prevKey);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.d(TAG,"child changed");
-                PrintJobDetail changedTransaction = dataSnapshot.getValue(PrintJobDetail.class);
+              PrintJobDetail changedTransaction = dataSnapshot.getValue(PrintJobDetail.class);
                 callback.apiPrintTransactionChanged(changedTransaction,dataSnapshot.getKey());
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.d(TAG,"child removed");
-                PrintJobDetail deletedTransaction = dataSnapshot.getValue(PrintJobDetail.class);
+              PrintJobDetail deletedTransaction = dataSnapshot.getValue(PrintJobDetail.class);
                 callback.apiPrintTransactionRemoved(deletedTransaction,dataSnapshot.getKey());
             }
 
@@ -225,8 +216,7 @@ public class PrintApi {
     }
 
     public void removeListeners() {
-        Log.d(TAG,"listener removed");
-        if (transactionInfoListener != null) {
+      if (transactionInfoListener != null) {
             userTransactionRef.removeEventListener(transactionInfoListener);
             transactionInfoListener = null;
         }
@@ -239,12 +229,6 @@ public class PrintApi {
     public void removeShopListener() {
         if (shopListener != null) {
             shopRef.removeEventListener(shopListener);
-            Log.d(TAG,"Shop listener removed");
-        }
-    }
-
-    public void transactionOnStart() {
-        if (shopListener != null)
-            shopRef.addValueEventListener(shopListener);
+      }
     }
 }

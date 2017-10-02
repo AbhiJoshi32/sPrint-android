@@ -20,13 +20,13 @@ import com.binktec.sprint.utility.SessionManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TransactionPresenter implements TransactionModalListener {
-
     private static final int FILE_ERROR = 1;
     private static Handler handler;
 
@@ -45,11 +45,12 @@ public class TransactionPresenter implements TransactionModalListener {
             public void handleMessage(Message msg) {
                 switch(msg.what){
                     case FILE_PARSED:
+                        transactionPresenterListener.showToastError("File Processed");
                         transactionPresenterListener.enableDone();
                         break;
                     case FILE_ERROR:
-                        clearTransactionSession();
-                        transactionPresenterListener.FileError();
+                        SessionManager.getFileDetail();
+                        transactionPresenterListener.FileError(chosenFiles);
                 }
             }
         };
@@ -62,7 +63,7 @@ public class TransactionPresenter implements TransactionModalListener {
 
     public void appStart() {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-
+        clearTransactionSession();
         if (firebaseUser != null) {
             printApi = new PrintApi(firebaseUser.getUid());
             if (SessionManager.getCurrentPrintJobDetail() != null) {
@@ -70,9 +71,6 @@ public class TransactionPresenter implements TransactionModalListener {
             } else {
                 transactionPresenterListener.initTransactionActivity();
             }
-        }
-        if (SessionManager.getFileDetail() != null) {
-            chosenFiles = new ArrayList<>(SessionManager.getFileDetail());
         }
     }
 
@@ -97,34 +95,36 @@ public class TransactionPresenter implements TransactionModalListener {
         else {
             chosenFiles = new ArrayList<>();
         }
-        try {
-            String[] nameAndPath = Misc.getFileNameAndPath(selectedUri, context);
-            final FileDetail fileAdded = new FileDetail();
-            fileAdded.setUri(selectedUri.toString());
-            fileAdded.setFilename(nameAndPath[0]);
-            fileAdded.setPath(nameAndPath[1]);
-            chosenFiles.add(fileAdded);
-            transactionPresenterListener.disableDone();
-            new Thread() {
-                public void run() {
-                    fileAdded.setNumberOfPages(Misc.getNumPages(fileAdded.getPath()));
-                    chosenFiles.remove(chosenFiles.size()-1);
+        String[] nameAndPath = Misc.getFileNameAndPath(selectedUri, context);
+        final FileDetail fileAdded = new FileDetail();
+        final int fileListSize;
+        fileAdded.setUri(selectedUri.toString());
+        fileAdded.setFilename(nameAndPath[0]);
+        fileAdded.setPath(nameAndPath[1]);
+        chosenFiles.add(fileAdded);
+        fileListSize = chosenFiles.size();
+        transactionPresenterListener.disableDone();
+        new Thread() {
+            public void run() {
+                fileAdded.setNumberOfPages(Misc.getNumPages(fileAdded.getPath()));
+                if (fileListSize == chosenFiles.size()) {
+                    chosenFiles.remove(chosenFiles.size() - 1);
                     chosenFiles.add(fileAdded);
                     SessionManager.fileDetailSave(chosenFiles);
                     Message msg = Message.obtain();
-                    if (fileAdded.getNumberOfPages() < 1)
+                    if (fileAdded.getNumberOfPages() < 1) {
                         msg.what = FILE_ERROR;
+                        chosenFiles.remove(chosenFiles.size() - 1);
+                        SessionManager.fileDetailSave(chosenFiles);
+                    }
                     else
                         msg.what = FILE_PARSED;
                     handler.sendMessage(msg);
                 }
-            }.start();
-            SessionManager.fileDetailSave(chosenFiles);
-            transactionPresenterListener.updateChooseFileFragment(chosenFiles);
-        } catch (Exception e) {
-            transactionPresenterListener.FileError();
-            e.printStackTrace();
-        }
+            }
+        }.start();
+        SessionManager.fileDetailSave(chosenFiles);
+        transactionPresenterListener.updateChooseFileFragment(chosenFiles);
     }
 
     public void removeSelectedFile(int position) {
@@ -135,18 +135,20 @@ public class TransactionPresenter implements TransactionModalListener {
                 chosenFiles = new ArrayList<>(SessionManager.getFileDetail());
             }
         }
-        if (!chosenFiles.isEmpty()) {
-            chosenFiles = new ArrayList<>(SessionManager.getFileDetail());
-            chosenFiles.remove(position);
-            SessionManager.fileDetailSave(chosenFiles);
+        if (position == chosenFiles.size() - 1){
+            transactionPresenterListener.enableDone();
         }
+        chosenFiles = new ArrayList<>(SessionManager.getFileDetail());
+        chosenFiles.remove(position);
+        SessionManager.fileDetailSave(chosenFiles);
+
         transactionPresenterListener.updateChooseFileFragment(chosenFiles);
     }
 
     public void confirmPrintDetail(PrintDetail detail) {
         try {
             int totalPages = 0;
-            int pagesToPrint;
+            int pagesToPrint = 0;
             if (chosenFiles == null) {
                 if (SessionManager.getFileDetail() == null) {
                     transactionPresenterListener.showFileError("empty File List");
@@ -155,7 +157,15 @@ public class TransactionPresenter implements TransactionModalListener {
                 }
             }
             for (FileDetail fileDetail : chosenFiles) {
-                totalPages += fileDetail.getNumberOfPages();
+                int filePages = fileDetail.getNumberOfPages();
+                totalPages +=  filePages;
+                if (detail.getPagesPerSheet() == 2) {
+                    if (filePages%2 == 0)
+                        filePages = filePages/2;
+                    else
+                        filePages = filePages/2+1;
+                }
+                pagesToPrint += filePages;
             }
             if (detail.getPagesText() != null && !detail.getPagesText().isEmpty()) {
 
@@ -168,8 +178,13 @@ public class TransactionPresenter implements TransactionModalListener {
                     pagesToPrint = Misc.getFromPagesText(detail.getPagesText(), totalPages);
                     if (pagesToPrint == -1) {
                         transactionPresenterListener.showPrintDetailError("Invalid Entry");
-
                     } else {
+                        if (detail.getPagesPerSheet() == 2) {
+                            if (pagesToPrint%2 == 0)
+                                pagesToPrint = pagesToPrint/2;
+                            else
+                                pagesToPrint = pagesToPrint/2+1;
+                        }
                         detail.setPagesToPrint(pagesToPrint * detail.getCopies());
                         SessionManager.savePrintDetail(detail);
                         transactionPresenterListener.proceedToShopSelection();
@@ -177,7 +192,7 @@ public class TransactionPresenter implements TransactionModalListener {
                     }
                 }
             } else {
-                pagesToPrint = totalPages * detail.getCopies();
+                pagesToPrint = pagesToPrint * detail.getCopies();
                 detail.setPagesToPrint(pagesToPrint);
                 SessionManager.savePrintDetail(detail);
                 transactionPresenterListener.proceedToShopSelection();
@@ -190,6 +205,13 @@ public class TransactionPresenter implements TransactionModalListener {
 
     public void getShopList() {
         printApi.getShopInfoApi(this);
+        try {
+            if (!isConnected()) {
+                transactionPresenterListener.shopRetrivalError();
+            }
+        } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -205,13 +227,16 @@ public class TransactionPresenter implements TransactionModalListener {
                             && shop.getAvailBinding().contains(printDetail.getBindingType())
                             && shop.getShopAvailPaperType().contains(printDetail.getPrintPaperType())
                             && shop.getShopAvailability().equals("yes")) {
-                        PrintTransaction printTransaction = new PrintTransaction();
-                        printTransaction.setFileDetails(fileDetail);
-                        printTransaction.setShop(shop);
-                        printTransaction.setPrintDetail(printDetail);
-                        printTransaction.setPrintCost(Misc.getPrintCost(printDetail, shop));
-                        printTransaction.setBindingCost(Misc.getBindCost(shop, printDetail));
-                        printTransactions.add(printTransaction);
+                        float printCost = Misc.getPrintCost(printDetail, shop);
+                        if (printCost != 0) {
+                            PrintTransaction printTransaction = new PrintTransaction();
+                            printTransaction.setFileDetails(fileDetail);
+                            printTransaction.setShop(shop);
+                            printTransaction.setPrintDetail(printDetail);
+                            printTransaction.setPrintCost(printCost);
+                            printTransaction.setBindingCost(Misc.getBindCost(shop, printDetail));
+                            printTransactions.add(printTransaction);
+                        }
                     }
                 }
                 transactionPresenterListener.updateShopFragment(printTransactions);
@@ -223,6 +248,7 @@ public class TransactionPresenter implements TransactionModalListener {
 
     @Override
     public void apiShopRetrievalUnsuccessful(String s) {
+        transactionPresenterListener.shopRetrivalError();
     }
 
     public void confirmTransaction(PrintTransaction printTransaction) {
@@ -251,5 +277,11 @@ public class TransactionPresenter implements TransactionModalListener {
     }
 
     public void onStartCalled() {
+    }
+
+    private boolean isConnected() throws InterruptedException, IOException
+    {
+        String command = "ping -c 1 google.com";
+        return (Runtime.getRuntime().exec (command).waitFor() == 0);
     }
 }

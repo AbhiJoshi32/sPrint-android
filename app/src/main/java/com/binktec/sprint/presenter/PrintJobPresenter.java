@@ -1,6 +1,5 @@
 package com.binktec.sprint.presenter;
 
-import android.util.Log;
 
 import com.binktec.sprint.interactor.modal.PrintJobModalListener;
 import com.binktec.sprint.interactor.presenter.PrintJobPresenterListener;
@@ -9,11 +8,12 @@ import com.binktec.sprint.modal.pojo.PrintJobDetail;
 import com.binktec.sprint.utility.SessionManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PrintJobPresenter implements PrintJobModalListener {
-    private static final String TAG = "Print job presnter";
     private PrintJobPresenterListener printJobPresenterListener;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
@@ -66,19 +66,21 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
     @Override
     public void filesUploaded(PrintJobDetail jobDetail) {
-        SessionManager.clearCurrentPrintJob();
-        transactionIds = SessionManager.getTransactionIds();
-        progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
-        int uploadingIndex = transactionIds.indexOf("Uploading");
-        if (uploadingIndex != -1) {
-            transactionIds.remove(uploadingIndex);
-            progressPrintJobDetails.remove(uploadingIndex);
-            printJobPresenterListener.progressItemRemoved(uploadingIndex);
-            SessionManager.saveApiPrintJob(progressPrintJobDetails);
-            SessionManager.saveTrasactionIds(transactionIds);
+        if (SessionManager.getCurrentPrintJobDetail() != null) {
+            SessionManager.clearCurrentPrintJob();
+            transactionIds = SessionManager.getTransactionIds();
+            progressPrintJobDetails = SessionManager.getApiPrintJobDetail();
+            int uploadingIndex = transactionIds.indexOf("Uploading");
+            if (uploadingIndex != -1) {
+                transactionIds.remove(uploadingIndex);
+                progressPrintJobDetails.remove(uploadingIndex);
+                printJobPresenterListener.progressItemRemoved(uploadingIndex);
+                SessionManager.saveApiPrintJob(progressPrintJobDetails);
+                SessionManager.saveTrasactionIds(transactionIds);
+            }
+            jobDetail.setStatus("Waiting");
+            printApi.enterTransaction(jobDetail);
         }
-        jobDetail.setStatus("Waiting");
-        printApi.enterTransaction(jobDetail);
     }
 
     @Override
@@ -99,17 +101,17 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
     @Override
     public void apiHistoryAdded(PrintJobDetail historyDetail) {
+        String tid = historyDetail.gettId();
+        int transactionIndex = transactionIds.indexOf(historyDetail.gettId());
+        if (transactionIndex != -1) {
+            transactionIds.remove(transactionIndex);
+            progressPrintJobDetails.remove(transactionIndex);
+            SessionManager.saveApiPrintJob(progressPrintJobDetails);
+            SessionManager.saveTrasactionIds(transactionIds);
+            printJobPresenterListener.progressItemRemoved(transactionIndex);
+        }
         if (!historyDetail.getStatus().equals("Cancelled")) {
-            String tid = historyDetail.gettId();
-            int transactionIndex = transactionIds.indexOf(historyDetail.gettId());
-            if (transactionIndex != -1) {
-                transactionIds.remove(transactionIndex);
-                progressPrintJobDetails.remove(transactionIndex);
-                SessionManager.saveApiPrintJob(progressPrintJobDetails);
-                SessionManager.saveTrasactionIds(transactionIds);
-                printJobPresenterListener.progressItemRemoved(transactionIndex);
-            }
-            if (!historyIds.contains(historyDetail.gettId())) {
+            if (!historyIds.contains(tid)) {
                 historyIds.add(0, tid);
                 historyPrintJobDetails.add(0, historyDetail);
                 SessionManager.saveHistoryPrintJob(historyPrintJobDetails);
@@ -127,8 +129,7 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
     @Override
     public void apiPrintTransactionAdded(final PrintJobDetail transactionDetail, final String key, String prevKey) {
-        Log.d(TAG,"Transaction addrd" + transactionDetail);
-        int topIndex = 0;
+      int topIndex = 0;
         if (SessionManager.getCurrentPrintJobDetail() != null) {
             topIndex = 1;
         }
@@ -176,11 +177,9 @@ public class PrintJobPresenter implements PrintJobModalListener {
     }
 
     public void appStart() {
-        Log.d(TAG,"app start");
-        firebaseUser = firebaseAuth.getCurrentUser();
+      firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser == null) {
-            Log.d(TAG,"userr is null");
-            printJobPresenterListener.openAuthActivity();
+          printJobPresenterListener.openAuthActivity();
         } else {
             if (!firebaseUser.isEmailVerified()) {
                 printJobPresenterListener.openAuthActivity();
@@ -237,6 +236,7 @@ public class PrintJobPresenter implements PrintJobModalListener {
 
     public void cancelUpload(PrintJobDetail printJobDetail) {
         if (printJobDetail.getStatus().equals("Uploading")) {
+            SessionManager.clearCurrentPrintJob();
             int uploadingIndex = transactionIds.indexOf("Uploading");
             if (uploadingIndex != -1) {
                 progressPrintJobDetails.remove(uploadingIndex);
@@ -246,8 +246,16 @@ public class PrintJobPresenter implements PrintJobModalListener {
                 printJobPresenterListener.progressItemRemoved(uploadingIndex);
             }
         } else {
-            printJobDetail.setStatus("Cancelled");
-            printApi.cancelTransaction(printJobDetail);
+            try {
+                if (isConnected()) {
+                    printJobDetail.setStatus("Cancelled");
+                    printApi.cancelTransaction(printJobDetail);
+                } else {
+                    printJobPresenterListener.showToastError("Can't Cancel. Please check internet connection");
+                }
+            } catch (InterruptedException | IOException e) {
+                printJobPresenterListener.showToastError("Can't Cancel. Please check internet connection");
+            }
         }
     }
 
@@ -256,10 +264,14 @@ public class PrintJobPresenter implements PrintJobModalListener {
         SessionManager.clearPrintDetail();
     }
 
-    public void appResumed() {
-//        if (printApi != null) {
-//            printApi.transactionOnStart();
-//        }
+    public void getProgressCardData(PrintJobDetail printJobDetail) {
+        SessionManager.saveClickedPrintJob(printJobDetail);
+        printJobPresenterListener.openDetailActivity();
+    }
 
+    private boolean isConnected() throws InterruptedException, IOException
+    {
+        String command = "ping -c 1 google.com";
+        return (Runtime.getRuntime().exec (command).waitFor() == 0);
     }
 }

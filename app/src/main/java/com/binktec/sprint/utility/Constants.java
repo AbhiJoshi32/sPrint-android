@@ -2,7 +2,7 @@ package com.binktec.sprint.utility;
 
 public class Constants {
 
-    public static final String vitInvalid = "Only vit email is allowed";
+    public static final String vitInvalid = "Only VIT Email is allowed";
     public static final String emptyEmailError = "Input Email";
     public static final String emptyPassError = "Input Password";
     public static final String weakPassword = "Password too short";

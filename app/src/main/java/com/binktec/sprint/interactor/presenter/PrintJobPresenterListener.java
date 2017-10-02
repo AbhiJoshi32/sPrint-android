@@ -1,7 +1,5 @@
 package com.binktec.sprint.interactor.presenter;
 
-import android.net.Uri;
-
 import com.binktec.sprint.modal.pojo.PrintJobDetail;
 
 import java.util.List;
@@ -28,4 +26,6 @@ public interface PrintJobPresenterListener {
     void showPrintConfirmDialog();
 
     void showRejectDialog();
+
+    void openDetailActivity();
 }

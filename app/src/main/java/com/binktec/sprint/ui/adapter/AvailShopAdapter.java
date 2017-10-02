@@ -68,19 +68,29 @@ public class AvailShopAdapter extends RecyclerView.Adapter<AvailShopAdapter.Avai
         Shop shop = shops.get(position);
         String pageTypeArray = "";
         String bindArray = "";
+        int i = 0;
         for (String type:shop.getShopAvailPaperType()) {
+            i++;
             pageTypeArray += type;
-            pageTypeArray += "  ";
+            if (i != shop.getShopAvailPaperType().size())
+                pageTypeArray += ", ";
         }
+        i = 0;
         for (String bind:shop.getAvailBinding()) {
+            i++;
             bindArray += bind;
-            bindArray += "  ";
+            if (i != shop.getAvailBinding().size())
+                bindArray += ", ";
         }
         holder.shopNameText.setText(shop.getShopName());
         holder.locationText.setText(shop.getShopLocation());
         holder.availablePaperSize.setText(pageTypeArray);
         holder.bindingTypeText.setText(bindArray);
-        holder.colourAvailableText.setText(shop.getShopAvailColor());
+        if (shop.getShopAvailColor().equals("yes")) {
+            holder.colourAvailableText.setText(R.string.yes);
+        } else {
+            holder.colourAvailableText.setText(R.string.no);
+        }
     }
 
     @Override

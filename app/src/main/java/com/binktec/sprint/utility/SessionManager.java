@@ -29,6 +29,7 @@ public class SessionManager {
     private static final String KEY_HISTORY_IDS = "History Id";
     private static final String KEY_IS_PRINTED = "IS Printed";
     private static final String KEY_IS_REJECTED = "Is Rejected";
+    private static final String KEY_CLICKED_PRINT_TRANSACTION = "Clicked print job";
     private static SharedPreferences pref;
 
     public SessionManager() {}
@@ -235,5 +236,21 @@ public class SessionManager {
 
     public static boolean getIsRejected() {
         return pref.getBoolean(KEY_IS_REJECTED,false);
+    }
+
+    public static void saveClickedPrintJob(PrintJobDetail printJobDetail){
+        String json;
+        Gson gson=new Gson();
+        SharedPreferences.Editor editor = pref.edit();
+        json = gson.toJson(printJobDetail);
+        editor.putString(KEY_CLICKED_PRINT_TRANSACTION,json);
+        editor.apply();
+    }
+
+    public static PrintJobDetail getClickedPrintJobDetail(){
+        String json;
+        Gson gson=new Gson();
+        json = pref.getString(KEY_CLICKED_PRINT_TRANSACTION,null);
+        return gson.fromJson(json,PrintJobDetail.class);
     }
 }

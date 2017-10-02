@@ -1,10 +1,8 @@
 package com.binktec.sprint.presenter;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.binktec.sprint.interactor.presenter.SettingPresenterListener;
-import com.binktec.sprint.modal.api.PrintApi;
 import com.binktec.sprint.utility.SessionManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -13,7 +11,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class SettingPresenter {
     private SettingPresenterListener settingPresenterListener;
-    FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth;
 
     public SettingPresenter(SettingPresenterListener settingPresenterListener) {
         this.settingPresenterListener = settingPresenterListener;

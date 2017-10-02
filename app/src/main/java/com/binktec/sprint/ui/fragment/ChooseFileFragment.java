@@ -12,6 +12,8 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.binktec.sprint.R;
 import com.binktec.sprint.interactor.fragment.TransactionFragmentListener;
@@ -28,6 +30,10 @@ import butterknife.Unbinder;
 
 public class ChooseFileFragment extends Fragment {
 
+    @BindView(R.id.pdfImage)
+    ImageView pdfImage;
+    @BindView(R.id.textView5)
+    TextView choosePdfText;
     private List<FileDetail> fragFileList = new ArrayList<>();
 //    private String TAG = "Choose File Fragmetnt";
 
@@ -72,8 +78,8 @@ public class ChooseFileFragment extends Fragment {
         fileRecyclerView.setLayoutManager(mLayoutManager);
         fileRecyclerView.setItemAnimator(new DefaultItemAnimator());
         fileRecyclerView.setAdapter(fileAdapter);
-        RecyclerView.ItemDecoration  mDividerItemDecoration = new DividerItemDecoration(
-                fileRecyclerView.getContext(),mLayoutManager.getOrientation()
+        RecyclerView.ItemDecoration mDividerItemDecoration = new DividerItemDecoration(
+                fileRecyclerView.getContext(), mLayoutManager.getOrientation()
         );
         fileRecyclerView.addItemDecoration(mDividerItemDecoration);
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback =
@@ -83,6 +89,7 @@ public class ChooseFileFragment extends Fragment {
                             target) {
                         return false;
                     }
+
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                         transactionFragmentListener.removeFile(viewHolder.getAdapterPosition());
@@ -100,6 +107,13 @@ public class ChooseFileFragment extends Fragment {
         if (SessionManager.getFileDetail() != null) {
             fragFileList.clear();
             fragFileList.addAll(SessionManager.getFileDetail());
+            if (fragFileList.size() > 0) {
+                pdfImage.setVisibility(View.GONE);
+                choosePdfText.setVisibility(View.GONE);
+            } else {
+                pdfImage.setVisibility(View.VISIBLE);
+                choosePdfText.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -119,10 +133,12 @@ public class ChooseFileFragment extends Fragment {
         fragFileList.clear();
         fragFileList.addAll(chosenFiles);
         fileAdapter.notifyDataSetChanged();
-    }
-
-    public void clearFileList() {
-        fragFileList.clear();
-        fileAdapter.notifyDataSetChanged();
+        if (fragFileList.size() > 0) {
+            pdfImage.setVisibility(View.GONE);
+            choosePdfText.setVisibility(View.GONE);
+        } else {
+            pdfImage.setVisibility(View.VISIBLE);
+            choosePdfText.setVisibility(View.VISIBLE);
+        }
     }
 }

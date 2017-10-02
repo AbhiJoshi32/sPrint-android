@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.binktec.sprint.R;
 import com.binktec.sprint.interactor.fragment.PrintJobFragmentListener;
@@ -26,6 +28,10 @@ public class ProgressFragment extends Fragment {
     @BindView(R.id.progress_recycler_view)
     RecyclerView progressRecyclerView;
     Unbinder unbinder;
+    @BindView(R.id.paperStackImage)
+    ImageView paperStackImage;
+    @BindView(R.id.textView6)
+    TextView noProgressText;
 
     private PrintJobFragmentListener printJobFragmentListener;
 
@@ -47,7 +53,7 @@ public class ProgressFragment extends Fragment {
         printJobListAdapter = new PrintJobListAdapter(printJobDetails, new PrintJobListAdapter.PrintJobListListener() {
             @Override
             public void showPrintDetail(View v, int position) {
-                printJobFragmentListener.printCardClicked();
+                printJobFragmentListener.printCardClicked(printJobDetails.get(position));
             }
 
             @Override
@@ -87,8 +93,10 @@ public class ProgressFragment extends Fragment {
     }
 
     public void insertProgressRecyclerView(final PrintJobDetail transactionDetail, final int i) {
-        printJobDetails.add(i,transactionDetail);
+        printJobDetails.add(i, transactionDetail);
         printJobListAdapter.notifyItemInserted(i);
+        paperStackImage.setVisibility(View.GONE);
+        noProgressText.setVisibility(View.GONE);
     }
 
     public void changeProgressRecyclerView(PrintJobDetail changedTransaction, int changedIndex) {
@@ -97,14 +105,24 @@ public class ProgressFragment extends Fragment {
     }
 
     public void removeProgressRecyclerView(int removeIndex) {
-
         printJobDetails.remove(removeIndex);
         printJobListAdapter.notifyItemRemoved(removeIndex);
+        if (printJobDetails.size() == 0) {
+            paperStackImage.setVisibility(View.VISIBLE);
+            noProgressText.setVisibility(View.VISIBLE);
+        }
     }
 
     public void initProgressRecyclerView(List<PrintJobDetail> progressPrintJobDetails) {
         printJobDetails.clear();
         printJobDetails.addAll(progressPrintJobDetails);
         printJobListAdapter.notifyDataSetChanged();
+        if (printJobDetails.size() > 0) {
+            paperStackImage.setVisibility(View.GONE);
+            noProgressText.setVisibility(View.GONE);
+        } else {
+            paperStackImage.setVisibility(View.VISIBLE);
+            noProgressText.setVisibility(View.VISIBLE);
+        }
     }
 }

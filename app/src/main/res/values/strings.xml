@@ -39,14 +39,14 @@
     <string name="web_client_id">496914499075-aqhame5fds8d98aec77d58q4ros1su2m.apps.googleusercontent.com</string>
     <string name="arrow_down">Arrow down</string>
     <string name="arrow_up">Arrow up</string>
-    <string name="help">Print Job cards show the status of that print job in the bottom right corner. These statuses indicate the progress of the job:
+    <string name="help">Print Job cards show the status of that document in the bottom right corner. These statuses indicate the progress of the job:
 \n\n1.	Uploading – Your files are being uploaded
 \n\n2.	Waiting – Files have been uploaded and are awaiting the shop’s confirmation
 \n\n3.	Printing – The chosen shop has accepted your print job
 \n\n4.	Printed – Your documents have been printed and can be collected from the shop
 \n\n5.	Rejected – The shop has rejected your print request
 \n\n6.	Cancelled – You have cancelled your print job
-\n\nNOTE: Print jobs cannot be cancelled after your documents have been printed</string>
+\n\nNOTE: Print jobs cannot be cancelled once the documents have been printed</string>
     <string name="about_us_text">As Arabella Weir has said, \"I cry at everything, even the length of the queue at Sainsbury\'s\". Only in our case, it’s not Sainsbury’s. It’s the printing shops in our institute. And so, we, an ambitious team of four engineers in the making, have come up with an innovative solution and have decided to share it with you! *insert more buttered up stuff here*.\nNow, seriously.\nMost probably, you or someone you know have stood in a queue for a long time to maybe get just a sheet of paper printed. And man, are those minutes irritating. So, we have come up with an app which would solve this problem. Also, sPrint uses Google’s servers so your data is secure. That’s all folks. :)</string>
     <string name="policy_summary">POLICY SUMMARY</string>
     <string name="pp2">Personal Data collected for the following purposes and using the following services:</string>
@@ -95,6 +95,11 @@
     <string name="choose_a_pdf_file">- Choose a PDF file -</string>
     <string name="no_ongoing_print_jobs">- No ongoing print jobs -</string>
     <string name="no_print_jobs_yet">- No print jobs yet -</string>
+    <string name="no_internet_connection">No Internet Connection</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="password_reset_error">Some error occurred in sending the email. Kindly check your internet connection and try again later.</string>
+    <string name="no_shop_match">No shops match your configuration</string>
 
     <string-array name="nav_item_activity_titles">
         <item>Printing Jobs</item>
@@ -111,7 +116,7 @@
         <item>A4</item>
         <item>A3</item>
         <item>A5</item>
-        <item>GlossyA4</item>
+        <item>Glossy A4</item>
     </string-array>
 
     <string-array name="Colour">

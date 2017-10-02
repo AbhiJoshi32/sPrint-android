@@ -3,8 +3,6 @@ package com.binktec.sprint.interactor.modal;
 
 import com.binktec.sprint.modal.pojo.PrintJobDetail;
 
-import java.util.List;
-
 public interface PrintJobModalListener {
 
     void uploadFailed(String s);

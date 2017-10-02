@@ -271,6 +271,12 @@ public class PrintJobActivity extends AppCompatActivity
                 .setNegativeButton("Ok", dialogClickListener).show();
     }
 
+    @Override
+    public void openDetailActivity() {
+        Intent intent = new Intent(PrintJobActivity.this, PrintJobDetailActivity.class);
+        startActivity(intent);
+    }
+
     private void selectNavMenu() {
         navigationView.getMenu().getItem(0).setChecked(true);
     }
@@ -317,7 +323,6 @@ public class PrintJobActivity extends AppCompatActivity
                 if (toOpenActivity) {
                     Intent intent = new Intent(PrintJobActivity.this, newActivityClass);
                     startActivity(intent);
-                    finish();
                 }
             }
 
@@ -355,7 +360,6 @@ public class PrintJobActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     public void onStop() {
         super.onStop();
@@ -368,7 +372,8 @@ public class PrintJobActivity extends AppCompatActivity
     }
 
     @Override
-    public void printCardClicked() {
+    public void printCardClicked(PrintJobDetail printJobDetail) {
+        printJobPresenter.getProgressCardData(printJobDetail);
     }
 
     @Override

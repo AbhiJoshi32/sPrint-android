@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.binktec.sprint.R;
 import com.binktec.sprint.interactor.fragment.PrintJobFragmentListener;
@@ -28,6 +30,10 @@ public class HistoryFragment extends Fragment {
     @BindView(R.id.history_recycler_view)
     RecyclerView historyRecyclerView;
     Unbinder unbinder;
+    @BindView(R.id.historyImage)
+    ImageView historyImage;
+    @BindView(R.id.textView2)
+    TextView noHistoryText;
 
     private PrintJobFragmentListener printJobFragmentListener;
 
@@ -49,7 +55,7 @@ public class HistoryFragment extends Fragment {
         printJobListAdapter = new HistoryJobListAdapter(printJobDetails, new HistoryJobListAdapter.HistoryJobListListener() {
             @Override
             public void showPrintDetail(View v, int position) {
-                printJobFragmentListener.printCardClicked();
+                printJobFragmentListener.printCardClicked(printJobDetails.get(position));
             }
         });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -90,17 +96,24 @@ public class HistoryFragment extends Fragment {
 
 
     public void initHistoryRecyclerView(List<PrintJobDetail> historyPrintJobDetails) {
-//        Log.d(TAG,"History recycler init");
         historyRecyclerView.scrollToPosition(0);
         printJobDetails.clear();
         printJobDetails.addAll(historyPrintJobDetails);
         printJobListAdapter.notifyDataSetChanged();
+        if (printJobDetails.size() > 0) {
+            historyImage.setVisibility(View.GONE);
+            noHistoryText.setVisibility(View.GONE);
+        } else {
+            historyImage.setVisibility(View.VISIBLE);
+            noHistoryText.setVisibility(View.VISIBLE);
+        }
     }
 
     public void addHistoryRecyclerView(PrintJobDetail historyDetail, int i) {
-//        Log.d(TAG,"history item inserted" + printJobDetails + "position is " + i);
         historyRecyclerView.scrollToPosition(0);
-        printJobDetails.add(i,historyDetail);
+        printJobDetails.add(i, historyDetail);
         printJobListAdapter.notifyItemInserted(i);
+        historyImage.setVisibility(View.GONE);
+        noHistoryText.setVisibility(View.GONE);
     }
 }

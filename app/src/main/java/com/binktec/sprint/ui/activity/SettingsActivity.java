@@ -32,7 +32,7 @@ import butterknife.ButterKnife;
 
 public class SettingsActivity extends AppCompatActivity implements SettingFragmentListener,SettingPresenterListener, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = "Settings";
+    private static final String TAG = "Accounts and Settings";
     private SettingPresenter settingPresenter;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -196,9 +196,12 @@ public class SettingsActivity extends AppCompatActivity implements SettingFragme
     public void openNewActivity(Class activityClass) {
         Intent intent;
         intent = new Intent(SettingsActivity.this, activityClass);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (activityClass.equals(InstructionActivity.class)) {
+            Bundle b = new Bundle();
+            b.putString("key", "Settings");
+            intent.putExtras(b);
+        }
         startActivity(intent);
-        finish();
     }
 
     @Override

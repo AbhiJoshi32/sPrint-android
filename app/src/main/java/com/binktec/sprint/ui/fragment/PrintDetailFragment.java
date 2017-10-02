@@ -2,6 +2,7 @@ package com.binktec.sprint.ui.fragment;
 
 
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class PrintDetailFragment extends Fragment implements AdapterView.OnItemSelectedListener{
+public class PrintDetailFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     @BindView(R.id.PaperTypeSpinner)
     Spinner PaperTypeSpinner;
     @BindView(R.id.ColourSpinner)
@@ -36,6 +37,8 @@ public class PrintDetailFragment extends Fragment implements AdapterView.OnItemS
     @BindView(R.id.PagesPerSheetSpinner)
     Spinner PagesPerSheetSpinner;
     Unbinder unbinder;
+    @BindView(R.id.Pages)
+    TextInputLayout Pages;
 
     public PrintDetailFragment() {
     }
@@ -100,6 +103,7 @@ public class PrintDetailFragment extends Fragment implements AdapterView.OnItemS
         if (adapterView.getSelectedItem().toString().compareTo("All") == 0) {
             PagesText.setText(null);
             PagesText.setEnabled(false);
+            Pages.setHintEnabled(false);
         }
 
     }
@@ -119,9 +123,11 @@ public class PrintDetailFragment extends Fragment implements AdapterView.OnItemS
                 PagesSpinner.setEnabled(true);
                 PagesSpinner.setSelection(0);
             } else {
+                PagesSpinner.setSelection(0);
                 PagesSpinner.setEnabled(false);
+                PagesText.setText("");
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

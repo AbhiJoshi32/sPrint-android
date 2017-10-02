@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.binktec.sprint.R;
@@ -64,7 +63,6 @@ public class AuthActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
         authPresenter = new AuthPresenter(this);
-        // [START initialize_auth]
         firebaseAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.web_client_id))
@@ -179,6 +177,8 @@ public class AuthActivity extends AppCompatActivity implements
                 showProgressBar();
                 GoogleSignInAccount account = result.getSignInAccount();
                 authPresenter.verifyGoogleSignInEmail(account);
+            } else {
+                showToastError("Some Error Occurred. Try again later");
             }
         }
     }
@@ -329,12 +329,10 @@ public class AuthActivity extends AppCompatActivity implements
     }
 
     public void signOut() {
-        Log.d(TAG_CURR,"Signing Out");
         if (firebaseAuth != null) {
             firebaseAuth.signOut();
             SessionManager.clearAllSession();
         }
-        // Google sign out
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             Auth.GoogleSignInApi.signOut(mGoogleApiClient);
         }
@@ -345,7 +343,6 @@ public class AuthActivity extends AppCompatActivity implements
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         showProgressBar();
-        Log.d(TAG_CURR, "firebaseAuthWithGoogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -353,21 +350,15 @@ public class AuthActivity extends AppCompatActivity implements
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             mGoogleApiClient.disconnect();
-                            Log.d(TAG_CURR, "signInWithCredential:success");
                             authPresenter.syncUser();
                         } else {
-                            Log.w(TAG_CURR, "signInWithCredential:failure", task.getException());
+                            signOut();
                             try {
                                 throw task.getException();
-                            } catch (FirebaseAuthException e){
-                                String err = e.getErrorCode();
-                                Log.d(TAG_CURR, err);
+                            } catch (FirebaseAuthException | FirebaseNetworkException e){
                                 toastErr = e.getMessage();
 
-                            }catch (FirebaseNetworkException e){
-                                toastErr = e.getMessage();
-                            }catch(Exception e) {
-                                Log.e(TAG_CURR, e.getMessage());
+                            } catch(Exception e) {
                                 toastErr = "Unknown Error";
                             }
                             showToastError(toastErr);
@@ -379,7 +370,6 @@ public class AuthActivity extends AppCompatActivity implements
 
 
     private void startMainActivity() {
-        Log.d(TAG_CURR,"opening Main Activity");
         Intent intent = new Intent(AuthActivity.this, PrintJobActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
@@ -414,7 +404,6 @@ public class AuthActivity extends AppCompatActivity implements
     }
 
     private void sendEmailVerification() {
-        Log.d(TAG_CURR,"Sending ver cost");
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             user.sendEmailVerification()
@@ -424,10 +413,8 @@ public class AuthActivity extends AppCompatActivity implements
                             if (TAG_CURR.equals(TAG_EMAIL_VER)) {
                                 emailVerFragment = (EmailVerFragment) getAuthCurrentFrag();
                                 if (task.isSuccessful()) {
-                                    Log.d(TAG_CURR, "Sending email successful");
                                     emailVerFragment.emailVerSendSuccessful();
                                 } else {
-                                    Log.e(TAG_CURR, "sendEmailVerification", task.getException());
                                     emailVerFragment.emailVerSendUnsuccessful();
                                 }
                             }
@@ -442,7 +429,6 @@ public class AuthActivity extends AppCompatActivity implements
     }
 
     private void checkLoginStatus() {
-        Log.d(TAG_CURR,"Check Login status called");
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if(user != null) {
             if (user.isEmailVerified()){
@@ -463,12 +449,13 @@ public class AuthActivity extends AppCompatActivity implements
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (TAG_CURR.equals(TAG_FORGOT_PASSWORD)) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG_CURR, "Email sent.");
-                                forgotPasswordFragment = (ForgotPasswordFragment) getAuthCurrentFrag();
-                                forgotPasswordFragment.showConfirmText();
-                            } else {
-                                showToastError("Some error occurred");
+                            forgotPasswordFragment = (ForgotPasswordFragment) getAuthCurrentFrag();
+                            if (forgotPasswordFragment != null) {
+                                if (task.isSuccessful()) {
+                                    forgotPasswordFragment.showConfirmText();
+                                } else {
+                                    forgotPasswordFragment.showSendError();
+                                }
                             }
                         }
                     }
@@ -477,7 +464,6 @@ public class AuthActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG_CURR, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 

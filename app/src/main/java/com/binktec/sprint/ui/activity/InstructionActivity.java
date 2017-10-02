@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.binktec.sprint.R;
 
@@ -16,12 +18,23 @@ public class InstructionActivity extends AppCompatActivity {
     private static final String TAG = "Instructions";
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.button2)
+    Button button2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_instruction);
         ButterKnife.bind(this);
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            String value = b.getString("key");
+            if (value != null) {
+                if (value.equals("Settings")) {
+                    button2.setVisibility(View.GONE);
+                }
+            }
+        }
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(TAG);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

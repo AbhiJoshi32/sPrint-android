@@ -28,7 +28,9 @@ public interface TransactionPresenterListener {
 
     void ongoingUpload();
 
-    void FileError();
+    void FileError(List<FileDetail> chosenFiles);
 
-    void openAuthActivity();
+    void showToastError(String s);
+
+    void shopRetrivalError();
 }

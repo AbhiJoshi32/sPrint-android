@@ -14,7 +14,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -130,7 +129,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
 
     @Override
     public void updatePrintDetails(int size) {
-        Log.d(TAG_CURR,"update print detauls" + size);
         viewPager.setCurrentItem(1, true);
         PrintDetailFragment printDetailFrag = (PrintDetailFragment)
                 (getSupportFragmentManager().
@@ -163,6 +161,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
 
     @Override
     public void disableDone() {
+        showToastError("File is being processed");
         donePrintStatus = false;
         toolProgressBar.setVisibility(View.VISIBLE);
         invalidateOptionsMenu();
@@ -182,22 +181,17 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     }
 
     @Override
-    public void FileError() {
+    public void FileError(List<FileDetail> chosenFiles) {
+        donePrintStatus = true;
         viewPager.setCurrentItem(0, true);
+        toolProgressBar.setVisibility(View.GONE);
+        invalidateOptionsMenu();
         ChooseFileFragment chooseFileFragment = (ChooseFileFragment)
                 (getSupportFragmentManager().
                         findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + 0));
-        chooseFileFragment.clearFileList();
-        showToastError("File Not Found. Check if the file is present");
+        chooseFileFragment.updateFileList(chosenFiles);
+        showToastError("Some error in File. Check if the file is present");
 
-    }
-
-    @Override
-    public void openAuthActivity() {
-        Intent intent = new Intent(TransactionActivity.this, AuthActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        finish();
-        startActivity(intent);
     }
 
     private void setToolbarTitle() {
@@ -213,7 +207,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     private void setUpNavigationView() {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
-            // This method will trigger on item Click of navigation menu
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
@@ -349,6 +342,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         menu.clear();
         if (TAG_CURR.equals(TAG_FILE)) {
             getMenuInflater().inflate(R.menu.choose_file, menu);
+            menu.findItem(R.id.action_upload_add).setEnabled(donePrintStatus);
         }
         if (TAG_CURR.equals(TAG_PRINT_DETAIL)) {
             getMenuInflater().inflate(R.menu.choose_option, menu);
@@ -438,7 +432,6 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
-                        //No button clicked
                         break;
                 }
             }
@@ -453,8 +446,18 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         transactionPresenter.getShopList();
     }
 
-    private void showToastError(String s) {
+    @Override
+    public void showToastError(String s) {
         Toast.makeText(TransactionActivity.this, s,
                 Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void shopRetrivalError() {
+        ChooseShopFragment chooseShopFragment = (ChooseShopFragment) getSupportFragmentManager().
+                findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + 2);
+        if (chooseShopFragment != null) {
+            chooseShopFragment.showConnectionError();
+        }
     }
 }

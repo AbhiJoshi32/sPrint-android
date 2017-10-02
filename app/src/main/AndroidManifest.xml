@@ -77,7 +77,7 @@
         <activity android:name=".ui.activity.SettingsActivity" />
         <activity android:name=".ui.activity.InstructionActivity" />
         <activity android:name=".ui.activity.HelpActivity" />
-        <activity android:name=".ui.activity.PrintJobDetailActivity"></activity>
+        <activity android:name=".ui.activity.PrintJobDetailActivity"/>
     </application>
 
 </manifest>
